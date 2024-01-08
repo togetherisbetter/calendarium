@@ -1,0 +1,426 @@
+<html>
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BPS2S5MCLH"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-BPS2S5MCLH');
+    </script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"-->
+
+    <style type="text/css">
+      body, html {
+        padding: 0;
+        margin: 0;
+        background-color: snow;
+      }
+      /* https://stackoverflow.com/questions/29205294/how-to-achieve-blinking-effect-in-svg */
+      @keyframes blink {
+        100%, 0% { fill: snow; }
+        80% { fill: orange; }
+      }
+      .blink {
+        animation: blink 1.5s infinite;
+      }
+    </style>
+    <script type="text/javascript">
+      window.mobileCheck = function() {  // https://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
+        let check = false;
+        (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+        return check;
+      };
+
+      const circle_radius = 2;
+      const number_of_weeks_in_a_row = 52;
+      const number_of_years = 101;
+      const calendar_step_horizontal = 5;
+      const calendar_step_vertical = 5;
+      const calendar_weeks_numbers_height = 5;
+      const calendar_years_numbers_width = 12;
+      const calendar_le_at_birth_median_peak_width = 20;
+      const calendar_new_year_label_height = 5;
+      const is_mobile = window.mobileCheck();
+
+      // https://www.mortality.org/File/GetDocument/hmd.v6/RUS/STATS/mltper_1x1.txt
+      const data_men_1987 = [2215, 216, 113, 82, 73, 69, 67, 70, 68, 61, 61, 61, 61, 57, 66, 78, 96, 120, 154, 157, 176, 196, 206, 212, 208, 229, 237, 247, 248, 275, 286, 282, 301, 323, 322, 362, 376, 397, 408, 408, 501, 501, 568, 658, 658, 792, 792, 837, 906, 917, 1040, 1072, 1179, 1221, 1327, 1420, 1517, 1620, 1648, 1839, 1901, 1974, 2089, 2188, 2181, 2268, 2378, 2442, 2593, 2646, 2646, 2700, 2793, 2793, 2793, 2700, 2700, 2613, 2610, 2534, 2464, 2270, 2171, 2035, 1792, 1601, 1466, 1268, 985, 906, 708, 545, 444, 343, 257, 194, 143, 102, 72, 50, 33, 22, 14, 9, 5, 3, 2, 1, 1, 0, 0];
+
+      // https://www.mortality.org/File/GetDocument/hmd.v6/RUS/STATS/fltper_1x1.txt
+      const data_women_1989 = [1456, 163, 82, 58, 53, 46, 42, 37, 35, 32, 30, 27, 26, 32, 43, 50, 62, 63, 69, 71, 69, 68, 69, 69, 69, 75, 69, 76, 78, 83, 87, 92, 97, 101, 114, 124, 134, 139, 156, 173, 190, 187, 242, 225, 259, 290, 275, 347, 335, 373, 414, 424, 483, 535, 586, 623, 678, 741, 781, 863, 927, 1015, 1085, 1229, 1309, 1499, 1539, 1695, 1836, 1950, 2271, 2247, 2279, 2542, 2787, 2949, 3037, 3288, 3362, 3580, 3652, 3726, 3804, 3638, 3631, 3514, 3306, 3077, 2709, 2609, 2024, 1924, 1516, 1225, 948, 812, 628, 474, 349, 250, 174, 118, 77, 49, 31, 18, 11, 6, 3, 2, 2];
+
+      const all_data = data_men_1987.concat(data_women_1989);
+
+      const screen_height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+      //const calendar_step_vertical = (screen_height - 15) / number_of_years;
+      //console.log(calendar_step_vertical)
+
+      function get_total(range) {
+        return range.reduce((a, b) => a + b, 0);
+      }
+
+      function get_percentiles(range) {
+        let percentiles = {50: 0, 80: 0, 90: 0};
+        const total = get_total(range);
+        let integral = 0;        
+        for (let i = 0; i < range.length; i++) {
+          if (integral < 0.51)
+            percentiles[50] = i;
+          else if (integral < 0.81)
+            percentiles[80] = i;
+          else if (integral < 0.91)
+            percentiles[90] = i;
+
+          integral += range[i] / total;
+          //console.log(integral)
+        }
+        return percentiles;
+      }
+
+      function get_peak_value(range) {
+        const max_value = Math.max(...range);
+        const peak = range.indexOf(max_value) + 1;  // to start from 1
+        return {'peak': peak, 'value': max_value};
+      }
+
+      const year_le_at_birth = 65;
+      const year_median = get_percentiles(data_men_1987)['50'];
+      const year_peak = get_peak_value(data_men_1987).peak;      
+
+      function recalculate_calendar(element) {
+        draw_calendar("calendar", element.value);
+      }
+
+      function calculate_weeks_between(earlier_date, later_date) {  // https://stackoverflow.com/questions/542938/how-to-calculate-number-of-days-between-two-dates
+        const diff_ms = new Date(later_date) - new Date(earlier_date);
+        const diff_days = diff_ms / (1000 * 60 * 60 * 24);
+        return Math.floor(diff_days / 7.024038461538462);  // (365*3+366)/4/52
+      }
+
+      function calculate_new_year_week(birthday) {
+        const date = new Date(birthday);
+        const next_year = date.getFullYear() + 1;
+        const diff_ms = new Date(next_year + '-01-01') - date;
+        const diff_days = diff_ms / (1000 * 60 * 60 * 24);
+        //console.log(diff_days)
+        //let week_new_year = Math.floor(diff_days / 7) + 1;  // no errors for weeks during 1 year
+        let week_new_year = Math.floor(diff_days / 7) + 1;  // no errors for weeks during 1 year
+        if (week_new_year == 53)  // leap year week possible mistake fix
+          week_new_year = 1;
+        return week_new_year;
+      }
+
+      function prepare_new_year_label(week_new_year) {
+        const cx = week_new_year * calendar_step_horizontal + calendar_years_numbers_width + circle_radius + 1;
+        const cy = number_of_years * calendar_step_vertical + calendar_weeks_numbers_height + calendar_new_year_label_height;
+        return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="' + cy + '">New Year</text>';
+      }
+
+      function prepare_weeks_numbers() {
+        let content = '';
+
+        for (let week = 1; week <= number_of_weeks_in_a_row; week++) {
+          if (week % 4 == 0) { // add a marker for every 4-th week
+            let x_offset = (week + 1) * calendar_step_horizontal + calendar_years_numbers_width;
+            let cx = x_offset - circle_radius;
+            content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="4" font-weight="bold">';
+            content += week;
+            content += '</text>';
+          }
+        }
+
+        return content;
+      }
+
+      function prepare_years_numbers(birthday) {
+        let content = '';
+
+        for (let year = 1; year <= number_of_years; year++) {
+          if (year % 5 == 0) { // add age marker for every 5-th year
+            let y_offset = year * calendar_step_vertical + calendar_weeks_numbers_height + 1;
+            if (is_mobile)  // idk why on mobiles is calculated differently
+              y_offset += 1;
+
+            const cy = y_offset - circle_radius;
+            content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="15" y="' + cy + '" font-weight="bold">'
+            content += year;
+            content += '</text>';
+          
+            const cy2 = cy + calendar_step_vertical;
+            content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="15" y="' + cy2 + '">'
+
+            const birthday_date = new Date(birthday);
+            const birthday_year = birthday_date.getFullYear();
+            if (birthday_date.getMonth() == 0 && birthday_date.getDate() <= 7)  // in case of birthday during 1st week of January don't write 2004/05, but 2004
+              content += birthday_year + year;
+            else {
+              const year_from = (birthday_year + year).toString();
+              const year_to = (birthday_year + year + 1).toString();
+              content +=  year_from + '/' + year_to.slice(2, 4);  // 2023/24
+            }
+            content += '</text>';
+          }
+        }
+
+        return content;
+      }
+
+      function coordinates_to_points(coordinates) {
+        let vertical_offset = calendar_weeks_numbers_height + 1 + circle_radius;
+        if (is_mobile)  // idk why on mobiles is calculated differently
+          vertical_offset += 10;
+        let horizontal_offset = calendar_years_numbers_width;
+
+        let points = '';
+        for (let key in coordinates) {
+          let value = coordinates[key];
+          let vertical = (key - 1) * calendar_step_vertical + vertical_offset;
+          let horizontal = (value - 1) * calendar_step_horizontal + horizontal_offset + 10;
+          points += horizontal + ',' + vertical + ' ';
+        }
+        return points;
+      }
+
+      function make_coordinates(array) {
+        const total = array.reduce((a, b) => a + b, 0);
+        const max = get_peak_value(all_data).value;
+
+        let coordinates_deaths = {};
+        let coordinates_integral = {};
+        let integral = 0;
+        
+        for (let i = 0; i < number_of_years; i++) {
+          const value = array[i];
+          //let value_mapped_on_weeks = Math.floor((value / max) * number_of_weeks_in_a_row);  // link to weeks dots
+          let value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row * 0.8;  // do not link to weeks dots, 0.8 le_at_births scale a bit lower to not hit 52-nd week with the peak
+          coordinates_deaths[i+1] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
+          
+          integral += (value / total) * number_of_weeks_in_a_row;
+          coordinates_integral[i+1] = integral;
+        }
+        return {'deaths': coordinates_deaths, 'integral': coordinates_integral};
+      }
+
+      function prepare_line_deaths(coordinates, stroke) {
+        let content = '';
+        content += '<polyline fill="none" stroke="' + stroke + '" stroke-width="0.5" stroke-linejoin="round" points="';
+        content += coordinates_to_points(coordinates.deaths);
+        content += '"/>';
+        return content;
+      }
+      function prepare_line_integral(coordinates, stroke) {
+        let content = '';
+        content += '<polyline fill="none" stroke="' + stroke + '" stroke-width="0.5" stroke-dasharray="4 2" stroke-linejoin="round" points="';
+        content += coordinates_to_points(coordinates.integral);
+        content += '"/>';
+        return content;
+      }
+
+      function prepare_lines() {
+        let content = '';
+
+        const coordinates_men_1987 = make_coordinates(data_men_1987);
+        content += prepare_line_deaths(coordinates_men_1987, "black");
+        content += prepare_line_integral(coordinates_men_1987, "black");
+
+        const coordinates_women_1989 = make_coordinates(data_women_1989);
+        content += prepare_line_deaths(coordinates_women_1989, "gray");
+        content += prepare_line_integral(coordinates_women_1989, "gray");
+
+        return content;
+      }
+
+      function transform_fill_ranges_to_coordinates(fill_ranges, date) {
+        let new_fill_ranges = [];
+        for (let i = 0; i < fill_ranges.length; i++) {
+          const range = fill_ranges[i];
+
+          let new_range = {};
+          new_range["fill"] = range["fill"];
+          new_range["animate"] = range["animate"];
+          new_range["stroke"] = range["stroke"];
+          new_range["stroke_width"] = range["stroke_width"];
+
+          // from
+          if (!range["from"])
+            new_range["from_week"] = 1;
+          else if (Number.isInteger(range["from"]))
+            new_range["from_week"] = (range["from"] - 1) * number_of_weeks_in_a_row + 1;
+          else  // date format
+            new_range["from_week"] = calculate_weeks_between(date, range["from"]);
+        
+          // to
+          if (!range["to"])
+            new_range["to_week"] = number_of_weeks_in_a_row * number_of_years;
+          else if (Number.isInteger(range["to"]))
+            new_range["to_week"] = range["to"] * number_of_weeks_in_a_row;
+          else  // date format
+            new_range["to_week"] = calculate_weeks_between(date, range["to"]);
+          
+          new_fill_ranges.push(new_range);
+        }
+        return new_fill_ranges;
+      }
+
+      function draw_calendar(element_id, date) {
+        let fill_ranges = [ // init
+          {"fill": "white"},
+          {"fill": "skyblue", "to": new Date()},
+          {"fill": "white", "from": year_le_at_birth, "to": year_le_at_birth, "stroke_width": "0.22"},
+          //{"fill": "#444", "from": year_le_at_birth, "to": year_le_at_birth},
+          {"fill": "white", "from": year_median, "to": year_median, "stroke_width": "0.22"},
+          //{"fill": "#444", "from": year_median, "to": year_median},
+          {"fill": "white", "from": year_peak, "to": year_peak, "stroke_width": "0.22"},
+          //{"fill": "#444", "from": year_peak, "to": year_peak},
+          //{"fill": "gold", "from": "2018-08-01", "to": new Date()},
+          {"fill": "orange", "from": "2024-05-31", "to": "2024-05-31", "animate": "blink"},
+          //{"fill": "red", "from": 78, "to": 78}
+        ];
+
+        /*
+        fill_ranges = [ // life
+          {"fill": "white"},
+          {"fill": "lightgray", "to": new Date()},
+          //{"fill": "lightgray", "from": year_le_at_birth, "to": year_le_at_birth},
+          //{"fill": "darkgray", "from": year_median, "to": year_median},
+          //{"fill": "gray", "from": year_peak, "to": year_peak},
+          //{"fill": "gold", "from": "2018-08-01", "to": new Date()},
+        ];
+
+        fill_ranges = [ // therapy
+          {"fill": "white"},
+          {"fill": "lightgray", "to": new Date()},
+          //{"fill": "lightgray", "from": year_le_at_birth, "to": year_le_at_birth},
+          //{"fill": "darkgray", "from": year_median, "to": year_median},
+          //{"fill": "gray", "from": year_peak, "to": year_peak},
+          {"fill": "gold", "from": "2018-08-01", "to": new Date()},
+        ];
+
+        fill_ranges = [ // school
+          {"fill": "white"},
+          //{"fill": "lightgray", "from": year_le_at_birth, "to": year_le_at_birth},
+          //{"fill": "darkgray", "from": year_median, "to": year_median},
+          //{"fill": "gray", "from": year_peak, "to": year_peak},
+          {"fill": "lightgreen", "from": "1988-01-01", "to": "1994-06-15"},
+          {"fill": "skyblue", "from": "1994-09-01", "to": "2004-06-15"},
+          {"fill": "lightsalmon", "from": "2004-09-01", "to": "2008-06-15"},
+          {"fill": "lightgray", "from": "2008-05-01", "to": new Date()},
+          {"fill": "orange", "from": 65},
+          //{"fill": "red", "from": new Date(), "to": new Date()},
+        ];
+
+        fill_ranges = [ // retirement
+          {"fill": "white"},
+          {"fill": "skyblue","to": new Date()},
+          {"fill": "lightgreen", "from": 65},
+          {"fill": "lightgray", "from": year_le_at_birth, "to": year_le_at_birth},
+          {"fill": "darkgray", "from": year_median, "to": year_median},
+          {"fill": "gray", "from": year_peak, "to": year_peak},
+          //{"fill": "red", "from": new Date(), "to": new Date()},
+        ];
+
+        fill_ranges = [ // empty
+          {"fill": "white"},
+          {"fill": "lightgray", "from": year_le_at_birth, "to": year_le_at_birth},
+          {"fill": "darkgray", "from": year_median, "to": year_median},
+          {"fill": "gray", "from": year_peak, "to": year_peak},
+        ];
+        */
+        //const skins = {"empty": []};
+
+        const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, date);
+
+        const calendar_height = number_of_years * calendar_step_vertical + calendar_weeks_numbers_height + calendar_new_year_label_height + 10;
+        const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + 6 + calendar_le_at_birth_median_peak_width;
+        let content = '<svg height="96%" viewBox="0 0 ' + calendar_width + ' ' + calendar_height + '" xmlns="http://www.w3.org/2000/svg" style="width: 89%; margin: 15px 6% 0 5%;">';
+
+        content += prepare_weeks_numbers();
+        content += prepare_years_numbers(date);
+        //content += prepare_lines();
+
+        const week_new_year = calculate_new_year_week(date);
+
+        let total_weeks = 1;
+        for (let year = 1; year <= number_of_years; year++) {
+          let y_offset = (year + 1) * calendar_step_vertical;
+          if (is_mobile)
+            y_offset += 10;
+          
+          let cy = y_offset - circle_radius;
+          for (let week = 1; week <= number_of_weeks_in_a_row; week++) {
+            let cx = (week + 1) * calendar_step_horizontal + calendar_years_numbers_width - circle_radius;
+            content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + circle_radius + '" ';
+            
+            let circle_color = "";
+            let stroke = "black";
+            let stroke_width = "0.1";
+            let blink = false;
+            for (let i in fill_ranges_transformed) {
+              const range = fill_ranges_transformed[i];
+              if (range["from_week"] <= total_weeks && range["to_week"] >= total_weeks) {
+                circle_color = range["fill"];
+                if (range["stroke"])
+                  stroke = range["stroke"];
+                if (range["stroke_width"])
+                  stroke_width = range["stroke_width"];
+              }
+              if (range["to_week"] == total_weeks && range["animate"] == "blink")
+                content += 'class="blink" ';
+            }
+            content += 'fill="' + circle_color + '" ';
+            content += 'stroke="' + stroke + '" stroke-width="' + stroke_width + '"/>';
+
+            if (week == week_new_year)  // dot for a new year week
+              content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + 0.4 + '" fill="" stroke="lightgray" stroke-width="0.1"/>';
+            //if (year == year_median || year == year_le_at_birth || year == year_peak)
+            //  content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + 0.3 + '" fill="" stroke="black" stroke-width="0.1"/>';
+
+            const cx2 = cx + 4;
+            let cy2 = cy + 1;
+            if (is_mobile)
+              cy2 = cy2 - 10 + 1;
+
+            const le_at_birth_median_peak = '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '">';
+            if (year == year_le_at_birth && week == number_of_weeks_in_a_row)
+              content += le_at_birth_median_peak + 'LE at birth' + '</text>';
+            else if (year == year_median && week == number_of_weeks_in_a_row)
+              content += le_at_birth_median_peak + '50% dead' + '</text>';
+            else if (year == year_peak && week == number_of_weeks_in_a_row)
+              content += le_at_birth_median_peak + 'Peak deaths' + '</text>';
+            
+            total_weeks++;
+          }
+        }
+
+        content += prepare_lines();
+        content += prepare_new_year_label(week_new_year);
+        content += '</svg>';
+
+        document.getElementById(element_id).innerHTML = content;
+      }
+      window.onload = function() {
+        draw_calendar("calendar", "1987-06-30");
+      };
+    </script>
+  </head>
+  <body>
+    <div id="calendar"></div>
+
+    <p style="color: black; text-align: center; width: 100%; margin: 10% 0 0 0; font-size: 1em;">
+      Set your birthday:<br>
+      <input type="date" value="1987-06-30" onchange="recalculate_calendar(this);">
+    </p>
+    
+    <p style="color: black; text-align: center; width: 100%; margin: 10% 0 0 0; font-size: 1em;">Share calendar with others:</p>
+    <img src="https://www.dropbox.com/s/6j8prd7zq4htyx4/calendar-qr-code.jpg?raw=1" style="width: 50%; margin: 0 25% 20% 25%;">
+    <p id="log"></p>
+  </body>
+</html>
