@@ -32,6 +32,13 @@
       .blink {
         animation: blink 1.5s infinite;
       }
+      .right {
+        text-align: right;
+        width: 50%;
+      }
+      .left {
+        text-align: left;
+      }
     </style>
     <script type="text/javascript">
       window.mobileCheck = function() {  // https://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
@@ -73,7 +80,7 @@
       }
 
       function get_mortality_data(country_code, sex, birthday_year) {
-        return fetch('https://9of10.org/data/calendar/mortality/' + country_code + '/' + sex + 'ltper_1x1.txt')
+        return fetch('https://calendarium.me/data/mortality/' + country_code + '/' + sex + 'ltper_1x1.txt')
           .then((response) => response.text())
           .then((data) => {
             const lines = data.split("\n");
@@ -128,8 +135,11 @@
         return {'peak': peak, 'value': max_value};
       }
 
-      function recalculate_calendar(element) {
-        draw_calendar("calendar", element.value);
+      function recalculate_calendar() {
+        const birthday = document.getElementById('birthday').value;
+        const country_code = document.getElementById('country_code').value;
+        const sex = document.getElementById('sex').value;
+        draw_calendar("calendar", birthday, country_code, sex);
       }
 
       function calculate_weeks_between(earlier_date, later_date) {  // https://stackoverflow.com/questions/542938/how-to-calculate-number-of-days-between-two-dates
@@ -301,16 +311,19 @@
         return new_fill_ranges;
       }
 
-      async function draw_calendar(element_id, date) {
-        await get_mortality_data('ru', 'm', '1987');
-        const data_men_1987 = data_dx['ru']['m']['1987'];
+      async function draw_calendar(element_id, date, country_code, sex) {
+        const birthday_date = new Date(date);
+        const birthday_year = birthday_date.getFullYear();
 
-        const all_data = data_dx_all; //data_men_1987.concat(data_women_1989).concat(data_women_2014);
+        await get_mortality_data(country_code, sex, birthday_year);
+        const data_to_build = data_dx[country_code][sex][birthday_year];
+
+        const all_data = data_dx_all; //data_to_build.concat(data_women_1989).concat(data_women_2014);
 
         //const year_le_at_birth = 65;
-        const year_percentiles = get_percentiles(data_men_1987);
+        const year_percentiles = get_percentiles(data_to_build);
         //const year_median = year_percentiles['50'];
-        //const year_peak = get_peak_value(data_men_1987).peak;
+        //const year_peak = get_peak_value(data_to_build).peak;
 
         let fill_ranges = [ // init
           {"fill": "white"},
@@ -318,7 +331,7 @@
           {"fill": "white", "from": year_percentiles['50'], "to": year_percentiles['50'], "stroke_width": "0.22"},
           {"fill": "white", "from": year_percentiles['80'], "to": year_percentiles['80'], "stroke_width": "0.22"},
           {"fill": "white", "from": year_percentiles['90'], "to": year_percentiles['90'], "stroke_width": "0.22"},
-          {"fill": "orange", "from": "2024-05-31", "to": "2024-05-31", "animate": "blink"},
+          //{"fill": "orange", "from": "2024-05-31", "to": "2024-05-31", "animate": "blink"},
           //{"fill": "skyblue", "from": "1989-01-08", "to": new Date()},
           //{"fill": "aquamarine", "from": "2014-06-04", "to": new Date()}, 
         ];
@@ -438,24 +451,60 @@
           }
         }
 
-        content += prepare_lines(data_men_1987, "black");
+        content += prepare_lines(data_to_build, "black");
         content += prepare_new_year_label(week_new_year);
         content += '</svg>';
 
         document.getElementById(element_id).innerHTML = content;
       }
       window.onload = function() {
-        draw_calendar("calendar", "1987-06-30");
+        recalculate_calendar();
       };
     </script>
   </head>
   <body>
     <div id="calendar"></div>
 
-    <p style="color: black; text-align: center; width: 100%; margin: 10% 0 0 0; font-size: 1em;">
-      Set your birthday:<br>
-      <input type="date" value="1987-06-30" onchange="recalculate_calendar(this);">
-    </p>
+    <table style="color: black; width: 100%; margin: 20px 0 10% 0; font-size: 1em;">
+      <tr>
+        <td class="right">Birthday:</td>
+        <td class="left">
+          <input id="birthday" type="date" value="1987-06-30" onchange="recalculate_calendar();">
+        </td>
+      </tr>
+      <tr>
+        <td class="right">Country most lived in:</td>
+        <td class="left">
+          <select id="country_code" onchange="recalculate_calendar();">
+            <option value="by">Belarus</option>
+            <option value="ca">Canada</option>
+            <option value="de">Germany</option>
+            <option value="dk">Denmark</option>
+            <option value="es">Spain</option>
+            <option value="il">Israel</option>
+            <option value="it">Italy</option>
+            <option value="nl">Netherlands</option>
+            <option value="no">Norway</option>
+            <option value="pl">Poland</option>
+            <option value="pt">Portugal</option>
+            <option value="ru" selected>Russia</option>
+            <option value="se">Sweden</option>
+            <option value="us">Ukraine</option>
+            <option value="uk">United Kingdom</option>
+            <option value="us">United States</option>        
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td class="right">Sex:</td>
+        <td class="left">
+          <select id="sex" onchange="recalculate_calendar();">
+            <option value="m" selected>Male</option>
+            <option value="f">Female</option>
+          </select>
+        </td>
+      </tr>
+    </table>
     
     <!--p style="color: black; text-align: center; width: 100%; margin: 10% 0 0 0; font-size: 1em;">Share calendar with others:</p>
     <img src="https://www.dropbox.com/s/6j8prd7zq4htyx4/calendar-qr-code.jpg?raw=1" style="width: 50%; margin: 0 25% 20% 25%;">
