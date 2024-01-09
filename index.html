@@ -163,7 +163,10 @@
           if (week % 4 == 0) { // add a marker for every 4-th week
             let x_offset = (week + 1) * calendar_step_horizontal + calendar_years_numbers_width;
             let cx = x_offset - circle_radius;
-            content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="' + calendar_height +'" font-weight="bold">';
+            let cy = calendar_height;
+            if (is_mobile)
+              cy += 10;
+            content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="' + cy +'" font-weight="bold">';
             content += week;
             content += '</text>';
           }
@@ -383,7 +386,7 @@
         for (let year = 1; year <= number_of_years; year++) {
           let y_offset = calendar_height - year * calendar_step_vertical;
           if (is_mobile)
-            y_offset += 10 + 10;
+            y_offset += 10;
           
           let cy = y_offset - circle_radius;
           for (let week = 1; week <= number_of_weeks_in_a_row; week++) {
