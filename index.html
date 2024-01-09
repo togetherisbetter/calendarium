@@ -381,9 +381,9 @@
 
         let total_weeks = 1;
         for (let year = 1; year <= number_of_years; year++) {
-          let y_offset = calendar_height - year * calendar_step_vertical - calendar_weeks_numbers_height;
+          let y_offset = calendar_height - year * calendar_step_vertical;
           if (is_mobile)
-            y_offset += 10;
+            y_offset += 10 + 10;
           
           let cy = y_offset - circle_radius;
           for (let week = 1; week <= number_of_weeks_in_a_row; week++) {
