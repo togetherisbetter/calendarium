@@ -331,12 +331,12 @@
 
         let fill_ranges = [ // init
           {"fill": "white"},
-          {"fill": "khaki", "to": new Date()},
+          {"fill": "skyblue", "to": new Date()},
           {"fill": "white", "from": year_percentiles['50'], "to": year_percentiles['50'], "stroke_width": "0.22"},
           {"fill": "white", "from": year_percentiles['80'], "to": year_percentiles['80'], "stroke_width": "0.22"},
           {"fill": "white", "from": year_percentiles['90'], "to": year_percentiles['90'], "stroke_width": "0.22"},
           //{"fill": "orange", "from": "2024-05-31", "to": "2024-05-31", "animate": "blink"},
-          {"fill": "skyblue", "from": "1989-01-08", "to": new Date()},
+          //{"fill": "skyblue", "from": "1989-01-08", "to": new Date()},
           //{"fill": "aquamarine", "from": "2014-06-04", "to": new Date()}, 
         ];
 
@@ -434,8 +434,8 @@
 
             if (week == week_new_year)  // dot for a new year week
               content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + 0.4 + '" fill="" stroke="lightgray" stroke-width="0.1"/>';
-            //if (year == year_median || year == year_le_at_birth || year == year_peak)
-            //  content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + 0.3 + '" fill="" stroke="black" stroke-width="0.1"/>';
+            //if (year == year_percentiles['50'] || year == year_percentiles['80'] || year == year_percentiles['90'])
+            //  content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + 0.2 + '" fill="" stroke="black" stroke-width="0.1"/>';
 
             const cx2 = cx + 4;
             let cy2 = cy + 1;
