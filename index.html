@@ -205,7 +205,7 @@
       function coordinates_to_points(coordinates) {
         let vertical_offset = calendar_weeks_numbers_height + circle_radius;
         if (is_mobile)  // idk why on mobiles is calculated differently
-          vertical_offset -= 0;
+          vertical_offset -= 10;
 
         let points = '';
         for (let key in coordinates) {
