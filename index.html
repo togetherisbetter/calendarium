@@ -375,7 +375,10 @@
         //const skins = {"empty": []};
 
         const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, date);
-        let content = '<svg height="96%" viewBox="0 0 ' + calendar_width + ' ' + calendar_height + '" xmlns="http://www.w3.org/2000/svg" style="width: 89%; margin: 15px 6% 0 5%;">';
+        let ch = calendar_height;
+        if (is_mobile)
+          ch += 10;
+        let content = '<svg height="96%" viewBox="0 0 ' + calendar_width + ' ' + ch + '" xmlns="http://www.w3.org/2000/svg" style="width: 89%; margin: 15px 6% 0 5%;">';
 
         content += prepare_weeks_numbers();
         content += prepare_years_numbers(date);
