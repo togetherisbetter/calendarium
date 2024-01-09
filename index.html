@@ -319,6 +319,9 @@
         await get_mortality_data(country_code, sex, birthday_year);
         const data_to_build = data_dx[country_code][sex][birthday_year];
 
+        //await get_mortality_data('ru', 'f', '1989');
+        //const data_to_build2 = data_dx['ru']['f']['1989'];
+
         const all_data = data_dx_all; //data_to_build.concat(data_women_1989).concat(data_women_2014);
 
         //const year_le_at_birth = 65;
@@ -328,12 +331,12 @@
 
         let fill_ranges = [ // init
           {"fill": "white"},
-          {"fill": "skyblue", "to": new Date()},
+          {"fill": "khaki", "to": new Date()},
           {"fill": "white", "from": year_percentiles['50'], "to": year_percentiles['50'], "stroke_width": "0.22"},
           {"fill": "white", "from": year_percentiles['80'], "to": year_percentiles['80'], "stroke_width": "0.22"},
           {"fill": "white", "from": year_percentiles['90'], "to": year_percentiles['90'], "stroke_width": "0.22"},
           //{"fill": "orange", "from": "2024-05-31", "to": "2024-05-31", "animate": "blink"},
-          //{"fill": "skyblue", "from": "1989-01-08", "to": new Date()},
+          {"fill": "skyblue", "from": "1989-01-08", "to": new Date()},
           //{"fill": "aquamarine", "from": "2014-06-04", "to": new Date()}, 
         ];
 
@@ -453,6 +456,7 @@
         }
 
         content += prepare_lines(data_to_build, "black");
+        //content += prepare_lines(data_to_build2, "gray");
         content += prepare_new_year_label(week_new_year);
         content += '</svg>';
 
@@ -474,7 +478,7 @@
         </td>
       </tr>
       <tr>
-        <td class="right">Country most lived in:</td>
+        <td class="right">Country mostly lived in:</td>
         <td class="left">
           <select id="country_code" onchange="recalculate_calendar();">
             <option value="by">Belarus (1959-2018)</option>
