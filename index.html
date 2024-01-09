@@ -50,9 +50,9 @@
       const calendar_years_numbers_width = 12;
       const calendar_le_at_birth_median_peak_width = 20;
       const calendar_new_year_label_height = 5;
-      let calendar_height = number_of_years * calendar_step_vertical + calendar_weeks_numbers_height + calendar_new_year_label_height;
-      if (is_mobile)
-        calendar_height += 100;
+      const calendar_height = number_of_years * calendar_step_vertical + calendar_weeks_numbers_height + calendar_new_year_label_height;
+      //if (is_mobile)
+      //  calendar_height += 100;
       const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6;
 
       var data_dx = {};
