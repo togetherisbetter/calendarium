@@ -49,7 +49,7 @@
       const calendar_years_numbers_width = 12;
       const calendar_le_at_birth_median_peak_width = 20;
       const calendar_new_year_label_height = 5;
-      const calendar_height = number_of_years * calendar_step_vertical + calendar_weeks_numbers_height + calendar_new_year_label_height;
+      const calendar_height = number_of_years * calendar_step_vertical + calendar_weeks_numbers_height + calendar_new_year_label_height + 10;
       const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6;
       const is_mobile = window.mobileCheck();
 
@@ -176,7 +176,7 @@
           if (year % 5 == 0) { // add age marker for every 5-th year
             let y_offset = year * calendar_step_vertical + 1;
             if (is_mobile)  // idk why on mobiles is calculated differently
-              y_offset += 1;
+              y_offset -= 1;
 
             const cy = calendar_height - y_offset //+ circle_radius;
             content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="15" y="' + cy + '" font-weight="bold">'
