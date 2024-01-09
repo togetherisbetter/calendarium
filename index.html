@@ -23,6 +23,7 @@
         padding: 0;
         margin: 0;
         background-color: snow;
+        font-family: Verdana;
       }
       /* https://stackoverflow.com/questions/29205294/how-to-achieve-blinking-effect-in-svg */
       @keyframes blink {
@@ -34,7 +35,7 @@
       }
       .right {
         text-align: right;
-        width: 50%;
+        width: 45%;
       }
       .left {
         text-align: left;
@@ -465,7 +466,7 @@
   <body>
     <div id="calendar"></div>
 
-    <table style="color: black; width: 100%; margin: 20px 0 10% 0; font-size: 1em;">
+    <table style="color: black; width: 100%; margin: 20px 0 10% 0; font-size: 0.8em;">
       <tr>
         <td class="right">Birthday:</td>
         <td class="left">
@@ -476,27 +477,27 @@
         <td class="right">Country most lived in:</td>
         <td class="left">
           <select id="country_code" onchange="recalculate_calendar();">
-            <option value="by">Belarus</option>
-            <option value="ca">Canada</option>
-            <option value="de">Germany</option>
-            <option value="dk">Denmark</option>
-            <option value="es">Spain</option>
-            <option value="il">Israel</option>
-            <option value="it">Italy</option>
-            <option value="nl">Netherlands</option>
-            <option value="no">Norway</option>
-            <option value="pl">Poland</option>
-            <option value="pt">Portugal</option>
-            <option value="ru" selected>Russia</option>
-            <option value="se">Sweden</option>
-            <option value="us">Ukraine</option>
-            <option value="uk">United Kingdom</option>
-            <option value="us">United States</option>        
+            <option value="by">Belarus (1959-2018)</option>
+            <option value="ca">Canada (1921-2021)</option>
+            <option value="de">Germany (1990-2020)</option>
+            <option value="dk">Denmark (1835-2022)</option>
+            <option value="es">Spain (1908-2021)</option>
+            <option value="il">Israel (1983-2016)</option>
+            <option value="it">Italy (1872-2020)</option>
+            <option value="nl">Netherlands (1850-2021)</option>
+            <option value="no">Norway (1846-2022)</option>
+            <option value="pl">Poland (1958-2019)</option>
+            <option value="pt">Portugal (1940-2022)</option>
+            <option value="ru" selected>Russia (1959-2014)</option>
+            <option value="se">Sweden (1751-2022)</option>
+            <option value="us">Ukraine (1959-2013)</option>
+            <option value="uk">United Kingdom (1922-2021)</option>
+            <option value="us">United States (1933-2021)</option>        
           </select>
         </td>
       </tr>
       <tr>
-        <td class="right">Sex:</td>
+        <td class="right">Sex at birth:</td>
         <td class="left">
           <select id="sex" onchange="recalculate_calendar();">
             <option value="m" selected>Male</option>
