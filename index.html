@@ -203,16 +203,15 @@
       }
 
       function coordinates_to_points(coordinates) {
-        let vertical_offset = calendar_weeks_numbers_height + 1 + circle_radius;
+        let vertical_offset = calendar_weeks_numbers_height + circle_radius;
         if (is_mobile)  // idk why on mobiles is calculated differently
-          vertical_offset += 10;
-        let horizontal_offset = calendar_years_numbers_width;
+          vertical_offset -= 10;
 
         let points = '';
         for (let key in coordinates) {
           let value = coordinates[key];
           let vertical = calendar_height - (key - 1) * calendar_step_vertical - vertical_offset;
-          let horizontal = (value - 1) * calendar_step_horizontal + horizontal_offset + 10;
+          let horizontal = (value - 1) * calendar_step_horizontal + calendar_years_numbers_width + 10;
           points += horizontal + ',' + vertical + ' ';
         }
         return points;
