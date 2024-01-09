@@ -377,7 +377,7 @@
         const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, date);
         let ch = calendar_height;
         if (is_mobile)
-          ch += calendar_weeks_numbers_height + calendar_new_year_label_height + 10;
+          ch += calendar_weeks_numbers_height + calendar_new_year_label_height + 0;
         let content = '<svg height="96%" viewBox="0 0 ' + calendar_width + ' ' + ch + '" xmlns="http://www.w3.org/2000/svg" style="width: 89%; margin: 15px 6% 0 5%;">';
 
         content += prepare_weeks_numbers();
