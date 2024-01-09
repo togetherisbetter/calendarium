@@ -49,17 +49,52 @@
       const calendar_years_numbers_width = 12;
       const calendar_le_at_birth_median_peak_width = 20;
       const calendar_new_year_label_height = 5;
+      const calendar_height = number_of_years * calendar_step_vertical + calendar_weeks_numbers_height + calendar_new_year_label_height;
+      const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6;
       const is_mobile = window.mobileCheck();
 
-      // https://www.mortality.org/File/GetDocument/hmd.v6/RUS/STATS/mltper_1x1.txt
-      const data_men_1987 = [2215, 216, 113, 82, 73, 69, 67, 70, 68, 61, 61, 61, 61, 57, 66, 78, 96, 120, 154, 157, 176, 196, 206, 212, 208, 229, 237, 247, 248, 275, 286, 282, 301, 323, 322, 362, 376, 397, 408, 408, 501, 501, 568, 658, 658, 792, 792, 837, 906, 917, 1040, 1072, 1179, 1221, 1327, 1420, 1517, 1620, 1648, 1839, 1901, 1974, 2089, 2188, 2181, 2268, 2378, 2442, 2593, 2646, 2646, 2700, 2793, 2793, 2793, 2700, 2700, 2613, 2610, 2534, 2464, 2270, 2171, 2035, 1792, 1601, 1466, 1268, 985, 906, 708, 545, 444, 343, 257, 194, 143, 102, 72, 50, 33, 22, 14, 9, 5, 3, 2, 1, 1, 0, 0];
+      var data_dx = {};
+      var data_dx_all = [];
 
-      // https://www.mortality.org/File/GetDocument/hmd.v6/RUS/STATS/fltper_1x1.txt
-      const data_women_1989 = [1456, 163, 82, 58, 53, 46, 42, 37, 35, 32, 30, 27, 26, 32, 43, 50, 62, 63, 69, 71, 69, 68, 69, 69, 69, 75, 69, 76, 78, 83, 87, 92, 97, 101, 114, 124, 134, 139, 156, 173, 190, 187, 242, 225, 259, 290, 275, 347, 335, 373, 414, 424, 483, 535, 586, 623, 678, 741, 781, 863, 927, 1015, 1085, 1229, 1309, 1499, 1539, 1695, 1836, 1950, 2271, 2247, 2279, 2542, 2787, 2949, 3037, 3288, 3362, 3580, 3652, 3726, 3804, 3638, 3631, 3514, 3306, 3077, 2709, 2609, 2024, 1924, 1516, 1225, 948, 812, 628, 474, 349, 250, 174, 118, 77, 49, 31, 18, 11, 6, 3, 2, 2];
+      function enrich_data_dx_dict(dx_data, country_code, sex, birthday_year) {
+        let data_country = data_dx[country_code];
+        if (!data_country)
+          data_dx[country_code] = {};
+        
+        let data_country_sex = data_dx[country_code][sex];
+        if (!data_country_sex)
+          data_dx[country_code][sex] = {};
 
-      const all_data = data_men_1987.concat(data_women_1989);
+        let data_country_sex_year = data_dx[country_code][sex][birthday_year];
+        if (!data_country_sex_year)
+          data_dx[country_code][sex][birthday_year] = dx_data;
+      }
 
-      const screen_height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+      function get_mortality_data(country_code, sex, birthday_year) {
+        return fetch('https://9of10.org/data/calendar/mortality/' + country_code + '/' + sex + 'ltper_1x1.txt')
+          .then((response) => response.text())
+          .then((data) => {
+            const lines = data.split("\n");
+
+            const offset_data_headers = 3;
+            const index_column_dx = 7;
+            const index_column_year = 1;
+            
+            dx_data = [];
+            for (let i = offset_data_headers; i < lines.length; i++) {
+              const splitted_data_line = lines[i].replace(/\s+/g, ',').split(',');
+              const data_year = splitted_data_line[index_column_year];
+              if (data_year == birthday_year)
+                dx_data.push(parseInt(splitted_data_line[index_column_dx]));
+            }
+
+            data_dx_all = data_dx_all.concat(dx_data.map(Number));
+            enrich_data_dx_dict(dx_data, country_code, sex, birthday_year);
+            //return dx_data;
+          });
+      }
+
+      //const screen_height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
       //const calendar_step_vertical = (screen_height - 15) / number_of_years;
       //console.log(calendar_step_vertical)
 
@@ -91,10 +126,6 @@
         return {'peak': peak, 'value': max_value};
       }
 
-      const year_le_at_birth = 65;
-      const year_median = get_percentiles(data_men_1987)['50'];
-      const year_peak = get_peak_value(data_men_1987).peak;      
-
       function recalculate_calendar(element) {
         draw_calendar("calendar", element.value);
       }
@@ -110,8 +141,7 @@
         const next_year = date.getFullYear() + 1;
         const diff_ms = new Date(next_year + '-01-01') - date;
         const diff_days = diff_ms / (1000 * 60 * 60 * 24);
-        //console.log(diff_days)
-        //let week_new_year = Math.floor(diff_days / 7) + 1;  // no errors for weeks during 1 year
+
         let week_new_year = Math.floor(diff_days / 7) + 1;  // no errors for weeks during 1 year
         if (week_new_year == 53)  // leap year week possible mistake fix
           week_new_year = 1;
@@ -120,8 +150,7 @@
 
       function prepare_new_year_label(week_new_year) {
         const cx = week_new_year * calendar_step_horizontal + calendar_years_numbers_width + circle_radius + 1;
-        const cy = number_of_years * calendar_step_vertical + calendar_weeks_numbers_height + calendar_new_year_label_height;
-        return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="' + cy + '">New Year</text>';
+        return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="4">New Year</text>';
       }
 
       function prepare_weeks_numbers() {
@@ -131,7 +160,7 @@
           if (week % 4 == 0) { // add a marker for every 4-th week
             let x_offset = (week + 1) * calendar_step_horizontal + calendar_years_numbers_width;
             let cx = x_offset - circle_radius;
-            content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="4" font-weight="bold">';
+            content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="' + calendar_height +'" font-weight="bold">';
             content += week;
             content += '</text>';
           }
@@ -145,16 +174,16 @@
 
         for (let year = 1; year <= number_of_years; year++) {
           if (year % 5 == 0) { // add age marker for every 5-th year
-            let y_offset = year * calendar_step_vertical + calendar_weeks_numbers_height + 1;
+            let y_offset = year * calendar_step_vertical + 1;
             if (is_mobile)  // idk why on mobiles is calculated differently
               y_offset += 1;
 
-            const cy = y_offset - circle_radius;
+            const cy = calendar_height - y_offset //+ circle_radius;
             content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="15" y="' + cy + '" font-weight="bold">'
             content += year;
             content += '</text>';
           
-            const cy2 = cy + calendar_step_vertical;
+            const cy2 = cy - calendar_step_vertical;
             content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="15" y="' + cy2 + '">'
 
             const birthday_date = new Date(birthday);
@@ -182,7 +211,7 @@
         let points = '';
         for (let key in coordinates) {
           let value = coordinates[key];
-          let vertical = (key - 1) * calendar_step_vertical + vertical_offset;
+          let vertical = calendar_height - (key - 1) * calendar_step_vertical - vertical_offset;
           let horizontal = (value - 1) * calendar_step_horizontal + horizontal_offset + 10;
           points += horizontal + ',' + vertical + ' ';
         }
@@ -191,7 +220,7 @@
 
       function make_coordinates(array) {
         const total = array.reduce((a, b) => a + b, 0);
-        const max = get_peak_value(all_data).value;
+        const max = get_peak_value(data_dx_all).value;
 
         let coordinates_deaths = {};
         let coordinates_integral = {};
@@ -200,12 +229,13 @@
         for (let i = 0; i < number_of_years; i++) {
           const value = array[i];
           //let value_mapped_on_weeks = Math.floor((value / max) * number_of_weeks_in_a_row);  // link to weeks dots
-          let value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row * 0.8;  // do not link to weeks dots, 0.8 le_at_births scale a bit lower to not hit 52-nd week with the peak
+          let value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row * 0.8;  // do not link to weeks dots, 0.8 scale - a bit lower to not hit 52-nd week with the peak
           coordinates_deaths[i+1] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
           
           integral += (value / total) * number_of_weeks_in_a_row;
           coordinates_integral[i+1] = integral;
         }
+        
         return {'deaths': coordinates_deaths, 'integral': coordinates_integral};
       }
 
@@ -224,16 +254,12 @@
         return content;
       }
 
-      function prepare_lines() {
+      function prepare_lines(data, stroke) {
         let content = '';
 
-        const coordinates_men_1987 = make_coordinates(data_men_1987);
-        content += prepare_line_deaths(coordinates_men_1987, "black");
-        content += prepare_line_integral(coordinates_men_1987, "black");
-
-        const coordinates_women_1989 = make_coordinates(data_women_1989);
-        content += prepare_line_deaths(coordinates_women_1989, "gray");
-        content += prepare_line_integral(coordinates_women_1989, "gray");
+        const coordinates = make_coordinates(data);
+        content += prepare_line_deaths(coordinates, stroke);
+        content += prepare_line_integral(coordinates, stroke);
 
         return content;
       }
@@ -270,19 +296,26 @@
         return new_fill_ranges;
       }
 
-      function draw_calendar(element_id, date) {
+      async function draw_calendar(element_id, date) {
+        await get_mortality_data('ru', 'm', '1987');
+        const data_men_1987 = data_dx['ru']['m']['1987'];
+
+        const all_data = data_dx_all; //data_men_1987.concat(data_women_1989).concat(data_women_2014);
+
+        //const year_le_at_birth = 65;
+        const year_percentiles = get_percentiles(data_men_1987);
+        //const year_median = year_percentiles['50'];
+        //const year_peak = get_peak_value(data_men_1987).peak;
+
         let fill_ranges = [ // init
           {"fill": "white"},
           {"fill": "skyblue", "to": new Date()},
-          {"fill": "white", "from": year_le_at_birth, "to": year_le_at_birth, "stroke_width": "0.22"},
-          //{"fill": "#444", "from": year_le_at_birth, "to": year_le_at_birth},
-          {"fill": "white", "from": year_median, "to": year_median, "stroke_width": "0.22"},
-          //{"fill": "#444", "from": year_median, "to": year_median},
-          {"fill": "white", "from": year_peak, "to": year_peak, "stroke_width": "0.22"},
-          //{"fill": "#444", "from": year_peak, "to": year_peak},
-          //{"fill": "gold", "from": "2018-08-01", "to": new Date()},
+          {"fill": "white", "from": year_percentiles['50'], "to": year_percentiles['50'], "stroke_width": "0.22"},
+          {"fill": "white", "from": year_percentiles['80'], "to": year_percentiles['80'], "stroke_width": "0.22"},
+          {"fill": "white", "from": year_percentiles['90'], "to": year_percentiles['90'], "stroke_width": "0.22"},
           {"fill": "orange", "from": "2024-05-31", "to": "2024-05-31", "animate": "blink"},
-          //{"fill": "red", "from": 78, "to": 78}
+          //{"fill": "skyblue", "from": "1989-01-08", "to": new Date()},
+          //{"fill": "aquamarine", "from": "2014-06-04", "to": new Date()},
         ];
 
         /*
@@ -337,20 +370,16 @@
         //const skins = {"empty": []};
 
         const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, date);
-
-        const calendar_height = number_of_years * calendar_step_vertical + calendar_weeks_numbers_height + calendar_new_year_label_height + 10;
-        const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + 6 + calendar_le_at_birth_median_peak_width;
         let content = '<svg height="96%" viewBox="0 0 ' + calendar_width + ' ' + calendar_height + '" xmlns="http://www.w3.org/2000/svg" style="width: 89%; margin: 15px 6% 0 5%;">';
 
         content += prepare_weeks_numbers();
         content += prepare_years_numbers(date);
-        //content += prepare_lines();
 
         const week_new_year = calculate_new_year_week(date);
 
         let total_weeks = 1;
         for (let year = 1; year <= number_of_years; year++) {
-          let y_offset = (year + 1) * calendar_step_vertical;
+          let y_offset = calendar_height - year * calendar_step_vertical;
           if (is_mobile)
             y_offset += 10;
           
@@ -388,19 +417,20 @@
             if (is_mobile)
               cy2 = cy2 - 10 + 1;
 
-            const le_at_birth_median_peak = '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '">';
-            if (year == year_le_at_birth && week == number_of_weeks_in_a_row)
-              content += le_at_birth_median_peak + 'LE at birth' + '</text>';
-            else if (year == year_median && week == number_of_weeks_in_a_row)
-              content += le_at_birth_median_peak + '50% dead' + '</text>';
-            else if (year == year_peak && week == number_of_weeks_in_a_row)
-              content += le_at_birth_median_peak + 'Peak deaths' + '</text>';
-            
+            const percentiles_to_draw = ['50', '80', '90'];
+            for (let i = 0; i < percentiles_to_draw.length; i++) {
+              let percentile = percentiles_to_draw[i];
+              if (year == year_percentiles[percentile] && week == number_of_weeks_in_a_row) {
+                content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '">';
+                content += percentile + '%' + '</text>';
+              }
+            }
+
             total_weeks++;
           }
         }
 
-        content += prepare_lines();
+        content += prepare_lines(data_men_1987, "black");
         content += prepare_new_year_label(week_new_year);
         content += '</svg>';
 
@@ -419,8 +449,8 @@
       <input type="date" value="1987-06-30" onchange="recalculate_calendar(this);">
     </p>
     
-    <p style="color: black; text-align: center; width: 100%; margin: 10% 0 0 0; font-size: 1em;">Share calendar with others:</p>
+    <!--p style="color: black; text-align: center; width: 100%; margin: 10% 0 0 0; font-size: 1em;">Share calendar with others:</p>
     <img src="https://www.dropbox.com/s/6j8prd7zq4htyx4/calendar-qr-code.jpg?raw=1" style="width: 50%; margin: 0 25% 20% 25%;">
-    <p id="log"></p>
+    <p id="log"></p-->
   </body>
 </html>
