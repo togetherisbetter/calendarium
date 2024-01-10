@@ -65,6 +65,7 @@
 
       var data_dx = {};
       var data_dx_all = [];
+      var last_year_in_dataset = 0;
 
       function enrich_data_dx_dict(dx_data, country_code, sex, birthday_year) {
         let data_country = data_dx[country_code];
@@ -96,6 +97,8 @@
               const data_year = splitted_data_line[index_column_year];
               if (data_year == birthday_year)
                 dx_data.push(parseInt(splitted_data_line[index_column_dx]));
+              if (i == lines.length - 2)  // get year to build "compare with" chart
+                last_year_in_dataset = splitted_data_line[index_column_year];
             }
 
             data_dx_all = data_dx_all.concat(dx_data.map(Number));
@@ -343,10 +346,10 @@
         await get_mortality_data(country_code, sex, birthday_year);
         const data_to_build = data_dx[country_code][sex][birthday_year];
 
-        //await get_mortality_data('ru', 'f', '1989');
-        //const data_to_build2 = data_dx['ru']['f']['1989'];
+        await get_mortality_data(country_code, sex, last_year_in_dataset);
+        const data_to_build2 = data_dx[country_code][sex][last_year_in_dataset];
 
-        const all_data = data_dx_all; //data_to_build.concat(data_women_1989).concat(data_women_2014);
+        const all_data = data_dx_all;
 
         //const year_le_at_birth = 65;
         const percentiles_to_draw = ['50', '80', '90'];
@@ -485,7 +488,9 @@
           // drawing integrals for special ages
           if (Object.keys(integrals_by_ages).includes(year.toString())) {
             if (!Object.keys(year_percentiles).includes(year.toString())) {
-              const cy2 = cy + 1;
+              let cy2 = cy + 1;
+              if (is_mobile)
+                cy2 = cy2 - 10 + 1;
               const cx2 = calendar_step_horizontal * number_of_weeks_in_a_row + calendar_years_numbers_width + 10 - circle_radius;
               content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '">';
                 content += integrals_by_ages[year] + '%' + '</text>';
@@ -499,6 +504,8 @@
         content += '</svg>';
 
         document.getElementById(element_id).innerHTML = content;
+
+        data_dx_all = []; // reset
       }
       window.onload = function() {
         recalculate_calendar();
