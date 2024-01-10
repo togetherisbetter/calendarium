@@ -188,10 +188,29 @@
         return week_new_year;
       }
 
-      function prepare_new_year_label(week_new_year) {
+      function prepare_label_new_year(week_new_year) {
         const cx = week_new_year * calendar_step_horizontal + calendar_years_numbers_width + circle_radius + 1;
         const cy = calendar_height - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height - 1;
         return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="' + cy + '">New Year</text>';
+      }
+
+      function prepare_label_integral() {
+        const cx = calendar_years_numbers_width + calendar_step_horizontal;
+        const cy = calendar_height - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height + 1;
+        let content = '<<rect x="' + cx + '" y="' + cy + '" width="25" height="4" rx="1" fill="white" stroke="white" stroke-width="0.3" />>';
+        const cx2 = cx + 1.5;
+        const cy2 = cy + 3;
+        content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="' + cx2 + '" y="' + cy2 + '" font-weight="bold">Deaths at age</text>';
+        return content
+      }
+      function prepare_label_deaths() {
+        const cx = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width - 39;
+        const cy = calendar_height - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height + 1;
+        let content = '<<rect x="' + cx + '" y="' + cy + '" width="45" height="4" rx="1" fill="white" stroke="white" stroke-width="0.3" />>';
+        const cx2 = cx + 1.5;
+        const cy2 = cy + 3;
+        content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="' + cx2 + '" y="' + cy2 + '" font-weight="bold">Integral of Deaths at age</text>';
+        return content
       }
 
       function prepare_weeks_numbers() {
@@ -504,7 +523,9 @@
 
         content += prepare_lines(data_to_build, "black");
         //content += prepare_lines(data_to_build2, "gray");
-        content += prepare_new_year_label(week_new_year);
+        content += prepare_label_new_year(week_new_year);
+        content += prepare_label_integral();
+        content += prepare_label_deaths();
         content += '</svg>';
 
         document.getElementById(element_id).innerHTML = content;
@@ -519,7 +540,7 @@
   <body>
     <div id="calendar"></div>
 
-    <table style="color: black; width: 100%; margin: 20px 0 10% 0; font-size: 0.7em;">
+    <table style="color: black; width: 100%; margin: 20px 0 10% 0; font-size: 0.7em; display: none-;">
       <tr>
         <td class="right">Birthday:</td>
         <td class="left">
