@@ -112,22 +112,46 @@
         return range.reduce((a, b) => a + b, 0);
       }
 
-      function get_percentiles(range) {
-        let percentiles = {50: 0, 80: 0, 90: 0};
+      function get_age(birthday) {  // returns number of full years from birthday till now
+        const ms = new Date() - new Date(birthday);
+        return Math.floor(ms / (1000 * 60 * 60 * 24 * 365.242199));
+      }
+
+      function get_percentiles(range, percentiles_range) {
+        let percentiles = {};
+        for (let i in percentiles_range) {
+          percentiles[percentiles_range[i]] = 0;
+        }
+
         const total = get_total(range);
         let integral = 0;        
         for (let i = 0; i < range.length; i++) {
-          if (integral < 0.51)
-            percentiles[50] = i;
-          else if (integral < 0.81)
-            percentiles[80] = i;
-          else if (integral < 0.91)
-            percentiles[90] = i;
-
+          for (let j in percentiles_range) {
+            if (integral <= percentiles_range[j] / 100) {
+              percentiles[percentiles_range[j]] = i + 1;
+            }
+          }
           integral += range[i] / total;
-          //console.log(integral)
         }
         return percentiles;
+      }
+
+      function get_integrals_by_ages(range, ages) {
+        const total = get_total(range);
+        let integrals_by_ages = {};
+
+        for (let j = 0; j < ages.length; j++) {
+          const age = ages[j];
+          let integral = 0;
+          for (let i = 0; i < range.length; i++) {
+            if (i < age)
+              integral += range[i] / total;
+            else
+              break;
+          }
+          integrals_by_ages[age] = (integral * 100).toFixed(1);
+        }
+        return integrals_by_ages;
       }
 
       function get_peak_value(range) {
@@ -325,7 +349,8 @@
         const all_data = data_dx_all; //data_to_build.concat(data_women_1989).concat(data_women_2014);
 
         //const year_le_at_birth = 65;
-        const year_percentiles = get_percentiles(data_to_build);
+        const percentiles_to_draw = ['50', '80', '90'];
+        const year_percentiles = get_percentiles(data_to_build, percentiles_to_draw);
         //const year_median = year_percentiles['50'];
         //const year_peak = get_peak_value(data_to_build).peak;
 
@@ -340,6 +365,7 @@
           //{"fill": "aquamarine", "from": "2014-06-04", "to": new Date()}, 
         ];
 
+        
         /*
         fill_ranges = [ // life
           {"fill": "white"},
@@ -402,6 +428,9 @@
 
         const week_new_year = calculate_new_year_week(date);
 
+        const special_ages = [1, get_age(date) + 1, number_of_years];  // to draw integral values for these years
+        const integrals_by_ages = get_integrals_by_ages(data_to_build, special_ages);
+
         let total_weeks = 1;
         for (let year = 1; year <= number_of_years; year++) {
           let y_offset = calendar_height - year * calendar_step_vertical;
@@ -442,7 +471,6 @@
             if (is_mobile)
               cy2 = cy2 - 10 + 1;
 
-            const percentiles_to_draw = ['50', '80', '90'];
             for (let i = 0; i < percentiles_to_draw.length; i++) {
               let percentile = percentiles_to_draw[i];
               if (year == year_percentiles[percentile] && week == number_of_weeks_in_a_row) {
@@ -452,6 +480,16 @@
             }
 
             total_weeks++;
+          }
+
+          // drawing integrals for special ages
+          if (Object.keys(integrals_by_ages).includes(year.toString())) {
+            if (!Object.keys(year_percentiles).includes(year.toString())) {
+              const cy2 = cy + 1;
+              const cx2 = calendar_step_horizontal * number_of_weeks_in_a_row + calendar_years_numbers_width + 10 - circle_radius;
+              content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '">';
+                content += integrals_by_ages[year] + '%' + '</text>';
+            }
           }
         }
 
