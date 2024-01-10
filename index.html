@@ -464,8 +464,12 @@
             content += 'fill="' + circle_color + '" ';
             content += 'stroke="' + stroke + '" stroke-width="' + stroke_width + '"/>';
 
-            if (week == week_new_year)  // dot for a new year week
+            if (week == week_new_year) {  // dot for a new year week
               content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + 0.4 + '" fill="" stroke="lightgray" stroke-width="0.1"/>';
+              //const cx3 = 300;
+              //const cy3 = cy - 2;
+              //content += '<rect x="' + cx3 + '" y="' + cy3 + '" width="4" height="4" rx="1" fill="white" stroke="black" stroke-width="0.3" />';
+            }
             //if (year == year_percentiles['50'] || year == year_percentiles['80'] || year == year_percentiles['90'])
             //  content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + 0.2 + '" fill="" stroke="black" stroke-width="0.1"/>';
 
