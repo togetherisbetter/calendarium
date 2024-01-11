@@ -41,6 +41,11 @@
         text-align: left;
       }
     </style>
+
+    <!-- https://github.com/davidshimjs/qrcodejs -->
+    <script type="text/javascript" src="src/js/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="src/js/qrcode/qrcode.min.js"></script>
+
     <script type="text/javascript">
       window.mobileCheck = function() {  // https://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
         let check = false;
@@ -541,12 +546,26 @@
 
         data_dx_all = []; // reset
       }
+
+      function init_qrcode() {
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+          text: "https://calendarium.me",
+          width: 64,
+          height: 64,
+          colorDark : "#000000",
+          colorLight : "snow",
+          correctLevel : QRCode.CorrectLevel.H
+        });
+      }
+
       window.onload = function() {
         recalculate_calendar();
+        //init_qrcode();
       };
     </script>
   </head>
   <body>
+    <!--div id="qrcode" style="position: absolute; padding: 5px; background-color: snow; top: 84.3%; left: 66.3%; border-radius: 5px;"></div-->
     <div id="calendar"></div>
 
     <table style="color: black; width: 100%; margin: 20px 0 10% 0; font-size: 0.7em; display: none-;">
@@ -560,19 +579,37 @@
         <td class="right">Country mostly lived in:</td>
         <td class="left">
           <select id="country_code" onchange="recalculate_calendar();">
+            <option value="at">Austria (1947-2019)</option>
+            <option value="be">Belgium (1841-2022)</option>
+            <option value="bg">Bulgaria (1947-2021)</option>
             <option value="by">Belarus (1959-2018)</option>
             <option value="ca">Canada (1921-2021)</option>
+            <option value="ch">Switzerland (1876-2022)</option>
             <option value="de">Germany (1990-2020)</option>
             <option value="dk">Denmark (1835-2022)</option>
+            <option value="ee">Estonia (1959-2019)</option>
             <option value="es">Spain (1908-2021)</option>
+            <option value="fi">Finland (1878-2022)</option>
+            <option value="fr">France (1816-2021)</option>
+            <option value="gr">Greece (1981-2019)</option>
+            <option value="hr">Croatia (2001-2020)</option>
+            <option value="hu">Hungary (1950-2020)</option>
+            <option value="ie">Ireland (1950-2020)</option>
             <option value="il">Israel (1983-2016)</option>
+            <option value="is">Iceland (1838-2021)</option>
             <option value="it">Italy (1872-2020)</option>
+            <option value="jp">Japan (1947-2021)</option>
+            <option value="kr">Republic of Korea (2003-2020)</option>
+            <option value="lt">Lithuania (1959-2020)</option>
+            <option value="lv">Latvia (1959-2019)</option>
             <option value="nl">Netherlands (1850-2021)</option>
             <option value="no">Norway (1846-2022)</option>
             <option value="pl">Poland (1958-2019)</option>
             <option value="pt">Portugal (1940-2022)</option>
             <option value="ru" selected>Russia (1959-2014)</option>
             <option value="se">Sweden (1751-2022)</option>
+            <option value="sk">Slovakia (1950-2019)</option>
+            <option value="tw">Taiwan (1970-2021)</option>
             <option value="us">Ukraine (1959-2013)</option>
             <option value="uk">United Kingdom (1922-2021)</option>
             <option value="us">United States (1933-2021)</option>        
