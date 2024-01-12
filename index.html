@@ -22,12 +22,12 @@
       body, html {
         padding: 0;
         margin: 0;
-        background-color: snow;
+        background-color: white;
         font-family: Verdana;
       }
       /* https://stackoverflow.com/questions/29205294/how-to-achieve-blinking-effect-in-svg */
       @keyframes blink {
-        100%, 0% { fill: snow; }
+        100%, 0% { fill: white; }
         80% { fill: orange; }
       }
       .blink {
@@ -73,22 +73,24 @@
       var antistroke = "black";
       var antistroke_width = 1;
 
-      var data_dx = {};
-      var data_dx_all = [];
+      //var data_dx = {};
+      var data_mx = {};
+      //var data_dx_all = [];
+      var data_mx_all = [];
       var last_year_in_dataset = 0;
 
-      function enrich_data_dx_dict(dx_data, country_code, sex, birthday_year) {
-        let data_country = data_dx[country_code];
+      function enrich_data_mx_dict(mx_data, country_code, sex, birthday_year) {
+        let data_country = data_mx[country_code];
         if (!data_country)
-          data_dx[country_code] = {};
+          data_mx[country_code] = {};
         
-        let data_country_sex = data_dx[country_code][sex];
+        let data_country_sex = data_mx[country_code][sex];
         if (!data_country_sex)
-          data_dx[country_code][sex] = {};
+          data_mx[country_code][sex] = {};
 
-        let data_country_sex_year = data_dx[country_code][sex][birthday_year];
+        let data_country_sex_year = data_mx[country_code][sex][birthday_year];
         if (!data_country_sex_year)
-          data_dx[country_code][sex][birthday_year] = dx_data;
+          data_mx[country_code][sex][birthday_year] = mx_data;
       }
 
       function get_mortality_data(country_code, sex, target_year) {
@@ -98,12 +100,12 @@
             const lines = data.split("\n");
 
             const offset_data_headers = 3;
-            const index_column_dx = 7;
+            const index_column_mx = 3;
             const index_column_year = 1;
 
             last_year_in_dataset = lines[lines.length - 2].split(' ')[2];
             
-            dx_data = [];
+            mx_data = [];
             for (let i = offset_data_headers; i < lines.length; i++) {
               const splitted_data_line = lines[i].replace(/\s+/g, ',').split(',');
               const data_year = splitted_data_line[index_column_year];
@@ -111,11 +113,11 @@
               if (!target_year)
                 target_year = last_year_in_dataset;
               if (data_year == target_year)
-                dx_data.push(parseInt(splitted_data_line[index_column_dx]));
+                mx_data.push(splitted_data_line[index_column_mx] * 100);
             }
 
-            data_dx_all = data_dx_all.concat(dx_data.map(Number));
-            enrich_data_dx_dict(dx_data, country_code, sex, target_year);
+            data_mx_all = data_mx_all.concat(mx_data.map(Number));
+            enrich_data_mx_dict(mx_data, country_code, sex, target_year);
             //return dx_data;
           });
       }
@@ -134,6 +136,7 @@
       }
 
       function get_percentiles(range, percentiles_range) {
+        //console.log(range)
         let percentiles = {};
         for (let i in percentiles_range) {
           percentiles[percentiles_range[i]] = 0;
@@ -149,6 +152,7 @@
           }
           integral += range[i] / total;
         }
+        console.log(percentiles)
         return percentiles;
       }
 
@@ -185,10 +189,10 @@
       function init_qrcode(user_values) {
         var qrcode = new QRCode(document.getElementById("qrcode"), {
           text: generate_qrcode_url(user_values),
-          width: 64,
-          height: 64,
+          width: 128,
+          height: 128,
           colorDark : "black",
-          colorLight : "snow",
+          colorLight : "white",
           correctLevel : QRCode.CorrectLevel.L,  // L, M, Q, H
         });
         return qrcode;
@@ -330,7 +334,7 @@
 
       function make_coordinates(array, age) {
         const total = array.reduce((a, b) => a + b, 0);
-        const max = get_peak_value(data_dx_all).value;
+        const max = 100//get_peak_value(data_mx_all).value;
 
         let coordinates_deaths = {};
         let coordinates_deaths_before_age = {};
@@ -343,7 +347,7 @@
         for (let year = 0; year < number_of_years; year++) {
           const value = array[year];
           //let value_mapped_on_weeks = Math.floor((value / max) * number_of_weeks_in_a_row);  // link to weeks dots
-          const value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row * 0.8;  // do not link to weeks dots, 0.8 scale - a bit lower to not hit 52-nd week with the peak
+          const value_mapped_on_weeks = number_of_weeks_in_a_row - (value / max) * number_of_weeks_in_a_row * 1.000;  // do not link to weeks dots, 0.8 scale - a bit lower to not hit 52-nd week with the peak
           coordinates_deaths[year + 1] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
           integral += (value / total) * number_of_weeks_in_a_row;
           coordinates_integral[year + 1] = integral;
@@ -391,8 +395,8 @@
 
         content += prepare_line_deaths(coordinates.deaths_before_age, antistroke, antistroke_width);
         content += prepare_line_deaths(coordinates.deaths_after_age, stroke, stroke_width);
-        content += prepare_line_integral(coordinates.integral_before_age, antistroke, antistroke_width);
-        content += prepare_line_integral(coordinates.integral_after_age, stroke, stroke_width);
+        //content += prepare_line_integral(coordinates.integral_before_age, antistroke, antistroke_width);
+        //content += prepare_line_integral(coordinates.integral_after_age, stroke, stroke_width);
 
         return content;
       }
@@ -500,17 +504,18 @@
         const sex = user_values['sex'];
 
         const birthday_date = new Date(date);
-        const birthday_year = birthday_date.getFullYear();
+        let birthday_year = birthday_date.getFullYear();
 
-        await get_mortality_data(country_code, sex, birthday_year);
-        const data_to_build = data_dx[country_code][sex][birthday_year];
+        await get_mortality_data(country_code, sex);
+        birthday_year = last_year_in_dataset
+        const data_to_build = data_mx[country_code][sex][birthday_year];
 
         await get_mortality_data(country_code_latest, sex); // to fix last year will be calculated automatically because not set
-        const data_to_build2 = data_dx[country_code_latest][sex][last_year_in_dataset];
-        const all_data = data_dx_all;
+        const data_to_build2 = data_mx[country_code_latest][sex][last_year_in_dataset];
+        const all_data = data_mx_all;
 
         //const year_le_at_birth = 65;
-        const percentiles_to_draw = ['50', '80', '90'];
+        const percentiles_to_draw = [1, 5, 10, 20, 25, 33, 50];
         const year_percentiles = get_percentiles(data_to_build, percentiles_to_draw);
         const year_percentiles2 = get_percentiles(data_to_build2, percentiles_to_draw);
         //const year_median = year_percentiles['50'];
@@ -583,7 +588,7 @@
         let ch = calendar_height + 1;
         if (is_mobile)
           ch += calendar_weeks_numbers_height + calendar_new_year_label_height; // idk why
-        let content = '<svg height="96%" viewBox="0 0 ' + calendar_width + ' ' + ch + '" xmlns="http://www.w3.org/2000/svg" style="width: 89%; margin: 10px 6% 0 5%;">';
+        let content = '<svg height="96%" viewBox="0 0 ' + calendar_width + ' ' + ch + '" xmlns="http://www.w3.org/2000/svg" style="width: 89%; margin: 3% 6% 0 5%;">';
 
         content += prepare_weeks_numbers();
         content += prepare_years_numbers(date);
@@ -591,8 +596,8 @@
         const week_new_year = calculate_new_year_week(date);
 
         const age = get_age(date);
-        const special_ages = [1, age + 1, number_of_years];  // to draw integral values for these years
-        const integrals_by_ages = get_integrals_by_ages(data_to_build, special_ages);
+        const special_ages = [1, 2, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, age + 1, number_of_years];  // to draw integral values for these years
+        //const integrals_by_ages = get_integrals_by_ages(data_to_build, special_ages);
 
         //const gradients = generate_gradients(age + 1);
         let total_weeks = 1;
@@ -649,6 +654,7 @@
 
             // drawing percentiles labels
             //const cx2 = cx + 5;
+            /*
             const cx2 = 20;
             const cx4 = cx2 + 9;
             let cy2 = cy + 1;
@@ -671,35 +677,48 @@
                 content += percentile + '%' + '</text>';
               }
             }
+            */
 
             total_weeks++;
           }
 
           // drawing integrals for special ages
-          if (Object.keys(integrals_by_ages).includes(year.toString())) {
-            if (!Object.keys(year_percentiles).includes(year.toString())) {
+          //console.log(integrals_by_ages, year_percentiles)
+          if (special_ages.includes(year)) {
+            //if (!Object.keys(year_percentiles).includes(year.toString())) {
+              //console.log(year)
               let cy2 = cy + 1;
               if (is_mobile)
                 cy2 = cy2 - 10 + 1;
               const cx2 = calendar_step_horizontal * number_of_weeks_in_a_row + calendar_years_numbers_width + 10 - circle_radius;
               content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '">';
-                content += integrals_by_ages[year] + '%' + '</text>';
-            }
+              //console.log(year, data_mx[country_code][sex][birthday_year])
+                content += data_mx[country_code][sex][birthday_year][year - 1].toFixed(1) + '%' + '</text>';
+            //}
+                if (country_code != country_code_latest) {
+              let cx6 = cx2 + 10;
+              if (data_mx[country_code][sex][birthday_year][year - 1] > 10)
+                cx6 += 2;
+              content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx6 + '" y="' + cy2 + '">';
+                content += data_mx[country_code_latest][sex][last_year_in_dataset][year - 1].toFixed(1) + '%' + '</text>';
+              }
           }
         }
         
-        content += prepare_lines(data_to_build, "black", age);
+        
         antistroke = "gray"
         content += prepare_lines(data_to_build2, "gray", age);
+        antistroke = "black"
+        content += prepare_lines(data_to_build, "black", age);
 
         content += prepare_label_new_year(week_new_year);
-        content += prepare_label_integral();
-        content += prepare_label_deaths();
+        //content += prepare_label_integral();
+        //content += prepare_label_deaths();
         content += '</svg>';
 
         document.getElementById("calendar").innerHTML = content;
 
-        data_dx_all = []; // reset
+        data_mx_all = []; // reset
       }
 
       window.onload = function() {
@@ -710,7 +729,7 @@
     </script>
   </head>
   <body>
-    <!--div id="qrcode" style="position: absolute; padding: 5px; background-color: snow; top: 84.3%; left: 66.3%; border-radius: 5px;"></div-->
+    <!--div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 84.1%; left: 66.4%; border-radius: 0px;"></div-->
     <div id="calendar"></div>
 
     <table style="color: black; width: 100%; margin: 20px 0 10% 0; font-size: 0.7em; display: none-;">
