@@ -35,7 +35,7 @@
       }
       .right {
         text-align: right;
-        width: 42%;
+        width: 50%;
       }
       .left {
         text-align: left;
@@ -61,12 +61,17 @@
       const calendar_step_vertical = 5;
       const calendar_weeks_numbers_height = 5;
       const calendar_years_numbers_width = 12;
-      const calendar_le_at_birth_median_peak_width = 20;
+      const calendar_le_at_birth_median_peak_width = 12;
       const calendar_new_year_label_height = 5;
       const calendar_height = number_of_years * calendar_step_vertical + calendar_weeks_numbers_height + calendar_new_year_label_height;
       //if (is_mobile)
       //  calendar_height += 100;
       const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6;
+      const calendar_qrcode_url_domain = "https://calendarium.me";
+      const calendar_id = Math.random().toString(36).slice(2);  // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
+      var qrcode;
+      var antistroke = "black";
+      var antistroke_width = 1;
 
       var data_dx = {};
       var data_dx_all = [];
@@ -86,7 +91,7 @@
           data_dx[country_code][sex][birthday_year] = dx_data;
       }
 
-      function get_mortality_data(country_code, sex, birthday_year) {
+      function get_mortality_data(country_code, sex, target_year) {
         return fetch('https://calendarium.me/data/mortality/' + country_code + '/' + sex + 'ltper_1x1.txt')
           .then((response) => response.text())
           .then((data) => {
@@ -95,19 +100,22 @@
             const offset_data_headers = 3;
             const index_column_dx = 7;
             const index_column_year = 1;
+
+            last_year_in_dataset = lines[lines.length - 2].split(' ')[2];
             
             dx_data = [];
             for (let i = offset_data_headers; i < lines.length; i++) {
               const splitted_data_line = lines[i].replace(/\s+/g, ',').split(',');
               const data_year = splitted_data_line[index_column_year];
-              if (data_year == birthday_year)
+
+              if (!target_year)
+                target_year = last_year_in_dataset;
+              if (data_year == target_year)
                 dx_data.push(parseInt(splitted_data_line[index_column_dx]));
-              if (i == lines.length - 2)  // get year to build "compare with" chart
-                last_year_in_dataset = splitted_data_line[index_column_year];
             }
 
             data_dx_all = data_dx_all.concat(dx_data.map(Number));
-            enrich_data_dx_dict(dx_data, country_code, sex, birthday_year);
+            enrich_data_dx_dict(dx_data, country_code, sex, target_year);
             //return dx_data;
           });
       }
@@ -168,11 +176,37 @@
         return {'peak': peak, 'value': max_value};
       }
 
-      function recalculate_calendar() {
+      function generate_qrcode_url(user_values) {
+        const url = `${calendar_qrcode_url_domain}?bd=${user_values.birthday}&cc=${user_values.country_code}&s=${user_values.sex}&cid=${calendar_id}&a=abc&b=cde&c=def`
+        console.log(url)
+        return url;
+      }
+
+      function init_qrcode(user_values) {
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+          text: generate_qrcode_url(user_values),
+          width: 64,
+          height: 64,
+          colorDark : "black",
+          colorLight : "snow",
+          correctLevel : QRCode.CorrectLevel.L,  // L, M, Q, H
+        });
+        return qrcode;
+      }
+
+      function get_user_selected_values() {
         const birthday = document.getElementById('birthday').value;
         const country_code = document.getElementById('country_code').value;
+        const country_code_latest = document.getElementById('country_code_latest').value;
         const sex = document.getElementById('sex').value;
-        draw_calendar("calendar", birthday, country_code, sex);
+        return {'birthday': birthday, 'country_code': country_code, 'country_code_latest': country_code_latest, 'sex': sex};
+      }
+
+      function recalculate_calendar() {
+        const user_values = get_user_selected_values();
+        draw_calendar(user_values);
+        //qrcode.clear();
+        //qrcode.makeCode(generate_qrcode_url(user_values));
       }
 
       function calculate_weeks_between(earlier_date, later_date) {  // https://stackoverflow.com/questions/542938/how-to-calculate-number-of-days-between-two-dates
@@ -294,48 +328,71 @@
         return points;
       }
 
-      function make_coordinates(array) {
+      function make_coordinates(array, age) {
         const total = array.reduce((a, b) => a + b, 0);
         const max = get_peak_value(data_dx_all).value;
 
         let coordinates_deaths = {};
+        let coordinates_deaths_before_age = {};
+        let coordinates_deaths_after_age = {};
+        let coordinates_integral_before_age = {};
+        let coordinates_integral_after_age = {};
         let coordinates_integral = {};
         let integral = 0;
         
-        for (let i = 0; i < number_of_years; i++) {
-          const value = array[i];
+        for (let year = 0; year < number_of_years; year++) {
+          const value = array[year];
           //let value_mapped_on_weeks = Math.floor((value / max) * number_of_weeks_in_a_row);  // link to weeks dots
-          let value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row * 0.8;  // do not link to weeks dots, 0.8 scale - a bit lower to not hit 52-nd week with the peak
-          coordinates_deaths[i+1] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
-          
+          const value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row * 0.8;  // do not link to weeks dots, 0.8 scale - a bit lower to not hit 52-nd week with the peak
+          coordinates_deaths[year + 1] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
           integral += (value / total) * number_of_weeks_in_a_row;
-          coordinates_integral[i+1] = integral;
+          coordinates_integral[year + 1] = integral;
+
+          if (year <= age) {
+            coordinates_deaths_before_age[year + 1] = value_mapped_on_weeks;
+            coordinates_integral_before_age[year + 1] = integral;
+          }
+          if (year >= age) {
+            coordinates_deaths_after_age[year + 1] = value_mapped_on_weeks;
+            coordinates_integral_after_age[year + 1] = integral;
+          }
         }
         
-        return {'deaths': coordinates_deaths, 'integral': coordinates_integral};
+        return {
+          //'deaths': coordinates_deaths,
+          'deaths_before_age': coordinates_deaths_before_age,
+          'deaths_after_age': coordinates_deaths_after_age,
+          //'integral': coordinates_integral,
+          'integral_before_age': coordinates_integral_before_age,
+          'integral_after_age': coordinates_integral_after_age,
+        };
       }
 
-      function prepare_line_deaths(coordinates, stroke) {
-        let content = '';
-        content += '<polyline fill="none" stroke="' + stroke + '" stroke-width="0.5" stroke-linejoin="round" points="';
-        content += coordinates_to_points(coordinates.deaths);
+      function prepare_line_deaths(coordinates, stroke, stroke_width) {
+        let content = `<polyline fill="none" stroke="${stroke}" stroke-width="${stroke_width}" stroke-linejoin="round" points="`;
+        content += coordinates_to_points(coordinates);
         content += '"/>';
         return content;
       }
-      function prepare_line_integral(coordinates, stroke) {
-        let content = '';
-        content += '<polyline fill="none" stroke="' + stroke + '" stroke-width="0.5" stroke-dasharray="4 2" stroke-linejoin="round" points="';
-        content += coordinates_to_points(coordinates.integral);
+      function prepare_line_integral(coordinates, stroke, stroke_width) {
+        let content = `<polyline fill="none" stroke="${stroke}" stroke-width="${stroke_width}" stroke-dasharray="4 3" stroke-linejoin="round" points="`;
+        content += coordinates_to_points(coordinates);
         content += '"/>';
         return content;
       }
 
-      function prepare_lines(data, stroke) {
+      function prepare_lines(data, stroke, age) {
         let content = '';
 
-        const coordinates = make_coordinates(data);
-        content += prepare_line_deaths(coordinates, stroke);
-        content += prepare_line_integral(coordinates, stroke);
+        //const antistroke = "black"
+        const stroke_width = 0.5;
+        //const antistroke_width = stroke_width * 1.5;
+        const coordinates = make_coordinates(data, age);
+
+        content += prepare_line_deaths(coordinates.deaths_before_age, antistroke, antistroke_width);
+        content += prepare_line_deaths(coordinates.deaths_after_age, stroke, stroke_width);
+        content += prepare_line_integral(coordinates.integral_before_age, antistroke, antistroke_width);
+        content += prepare_line_integral(coordinates.integral_after_age, stroke, stroke_width);
 
         return content;
       }
@@ -372,16 +429,84 @@
         return new_fill_ranges;
       }
 
-      async function draw_calendar(element_id, date, country_code, sex) {
+      function get_random_int(max) {
+        return Math.floor(Math.random() * max + 1);
+      }
+
+      function generate_gradients(age) {
+        let gradients = {};
+        let how_many_years = get_random_int(5);
+        let gradient_direction = get_random_int(4);  // 0 - black, 1 - white, 2 - black to white, 3 - white to black
+        let gradient_direction_previous = gradient_direction;
+
+        let base_color = 0;
+        let color_shift = 0;
+
+        const color_min = 0;
+        const color_max = 255;
+
+        for (let year = 0; year < age; year++) {
+          let year_gradients = [];
+
+          if (year >= how_many_years) {
+            gradient_direction = get_random_int(4);
+            if (gradient_direction == 1 || gradient_direction == 2) {
+              if (gradient_direction_previous == 1 || gradient_direction_previous == 2)
+                gradient_direction = get_random_int(2) + 2;  // do not repeat single line black or white
+              else
+                how_many_years = year + 1;
+            }
+            else
+              how_many_years = year + get_random_int(5);
+
+            gradient_direction_previous = gradient_direction;
+          }
+
+          if (gradient_direction == 1) {
+            base_color = color_min;
+            color_shift = 0;
+          }
+          else if (gradient_direction == 2) {
+            base_color = color_min;
+            color_shift = 0;
+          }
+          else if (gradient_direction == 3) {
+            base_color = color_min;
+            color_shift = (color_max - color_min + 1) / number_of_weeks_in_a_row;
+          }
+          else {
+            base_color = color_max;
+            color_shift = -1 * (color_max - color_min + 1) / number_of_weeks_in_a_row;
+          }
+
+          for (let j = 0; j < number_of_weeks_in_a_row; j++) {
+            let int_number = Math.round(base_color + color_shift * j);
+            let hex_number = (int_number).toString(16);
+            if (int_number < 16)
+              hex_number = '0' + hex_number;
+            
+            year_gradients.push('#' + hex_number.repeat(3));
+          }
+
+          gradients[year] = year_gradients;
+        }
+        return gradients;
+      }
+
+      async function draw_calendar(user_values) {
+        const date = user_values['birthday'];
+        const country_code = user_values['country_code'];
+        const country_code_latest = user_values['country_code_latest'];
+        const sex = user_values['sex'];
+
         const birthday_date = new Date(date);
         const birthday_year = birthday_date.getFullYear();
 
         await get_mortality_data(country_code, sex, birthday_year);
         const data_to_build = data_dx[country_code][sex][birthday_year];
 
-        await get_mortality_data(country_code, sex, last_year_in_dataset);
-        const data_to_build2 = data_dx[country_code][sex][last_year_in_dataset];
-
+        await get_mortality_data(country_code_latest, sex); // to fix last year will be calculated automatically because not set
+        const data_to_build2 = data_dx[country_code_latest][sex][last_year_in_dataset];
         const all_data = data_dx_all;
 
         //const year_le_at_birth = 65;
@@ -392,10 +517,10 @@
 
         let fill_ranges = [ // init
           {"fill": "white"},
-          {"fill": "skyblue", "to": new Date()},
-          {"fill": "white", "from": year_percentiles['50'], "to": year_percentiles['50'], "stroke_width": "0.22"},
-          {"fill": "white", "from": year_percentiles['80'], "to": year_percentiles['80'], "stroke_width": "0.22"},
-          {"fill": "white", "from": year_percentiles['90'], "to": year_percentiles['90'], "stroke_width": "0.22"},
+          {"fill": "black", "to": new Date(), "stroke_width": "0.2"},
+          {"fill": "white", "from": year_percentiles['50'], "to": year_percentiles['50'], "stroke_width": "0.32"},
+          {"fill": "white", "from": year_percentiles['80'], "to": year_percentiles['80'], "stroke_width": "0.32"},
+          {"fill": "white", "from": year_percentiles['90'], "to": year_percentiles['90'], "stroke_width": "0.32"},
           //{"fill": "orange", "from": "2024-05-31", "to": "2024-05-31", "animate": "blink"},
           //{"fill": "skyblue", "from": "1989-01-08", "to": new Date()},
           //{"fill": "aquamarine", "from": "2014-06-04", "to": new Date()}, 
@@ -464,9 +589,11 @@
 
         const week_new_year = calculate_new_year_week(date);
 
-        const special_ages = [1, get_age(date) + 1, number_of_years];  // to draw integral values for these years
+        const age = get_age(date);
+        const special_ages = [1, age + 1, number_of_years];  // to draw integral values for these years
         const integrals_by_ages = get_integrals_by_ages(data_to_build, special_ages);
 
+        //const gradients = generate_gradients(age + 1);
         let total_weeks = 1;
         for (let year = 1; year <= number_of_years; year++) {
           let y_offset = calendar_height - year * calendar_step_vertical;
@@ -476,7 +603,13 @@
           let cy = y_offset - circle_radius;
           for (let week = 1; week <= number_of_weeks_in_a_row; week++) {
             let cx = (week + 1) * calendar_step_horizontal + calendar_years_numbers_width - circle_radius;
-            content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + circle_radius + '" ';
+            //content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + circle_radius + '" ';
+            const rect_width = 3.5;
+            const cx3 = cx - rect_width / 2;
+            const cy3 = cy - rect_width / 2;
+            antistroke = "black";
+            antistroke_width = 0.8;
+            content += `<rect x="${cx3}" y="${cy3}" width="${rect_width}" height="${rect_width}" rx="20"`;
             
             let circle_color = "";
             let stroke = "black";
@@ -490,23 +623,31 @@
                   stroke = range["stroke"];
                 if (range["stroke_width"])
                   stroke_width = range["stroke_width"];
+
+                //if (year < age + 1 && week <= total_weeks) // gradients
+                //  circle_color = gradients[year - 1][week - 1];
               }
               if (range["to_week"] == total_weeks && range["animate"] == "blink")
                 content += 'class="blink" ';
             }
+
             content += 'fill="' + circle_color + '" ';
             content += 'stroke="' + stroke + '" stroke-width="' + stroke_width + '"/>';
 
             if (week == week_new_year) {  // dot for a new year week
-              content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + 0.4 + '" fill="" stroke="lightgray" stroke-width="0.1"/>';
-              //const cx3 = 300;
-              //const cy3 = cy - 2;
-              //content += '<rect x="' + cx3 + '" y="' + cy3 + '" width="4" height="4" rx="1" fill="white" stroke="black" stroke-width="0.3" />';
+              let dot_color = "black";
+              //if (year <= age) {
+              //  console.log(year)
+              //  dot_color = "white";
+              //}
+
+              content += `<circle cx="${cx}" cy="${cy}" r="0.2" fill="${dot_color}" stroke="${dot_color}" stroke-width="0.2"/>`;
             }
             //if (year == year_percentiles['50'] || year == year_percentiles['80'] || year == year_percentiles['90'])
             //  content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + 0.2 + '" fill="" stroke="black" stroke-width="0.1"/>';
 
-            const cx2 = cx + 4;
+            // drawing percentiles labels
+            const cx2 = cx + 5;
             let cy2 = cy + 1;
             if (is_mobile)
               cy2 = cy2 - 10 + 1;
@@ -534,38 +675,29 @@
             }
           }
         }
+        
+        content += prepare_lines(data_to_build, "black", age);
+        content += prepare_lines(data_to_build2, "gray", age);
 
-        content += prepare_lines(data_to_build, "black");
-        //content += prepare_lines(data_to_build2, "gray");
         content += prepare_label_new_year(week_new_year);
         content += prepare_label_integral();
         content += prepare_label_deaths();
         content += '</svg>';
 
-        document.getElementById(element_id).innerHTML = content;
+        document.getElementById("calendar").innerHTML = content;
 
         data_dx_all = []; // reset
       }
 
-      function init_qrcode() {
-        var qrcode = new QRCode(document.getElementById("qrcode"), {
-          text: "https://calendarium.me",
-          width: 64,
-          height: 64,
-          colorDark : "#000000",
-          colorLight : "snow",
-          correctLevel : QRCode.CorrectLevel.H
-        });
-      }
-
       window.onload = function() {
-        recalculate_calendar();
-        //init_qrcode();
+        const user_values = get_user_selected_values();
+        draw_calendar(user_values);
+        //qrcode = init_qrcode(user_values);
       };
     </script>
   </head>
   <body>
-    <!--div id="qrcode" style="position: absolute; padding: 5px; background-color: snow; top: 84.3%; left: 66.3%; border-radius: 5px;"></div-->
+    <div id="qrcode" style="position: absolute; padding: 5px; background-color: snow; top: 84.3%; left: 66.3%; border-radius: 5px;"></div>
     <div id="calendar"></div>
 
     <table style="color: black; width: 100%; margin: 20px 0 10% 0; font-size: 0.7em; display: none-;">
@@ -576,7 +708,7 @@
         </td>
       </tr>
       <tr>
-        <td class="right">Country mostly lived in:</td>
+        <td class="right">Country of birth & childhood:</td>
         <td class="left">
           <select id="country_code" onchange="recalculate_calendar();">
             <option value="at">Austria (1947-2019)</option>
@@ -613,6 +745,47 @@
             <option value="us">Ukraine (1959-2013)</option>
             <option value="uk">United Kingdom (1922-2021)</option>
             <option value="us">United States (1933-2021)</option>        
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td class="right">Country mostly lived in during last 10+ years:</td>
+        <td class="left">
+          <select id="country_code_latest" onchange="recalculate_calendar();">
+            <option value="at">Austria</option>
+            <option value="be">Belgium</option>
+            <option value="bg">Bulgaria</option>
+            <option value="by">Belarus</option>
+            <option value="ca">Canada</option>
+            <option value="ch">Switzerland</option>
+            <option value="de">Germany</option>
+            <option value="dk">Denmark</option>
+            <option value="ee">Estonia</option>
+            <option value="es">Spain</option>
+            <option value="fi">Finland</option>
+            <option value="fr">France</option>
+            <option value="gr">Greece</option>
+            <option value="hr">Croatia</option>
+            <option value="hu">Hungary</option>
+            <option value="ie">Ireland</option>
+            <option value="il">Israel</option>
+            <option value="is">Iceland</option>
+            <option value="it">Italy</option>
+            <option value="jp">Japan</option>
+            <option value="kr">Republic of Korea</option>
+            <option value="lt">Lithuania</option>
+            <option value="lv">Latvia</option>
+            <option value="nl">Netherlands</option>
+            <option value="no">Norway</option>
+            <option value="pl">Poland</option>
+            <option value="pt">Portugal</option>
+            <option value="ru" selected>Russia</option>
+            <option value="se">Sweden</option>
+            <option value="sk">Slovakia</option>
+            <option value="tw">Taiwan</option>
+            <option value="us">Ukraine</option>
+            <option value="uk">United Kingdom</option>
+            <option value="us">United States</option>        
           </select>
         </td>
       </tr>
