@@ -233,13 +233,13 @@
         return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="' + cy + '">New Year</text>';
       }
 
-      function prepare_label_integral() {
+      function prepare_label_deaths() {
         const cx = calendar_years_numbers_width + calendar_step_horizontal;
         let cy = calendar_height - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height + 1;
         if (is_mobile)
           cy += 10;
 
-        let content = '<rect x="' + cx + '" y="' + cy + '" width="25" height="4" rx="1" fill="white" stroke="white" stroke-width="0.3" />';
+        let content = '<rect x="' + cx + '" y="' + cy + '" width="25" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
         const cx2 = cx + 1.5;
         let cy2 = cy + 3;
         if (is_mobile)
@@ -247,13 +247,13 @@
         content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="' + cx2 + '" y="' + cy2 + '" font-weight="bold">Deaths at age</text>';
         return content
       }
-      function prepare_label_deaths() {
+      function prepare_label_integral() {
         const cx = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width - 39;
         let cy = calendar_height - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height + 1;
         if (is_mobile)
           cy += 10;
-        let content = '<rect x="' + cx + '" y="' + cy + '" width="45" height="4" rx="1" fill="white" stroke="white" stroke-width="0.3" />';
-        const cx2 = cx + 1.5;
+        let content = '<rect x="' + cx + '" y="' + cy + '" width="45" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
+        const cx2 = cx + 1;
         let cy2 = cy + 3;
         if (is_mobile)
           cy2 -= 9;
@@ -512,15 +512,16 @@
         //const year_le_at_birth = 65;
         const percentiles_to_draw = ['50', '80', '90'];
         const year_percentiles = get_percentiles(data_to_build, percentiles_to_draw);
+        const year_percentiles2 = get_percentiles(data_to_build2, percentiles_to_draw);
         //const year_median = year_percentiles['50'];
         //const year_peak = get_peak_value(data_to_build).peak;
 
         let fill_ranges = [ // init
           {"fill": "white"},
           {"fill": "black", "to": new Date(), "stroke_width": "0.2"},
-          {"fill": "white", "from": year_percentiles['50'], "to": year_percentiles['50'], "stroke_width": "0.32"},
-          {"fill": "white", "from": year_percentiles['80'], "to": year_percentiles['80'], "stroke_width": "0.32"},
-          {"fill": "white", "from": year_percentiles['90'], "to": year_percentiles['90'], "stroke_width": "0.32"},
+          //{"fill": "white", "from": year_percentiles['50'], "to": year_percentiles['50'], "stroke_width": "0.32"},
+          //{"fill": "white", "from": year_percentiles['80'], "to": year_percentiles['80'], "stroke_width": "0.32"},
+          //{"fill": "white", "from": year_percentiles['90'], "to": year_percentiles['90'], "stroke_width": "0.32"},
           //{"fill": "orange", "from": "2024-05-31", "to": "2024-05-31", "animate": "blink"},
           //{"fill": "skyblue", "from": "1989-01-08", "to": new Date()},
           //{"fill": "aquamarine", "from": "2014-06-04", "to": new Date()}, 
@@ -579,7 +580,7 @@
         //const skins = {"empty": []};
 
         const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, date);
-        let ch = calendar_height;
+        let ch = calendar_height + 1;
         if (is_mobile)
           ch += calendar_weeks_numbers_height + calendar_new_year_label_height; // idk why
         let content = '<svg height="96%" viewBox="0 0 ' + calendar_width + ' ' + ch + '" xmlns="http://www.w3.org/2000/svg" style="width: 89%; margin: 10px 6% 0 5%;">';
@@ -608,7 +609,7 @@
             const cx3 = cx - rect_width / 2;
             const cy3 = cy - rect_width / 2;
             antistroke = "black";
-            antistroke_width = 0.8;
+            antistroke_width = 0.5;
             content += `<rect x="${cx3}" y="${cy3}" width="${rect_width}" height="${rect_width}" rx="20"`;
             
             let circle_color = "";
@@ -647,14 +648,25 @@
             //  content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + 0.2 + '" fill="" stroke="black" stroke-width="0.1"/>';
 
             // drawing percentiles labels
-            const cx2 = cx + 5;
+            //const cx2 = cx + 5;
+            const cx2 = 20;
+            const cx4 = cx2 + 9;
             let cy2 = cy + 1;
             if (is_mobile)
               cy2 = cy2 - 10 + 1;
 
             for (let i = 0; i < percentiles_to_draw.length; i++) {
               let percentile = percentiles_to_draw[i];
+              const cx5 = cx2 - 3;
+              const cy5 = cy2 - 3;
+              if (year == year_percentiles2[percentile] && week == number_of_weeks_in_a_row) {
+                content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="20" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
+                content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx4 + '" y="' + cy2 + '">';
+                content += percentile + '%' + '</text>';
+              }
               if (year == year_percentiles[percentile] && week == number_of_weeks_in_a_row) {
+                content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="10" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
+
                 content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '">';
                 content += percentile + '%' + '</text>';
               }
@@ -677,6 +689,7 @@
         }
         
         content += prepare_lines(data_to_build, "black", age);
+        antistroke = "gray"
         content += prepare_lines(data_to_build2, "gray", age);
 
         content += prepare_label_new_year(week_new_year);
