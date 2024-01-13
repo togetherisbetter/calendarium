@@ -542,7 +542,10 @@
             for (let i = 0; i < percentiles_to_draw.length; i++) {
               let percentile = percentiles_to_draw[i];
               const cx5 = cx2 - 2;
-              const cy5 = cy2 - 3;
+              let cy5 = cy2 - 3;
+              if (is_mobile)
+                cy5 = cy5 - 10 + 1;
+
               if (country_code != country_code_latest) {
                 if (year == year_percentiles_dx_another_country[percentile] && week == number_of_weeks_in_a_row) {
                   content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="20" height="4" rx="0" fill="red" stroke="white" stroke-width="0.3" />';
