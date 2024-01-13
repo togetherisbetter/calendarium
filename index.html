@@ -73,24 +73,23 @@
       var antistroke = "black";
       var antistroke_width = 1;
 
-      //var data_dx = {};
+      var data_dx = {};
       var data_mx = {};
-      //var data_dx_all = [];
-      var data_mx_all = [];
+      var data_all = {'dx': [], 'mx': []};
       var last_year_in_dataset = 0;
 
-      function enrich_data_mx_dict(mx_data, country_code, sex, birthday_year) {
-        let data_country = data_mx[country_code];
+      function enrich_data_mdx_dict(data_mdx, mdx_data, country_code, sex, target_year) {
+        let data_country = data_mdx[country_code];
         if (!data_country)
-          data_mx[country_code] = {};
+          data_mdx[country_code] = {};
         
-        let data_country_sex = data_mx[country_code][sex];
+        let data_country_sex = data_mdx[country_code][sex];
         if (!data_country_sex)
-          data_mx[country_code][sex] = {};
+          data_mdx[country_code][sex] = {};
 
-        let data_country_sex_year = data_mx[country_code][sex][birthday_year];
+        let data_country_sex_year = data_mdx[country_code][sex][target_year];
         if (!data_country_sex_year)
-          data_mx[country_code][sex][birthday_year] = mx_data;
+          data_mdx[country_code][sex][target_year] = mdx_data;
       }
 
       function get_mortality_data(country_code, sex, target_year) {
@@ -100,31 +99,32 @@
             const lines = data.split("\n");
 
             const offset_data_headers = 3;
-            const index_column_mx = 3;
             const index_column_year = 1;
+            const index_column_mx = 3;
+            const index_column_dx = 7;
 
             last_year_in_dataset = lines[lines.length - 2].split(' ')[2];
-            
-            mx_data = [];
+            if (!target_year)
+              target_year = last_year_in_dataset;
+
+            let mx_data = [];
+            let dx_data = [];
             for (let i = offset_data_headers; i < lines.length; i++) {
               const splitted_data_line = lines[i].replace(/\s+/g, ',').split(',');
               const data_year = splitted_data_line[index_column_year];
 
-              if (!target_year)
-                target_year = last_year_in_dataset;
-              if (data_year == target_year)
+              if (data_year == target_year) {
+                dx_data.push(parseInt(splitted_data_line[index_column_dx]));
                 mx_data.push(splitted_data_line[index_column_mx] * 100);
+              }
             }
 
-            data_mx_all = data_mx_all.concat(mx_data.map(Number));
-            enrich_data_mx_dict(mx_data, country_code, sex, target_year);
-            //return dx_data;
+            data_all['mx'] = data_all['mx'].concat(mx_data.map(Number));
+            enrich_data_mdx_dict(data_mx, mx_data, country_code, sex, target_year);
+            data_all['dx'] = data_all['dx'].concat(dx_data.map(Number));
+            enrich_data_mdx_dict(data_dx, dx_data, country_code, sex, target_year);
           });
       }
-
-      //const screen_height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-      //const calendar_step_vertical = (screen_height - 15) / number_of_years;
-      //console.log(calendar_step_vertical)
 
       function get_total(range) {
         return range.reduce((a, b) => a + b, 0);
@@ -136,7 +136,6 @@
       }
 
       function get_percentiles(range, percentiles_range) {
-        //console.log(range)
         let percentiles = {};
         for (let i in percentiles_range) {
           percentiles[percentiles_range[i]] = 0;
@@ -152,7 +151,6 @@
           }
           integral += range[i] / total;
         }
-        console.log(percentiles)
         return percentiles;
       }
 
@@ -181,8 +179,8 @@
       }
 
       function generate_qrcode_url(user_values) {
-        const url = `${calendar_qrcode_url_domain}?bd=${user_values.birthday}&cc=${user_values.country_code}&s=${user_values.sex}&cid=${calendar_id}&a=abc&b=cde&c=def`
-        console.log(url)
+        const url = `${calendar_qrcode_url_domain}?bd=${user_values.birthday}&cc=${user_values.country_code}&&ccl=${user_values.country_code_latest}&s=${user_values.sex}&cid=${calendar_id}&a=abc&b=cde&c=def`
+        //console.log(url)
         return url;
       }
 
@@ -237,7 +235,7 @@
         return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="' + cy + '">New Year</text>';
       }
 
-      function prepare_label_deaths() {
+      function prepare_label_dotss() {
         const cx = calendar_years_numbers_width + calendar_step_horizontal;
         let cy = calendar_height - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height + 1;
         if (is_mobile)
@@ -265,7 +263,7 @@
         return content
       }
 
-      function prepare_weeks_numbers() {
+      function draw_weeks_numbers() {
         let content = '';
 
         for (let week = 1; week <= number_of_weeks_in_a_row; week++) {
@@ -284,7 +282,7 @@
         return content;
       }
 
-      function prepare_years_numbers(birthday) {
+      function draw_years_numbers(birthday) {
         let content = '';
 
         for (let year = 1; year <= number_of_years; year++) {
@@ -324,79 +322,88 @@
 
         let points = '';
         for (let key in coordinates) {
-          let value = coordinates[key];
-          let vertical = calendar_height - (key - 1) * calendar_step_vertical - vertical_offset;
-          let horizontal = (value - 1) * calendar_step_horizontal + calendar_years_numbers_width + 10;
+          const value = coordinates[key];
+          const vertical = calendar_height - (key - 1) * calendar_step_vertical - vertical_offset;
+          const horizontal = (value - 1) * calendar_step_horizontal + calendar_years_numbers_width + 10;
           points += horizontal + ',' + vertical + ' ';
         }
         return points;
       }
 
-      function make_coordinates(array, age) {
+      function make_coordinates(mdx, array, age, position, scale_y) {
         const total = array.reduce((a, b) => a + b, 0);
-        const max = 100//get_peak_value(data_mx_all).value;
+        let max = get_peak_value(data_all[mdx]).value;
+        if (max < 100)
+          max = 100;
 
-        let coordinates_deaths = {};
-        let coordinates_deaths_before_age = {};
-        let coordinates_deaths_after_age = {};
+        let coordinates_dotss = {};
+        let coordinates_dotss_before_age = {};
+        let coordinates_dotss_after_age = {};
         let coordinates_integral_before_age = {};
         let coordinates_integral_after_age = {};
         let coordinates_integral = {};
         let integral = 0;
+
+        if (!scale_y)
+          scale_y = 1;
         
         for (let year = 0; year < number_of_years; year++) {
           const value = array[year];
-          //let value_mapped_on_weeks = Math.floor((value / max) * number_of_weeks_in_a_row);  // link to weeks dots
-          const value_mapped_on_weeks = number_of_weeks_in_a_row - (value / max) * number_of_weeks_in_a_row * 1.000;  // do not link to weeks dots, 0.8 scale - a bit lower to not hit 52-nd week with the peak
-          coordinates_deaths[year + 1] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
+          let value_mapped_on_weeks;
+          if (position == "right") 
+            value_mapped_on_weeks = number_of_weeks_in_a_row - (value / max) * number_of_weeks_in_a_row * scale_y;
+          else
+            value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row * scale_y;
+
+          coordinates_dotss[year + 1] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
           integral += (value / total) * number_of_weeks_in_a_row;
           coordinates_integral[year + 1] = integral;
 
           if (year <= age) {
-            coordinates_deaths_before_age[year + 1] = value_mapped_on_weeks;
+            coordinates_dotss_before_age[year + 1] = value_mapped_on_weeks;
             coordinates_integral_before_age[year + 1] = integral;
           }
           if (year >= age) {
-            coordinates_deaths_after_age[year + 1] = value_mapped_on_weeks;
+            coordinates_dotss_after_age[year + 1] = value_mapped_on_weeks;
             coordinates_integral_after_age[year + 1] = integral;
           }
         }
         
         return {
-          //'deaths': coordinates_deaths,
-          'deaths_before_age': coordinates_deaths_before_age,
-          'deaths_after_age': coordinates_deaths_after_age,
+          //'dotss': coordinates_dotss,
+          'dotss_before_age': coordinates_dotss_before_age,
+          'dotss_after_age': coordinates_dotss_after_age,
           //'integral': coordinates_integral,
           'integral_before_age': coordinates_integral_before_age,
           'integral_after_age': coordinates_integral_after_age,
         };
       }
 
-      function prepare_line_deaths(coordinates, stroke, stroke_width) {
-        let content = `<polyline fill="none" stroke="${stroke}" stroke-width="${stroke_width}" stroke-linejoin="round" points="`;
-        content += coordinates_to_points(coordinates);
-        content += '"/>';
-        return content;
-      }
-      function prepare_line_integral(coordinates, stroke, stroke_width) {
-        let content = `<polyline fill="none" stroke="${stroke}" stroke-width="${stroke_width}" stroke-dasharray="4 3" stroke-linejoin="round" points="`;
+      function draw_polyline(coordinates, stroke, stroke_width, stroke_dasharray) {
+        let content = `<polyline fill="none" stroke="${stroke}" stroke-width="${stroke_width}" stroke-linejoin="round" stroke-dasharray="${stroke_dasharray}" points="`;
         content += coordinates_to_points(coordinates);
         content += '"/>';
         return content;
       }
 
-      function prepare_lines(data, stroke, age) {
+      function draw_line(mdx, data, stroke, age) {
         let content = '';
 
         //const antistroke = "black"
         const stroke_width = 0.5;
         //const antistroke_width = stroke_width * 1.5;
-        const coordinates = make_coordinates(data, age);
+        let position = "left";
+        let scale_y = 0.9;
+        if (mdx == "mx") {
+          position = "right";
+          scale_y = 1;
+        }
+        const coordinates = make_coordinates(mdx, data, age, position, scale_y);
 
-        content += prepare_line_deaths(coordinates.deaths_before_age, antistroke, antistroke_width);
-        content += prepare_line_deaths(coordinates.deaths_after_age, stroke, stroke_width);
-        //content += prepare_line_integral(coordinates.integral_before_age, antistroke, antistroke_width);
-        //content += prepare_line_integral(coordinates.integral_after_age, stroke, stroke_width);
+        content += draw_polyline(coordinates.dotss_before_age, antistroke, antistroke_width);
+        content += draw_polyline(coordinates.dotss_after_age, stroke, stroke_width);
+        //content += draw_polyline(coordinates.integral_before_age, antistroke, antistroke_width);
+        //content += draw_polyline(coordinates.integral_after_age, stroke, stroke_width);
 
         return content;
       }
@@ -433,71 +440,9 @@
         return new_fill_ranges;
       }
 
-      function get_random_int(max) {
-        return Math.floor(Math.random() * max + 1);
-      }
-
-      function generate_gradients(age) {
-        let gradients = {};
-        let how_many_years = get_random_int(5);
-        let gradient_direction = get_random_int(4);  // 0 - black, 1 - white, 2 - black to white, 3 - white to black
-        let gradient_direction_previous = gradient_direction;
-
-        let base_color = 0;
-        let color_shift = 0;
-
-        const color_min = 0;
-        const color_max = 255;
-
-        for (let year = 0; year < age; year++) {
-          let year_gradients = [];
-
-          if (year >= how_many_years) {
-            gradient_direction = get_random_int(4);
-            if (gradient_direction == 1 || gradient_direction == 2) {
-              if (gradient_direction_previous == 1 || gradient_direction_previous == 2)
-                gradient_direction = get_random_int(2) + 2;  // do not repeat single line black or white
-              else
-                how_many_years = year + 1;
-            }
-            else
-              how_many_years = year + get_random_int(5);
-
-            gradient_direction_previous = gradient_direction;
-          }
-
-          if (gradient_direction == 1) {
-            base_color = color_min;
-            color_shift = 0;
-          }
-          else if (gradient_direction == 2) {
-            base_color = color_min;
-            color_shift = 0;
-          }
-          else if (gradient_direction == 3) {
-            base_color = color_min;
-            color_shift = (color_max - color_min + 1) / number_of_weeks_in_a_row;
-          }
-          else {
-            base_color = color_max;
-            color_shift = -1 * (color_max - color_min + 1) / number_of_weeks_in_a_row;
-          }
-
-          for (let j = 0; j < number_of_weeks_in_a_row; j++) {
-            let int_number = Math.round(base_color + color_shift * j);
-            let hex_number = (int_number).toString(16);
-            if (int_number < 16)
-              hex_number = '0' + hex_number;
-            
-            year_gradients.push('#' + hex_number.repeat(3));
-          }
-
-          gradients[year] = year_gradients;
-        }
-        return gradients;
-      }
-
       async function draw_calendar(user_values) {
+        data_all = {'mx': [], 'dx': []}; // reset
+
         const date = user_values['birthday'];
         const country_code = user_values['country_code'];
         const country_code_latest = user_values['country_code_latest'];
@@ -508,81 +453,28 @@
 
         await get_mortality_data(country_code, sex);
         birthday_year = last_year_in_dataset
-        const data_to_build = data_mx[country_code][sex][birthday_year];
+        const data_to_build_mx = data_mx[country_code][sex][birthday_year];
+        const data_to_build_dx = data_dx[country_code][sex][birthday_year];
 
         await get_mortality_data(country_code_latest, sex); // to fix last year will be calculated automatically because not set
-        const data_to_build2 = data_mx[country_code_latest][sex][last_year_in_dataset];
-        const all_data = data_mx_all;
+        const data_to_build_mx2 = data_mx[country_code_latest][sex][last_year_in_dataset];
+        const data_to_build_dx2 = data_dx[country_code_latest][sex][last_year_in_dataset];
+        //const all_data = data_all;
 
-        //const year_le_at_birth = 65;
-        const percentiles_to_draw = [1, 5, 10, 20, 25, 33, 50];
-        const year_percentiles = get_percentiles(data_to_build, percentiles_to_draw);
-        const year_percentiles2 = get_percentiles(data_to_build2, percentiles_to_draw);
-        //const year_median = year_percentiles['50'];
-        //const year_peak = get_peak_value(data_to_build).peak;
+        const percentiles_to_draw = [50, 80, 90];
+        const year_percentiles_dx = get_percentiles(data_to_build_dx, percentiles_to_draw);
+        const year_percentiles_dx2 = get_percentiles(data_to_build_dx2, percentiles_to_draw);
 
         let fill_ranges = [ // init
           {"fill": "white"},
           {"fill": "black", "to": new Date(), "stroke_width": "0.2"},
-          //{"fill": "white", "from": year_percentiles['50'], "to": year_percentiles['50'], "stroke_width": "0.32"},
-          //{"fill": "white", "from": year_percentiles['80'], "to": year_percentiles['80'], "stroke_width": "0.32"},
-          //{"fill": "white", "from": year_percentiles['90'], "to": year_percentiles['90'], "stroke_width": "0.32"},
+          //{"fill": "white", "from": year_percentiles_dx['50'], "to": year_percentiles_dx['50'], "stroke_width": "0.32"},
+          //{"fill": "white", "from": year_percentiles_dx['80'], "to": year_percentiles_dx['80'], "stroke_width": "0.32"},
+          //{"fill": "white", "from": year_percentiles_dx['90'], "to": year_percentiles_dx['90'], "stroke_width": "0.32"},
           //{"fill": "orange", "from": "2024-05-31", "to": "2024-05-31", "animate": "blink"},
           //{"fill": "skyblue", "from": "1989-01-08", "to": new Date()},
           //{"fill": "aquamarine", "from": "2014-06-04", "to": new Date()}, 
         ];
-
-        
-        /*
-        fill_ranges = [ // life
-          {"fill": "white"},
-          {"fill": "lightgray", "to": new Date()},
-          //{"fill": "lightgray", "from": year_le_at_birth, "to": year_le_at_birth},
-          //{"fill": "darkgray", "from": year_median, "to": year_median},
-          //{"fill": "gray", "from": year_peak, "to": year_peak},
-          //{"fill": "gold", "from": "2018-08-01", "to": new Date()},
-        ];
-
-        fill_ranges = [ // therapy
-          {"fill": "white"},
-          {"fill": "lightgray", "to": new Date()},
-          //{"fill": "lightgray", "from": year_le_at_birth, "to": year_le_at_birth},
-          //{"fill": "darkgray", "from": year_median, "to": year_median},
-          //{"fill": "gray", "from": year_peak, "to": year_peak},
-          {"fill": "gold", "from": "2018-08-01", "to": new Date()},
-        ];
-
-        fill_ranges = [ // school
-          {"fill": "white"},
-          //{"fill": "lightgray", "from": year_le_at_birth, "to": year_le_at_birth},
-          //{"fill": "darkgray", "from": year_median, "to": year_median},
-          //{"fill": "gray", "from": year_peak, "to": year_peak},
-          {"fill": "lightgreen", "from": "1988-01-01", "to": "1994-06-15"},
-          {"fill": "skyblue", "from": "1994-09-01", "to": "2004-06-15"},
-          {"fill": "lightsalmon", "from": "2004-09-01", "to": "2008-06-15"},
-          {"fill": "lightgray", "from": "2008-05-01", "to": new Date()},
-          {"fill": "orange", "from": 65},
-          //{"fill": "red", "from": new Date(), "to": new Date()},
-        ];
-
-        fill_ranges = [ // retirement
-          {"fill": "white"},
-          {"fill": "skyblue","to": new Date()},
-          {"fill": "lightgreen", "from": 65},
-          {"fill": "lightgray", "from": year_le_at_birth, "to": year_le_at_birth},
-          {"fill": "darkgray", "from": year_median, "to": year_median},
-          {"fill": "gray", "from": year_peak, "to": year_peak},
-          //{"fill": "red", "from": new Date(), "to": new Date()},
-        ];
-
-        fill_ranges = [ // empty
-          {"fill": "white"},
-          {"fill": "lightgray", "from": year_le_at_birth, "to": year_le_at_birth},
-          {"fill": "darkgray", "from": year_median, "to": year_median},
-          {"fill": "gray", "from": year_peak, "to": year_peak},
-        ];
-        */
-        //const skins = {"empty": []};
 
         const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, date);
         let ch = calendar_height + 1;
@@ -590,16 +482,15 @@
           ch += calendar_weeks_numbers_height + calendar_new_year_label_height; // idk why
         let content = '<svg height="96%" viewBox="0 0 ' + calendar_width + ' ' + ch + '" xmlns="http://www.w3.org/2000/svg" style="width: 89%; margin: 15px 6% 0 5%;">';
 
-        content += prepare_weeks_numbers();
-        content += prepare_years_numbers(date);
+        content += draw_weeks_numbers();
+        content += draw_years_numbers(date);
 
         const week_new_year = calculate_new_year_week(date);
 
         const age = get_age(date);
         const special_ages = [1, 2, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, age + 1, number_of_years];  // to draw integral values for these years
-        //const integrals_by_ages = get_integrals_by_ages(data_to_build, special_ages);
+        //const integrals_by_ages = get_integrals_by_ages(data_to_build_mx, special_ages);
 
-        //const gradients = generate_gradients(age + 1);
         let total_weeks = 1;
         for (let year = 1; year <= number_of_years; year++) {
           let y_offset = calendar_height - year * calendar_step_vertical;
@@ -629,9 +520,6 @@
                   stroke = range["stroke"];
                 if (range["stroke_width"])
                   stroke_width = range["stroke_width"];
-
-                //if (year < age + 1 && week <= total_weeks) // gradients
-                //  circle_color = gradients[year - 1][week - 1];
               }
               if (range["to_week"] == total_weeks && range["animate"] == "blink")
                 content += 'class="blink" ';
@@ -649,12 +537,10 @@
 
               content += `<circle cx="${cx}" cy="${cy}" r="0.2" fill="${dot_color}" stroke="${dot_color}" stroke-width="0.2"/>`;
             }
-            //if (year == year_percentiles['50'] || year == year_percentiles['80'] || year == year_percentiles['90'])
-            //  content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + 0.2 + '" fill="" stroke="black" stroke-width="0.1"/>';
 
             // drawing percentiles labels
             //const cx2 = cx + 5;
-            /*
+            
             const cx2 = 20;
             const cx4 = cx2 + 9;
             let cy2 = cy + 1;
@@ -665,60 +551,56 @@
               let percentile = percentiles_to_draw[i];
               const cx5 = cx2 - 3;
               const cy5 = cy2 - 3;
-              if (year == year_percentiles2[percentile] && week == number_of_weeks_in_a_row) {
-                content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="20" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
-                content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx4 + '" y="' + cy2 + '">';
-                content += percentile + '%' + '</text>';
+              if (country_code != country_code_latest) {
+                if (year == year_percentiles_dx2[percentile] && week == number_of_weeks_in_a_row) {
+                  content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="20" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
+                  content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx4 + '" y="' + cy2 + '">';
+                  content += percentile + '%' + '</text>';
+                }
               }
-              if (year == year_percentiles[percentile] && week == number_of_weeks_in_a_row) {
+              if (year == year_percentiles_dx[percentile] && week == number_of_weeks_in_a_row) {
                 content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="10" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
 
                 content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '">';
                 content += percentile + '%' + '</text>';
               }
             }
-            */
 
             total_weeks++;
           }
 
-          // drawing integrals for special ages
-          //console.log(integrals_by_ages, year_percentiles)
+          // drawing labels for special ages
           if (special_ages.includes(year)) {
-            //if (!Object.keys(year_percentiles).includes(year.toString())) {
-              //console.log(year)
+            //if (!Object.keys(year_percentiles_dx).includes(year.toString())) {
               let cy2 = cy + 1;
               if (is_mobile)
                 cy2 = cy2 - 10 + 1;
               const cx2 = calendar_step_horizontal * number_of_weeks_in_a_row + calendar_years_numbers_width + 10 - circle_radius;
               content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '">';
-              //console.log(year, data_mx[country_code][sex][birthday_year])
                 content += data_mx[country_code][sex][birthday_year][year - 1].toFixed(1) + '%' + '</text>';
             //}
-                if (country_code != country_code_latest) {
+            if (country_code != country_code_latest) {
               let cx6 = cx2 + 10;
               if (data_mx[country_code][sex][birthday_year][year - 1] > 10)
                 cx6 += 2;
               content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx6 + '" y="' + cy2 + '">';
                 content += data_mx[country_code_latest][sex][last_year_in_dataset][year - 1].toFixed(1) + '%' + '</text>';
-              }
+            }
           }
         }
         
-        
-        antistroke = "gray"
-        content += prepare_lines(data_to_build2, "gray", age);
         antistroke = "black"
-        content += prepare_lines(data_to_build, "black", age);
+        content += draw_line("mx", data_to_build_mx2, "gray", age);
+        content += draw_line("mx", data_to_build_mx, "black", age);
+        content += draw_line("dx", data_to_build_dx2, "gray", age);
+        content += draw_line("dx", data_to_build_dx, "black", age);
 
         content += prepare_label_new_year(week_new_year);
         //content += prepare_label_integral();
-        //content += prepare_label_deaths();
+        //content += prepare_label_dotss();
         content += '</svg>';
 
         document.getElementById("calendar").innerHTML = content;
-
-        data_mx_all = []; // reset
       }
 
       window.onload = function() {
