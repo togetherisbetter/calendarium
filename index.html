@@ -154,24 +154,6 @@
         return percentiles;
       }
 
-      function get_integrals_by_ages(range, ages) {
-        const total = get_total(range);
-        let integrals_by_ages = {};
-
-        for (let j = 0; j < ages.length; j++) {
-          const age = ages[j];
-          let integral = 0;
-          for (let i = 0; i < range.length; i++) {
-            if (i < age)
-              integral += range[i] / total;
-            else
-              break;
-          }
-          integrals_by_ages[age] = (integral * 100).toFixed(1);
-        }
-        return integrals_by_ages;
-      }
-
       function get_peak_value(range) {
         const max_value = Math.max(...range);
         const peak = range.indexOf(max_value) + 1;  // to start from 1
@@ -392,22 +374,22 @@
         return content;
       }
 
-      function draw_line(mdx, data, stroke, age) {
+      function draw_line(mdx, data, stroke, age, stroke_dasharray) {
         let content = '';
 
         //const antistroke = "black"
         const stroke_width = 0.5;
         //const antistroke_width = stroke_width * 1.5;
         let position = "left";
-        let scale_y = 0.8;
+        let scale_y = 0.7;
         if (mdx == "mx") {
           position = "right";
           scale_y = 1;
         }
         const coordinates = make_coordinates(mdx, data, age, position, scale_y);
 
-        content += draw_polyline(coordinates.dotss_before_age, antistroke, antistroke_width);
-        content += draw_polyline(coordinates.dotss_after_age, stroke, stroke_width);
+        content += draw_polyline(coordinates.dotss_before_age, antistroke, antistroke_width, stroke_dasharray);
+        content += draw_polyline(coordinates.dotss_after_age, stroke, stroke_width, stroke_dasharray);
         //content += draw_polyline(coordinates.integral_before_age, antistroke, antistroke_width);
         //content += draw_polyline(coordinates.integral_after_age, stroke, stroke_width);
 
@@ -457,19 +439,23 @@
         const birthday_date = new Date(date);
         let birthday_year = birthday_date.getFullYear();
 
+        await get_mortality_data(country_code, sex, birthday_year);
+        const data_to_draw_mx_birthday = data_mx[country_code][sex][birthday_year];
+        const data_to_draw_dx_birthday = data_dx[country_code][sex][birthday_year];
+        
         await get_mortality_data(country_code, sex);
-        birthday_year = last_year_in_dataset
-        const data_to_build_mx = data_mx[country_code][sex][birthday_year];
-        const data_to_build_dx = data_dx[country_code][sex][birthday_year];
+        // birthday_year = last_year_in_dataset
+        const data_to_draw_mx_latest = data_mx[country_code][sex][last_year_in_dataset];
+        const data_to_draw_dx_latest = data_dx[country_code][sex][last_year_in_dataset];
 
         await get_mortality_data(country_code_latest, sex); // to fix last year will be calculated automatically because not set
-        const data_to_build_mx2 = data_mx[country_code_latest][sex][last_year_in_dataset];
-        const data_to_build_dx2 = data_dx[country_code_latest][sex][last_year_in_dataset];
+        const data_to_draw_mx_another_country = data_mx[country_code_latest][sex][last_year_in_dataset];
+        const data_to_draw_dx_another_country = data_dx[country_code_latest][sex][last_year_in_dataset];
         //const all_data = data_all;
 
         const percentiles_to_draw = [50, 80, 90];
-        const year_percentiles_dx = get_percentiles(data_to_build_dx, percentiles_to_draw);
-        const year_percentiles_dx2 = get_percentiles(data_to_build_dx2, percentiles_to_draw);
+        const year_percentiles_dx_latest = get_percentiles(data_to_draw_dx_latest, percentiles_to_draw);
+        const year_percentiles_dx_another_country = get_percentiles(data_to_draw_dx_another_country, percentiles_to_draw);
 
         let fill_ranges = [ // init
           {"fill": "white"},
@@ -495,7 +481,6 @@
 
         const age = get_age(date);
         const special_ages = [1, 2, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, age + 1, number_of_years];  // to draw integral values for these years
-        //const integrals_by_ages = get_integrals_by_ages(data_to_build_mx, special_ages);
 
         let total_weeks = 1;
         for (let year = 1; year <= number_of_years; year++) {
@@ -558,13 +543,13 @@
               const cx5 = cx2 - 3;
               const cy5 = cy2 - 3;
               if (country_code != country_code_latest) {
-                if (year == year_percentiles_dx2[percentile] && week == number_of_weeks_in_a_row) {
+                if (year == year_percentiles_dx_another_country[percentile] && week == number_of_weeks_in_a_row) {
                   content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="20" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
                   content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx4 + '" y="' + cy2 + '">';
                   content += percentile + '%' + '</text>';
                 }
               }
-              if (year == year_percentiles_dx[percentile] && week == number_of_weeks_in_a_row) {
+              if (year == year_percentiles_dx_latest[percentile] && week == number_of_weeks_in_a_row) {
                 content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="10" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
 
                 content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '">';
@@ -596,10 +581,12 @@
         }
         
         antistroke = "black"
-        content += draw_line("mx", data_to_build_mx2, "gray", age);
-        content += draw_line("mx", data_to_build_mx, "black", age);
-        content += draw_line("dx", data_to_build_dx2, "gray", age);
-        content += draw_line("dx", data_to_build_dx, "black", age);
+        content += draw_line("mx", data_to_draw_mx_birthday, "black", age);
+        content += draw_line("mx", data_to_draw_mx_another_country, "gray", age, "4 2");
+        content += draw_line("mx", data_to_draw_mx_latest, "gray", age);
+        content += draw_line("dx", data_to_draw_dx_birthday, "black", age);
+        content += draw_line("dx", data_to_draw_dx_another_country, "gray", age, "4 2");
+        content += draw_line("dx", data_to_draw_dx_latest, "gray", age);
 
         content += prepare_label_new_year(week_new_year);
         //content += prepare_label_integral();
