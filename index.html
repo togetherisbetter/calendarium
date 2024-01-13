@@ -545,19 +545,19 @@
               const cy5 = cy2 - 3;
               if (country_code != country_code_latest) {
                 if (year == year_percentiles_dx_another_country[percentile] && week == number_of_weeks_in_a_row) {
-                  content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="20" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
+                  content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="20" height="4" rx="0" fill="red" stroke="white" stroke-width="0.3" />';
                   content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx4 + '" y="' + cy2 + '">';
                   content += percentile + '%' + '</text>';
                 }
               }
               if (year == year_percentiles_dx_birthday[percentile] && week == number_of_weeks_in_a_row) {
-                content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="10" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
+                content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="10" height="4" rx="0" fill="green" stroke="white" stroke-width="0.3" />';
 
                 content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '" font-weight="bold">';
                 content += percentile + '%' + '</text>';
               }
               if (year == year_percentiles_dx_latest[percentile] && week == number_of_weeks_in_a_row) {
-                content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="10" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
+                content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="10" height="4" rx="0" fill="blue" stroke="white" stroke-width="0.3" />';
 
                 content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '" font-weight="bold">';
                 content += percentile + '%' + '</text>';
@@ -589,9 +589,11 @@
         
         antistroke = "black"
         content += draw_line("mx", data_to_draw_mx_birthday, "black", age);
+        content += draw_line("dx", data_to_draw_dx_birthday, "black", age);
+
+        antistroke = "gray"
         content += draw_line("mx", data_to_draw_mx_another_country, "gray", age, "4 2");
         content += draw_line("mx", data_to_draw_mx_latest, "gray", age);
-        content += draw_line("dx", data_to_draw_dx_birthday, "black", age);
         content += draw_line("dx", data_to_draw_dx_another_country, "gray", age, "4 2");
         content += draw_line("dx", data_to_draw_dx_latest, "gray", age);
 
