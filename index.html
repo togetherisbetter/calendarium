@@ -169,11 +169,11 @@
         return generate_url(user_values) + `&cid=${calendar_id}&a=abc&b=cde&c=def`;
       }
 
-      function init_qrcode(user_values) {
+      function init_qrcode(user_values, size) {
         var qrcode = new QRCode(document.getElementById("qrcode"), {
           text: generate_qrcode_url(user_values),
-          width: 128,
-          height: 128,
+          width: size,
+          height: size,
           colorDark : "black",
           colorLight : "white",
           correctLevel : QRCode.CorrectLevel.L,  // L, M, Q, H
@@ -254,7 +254,7 @@
         let cy2 = cy + 3 + 1;
         if (is_mobile)
           cy2 -= 9;
-        content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="' + cx2 + '" y="' + cy2 + '" font-weight="bold">Deaths at age</text>';
+        content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="' + cx2 + '" y="' + cy2 + '" font-weight="bold-">Deaths at age</text>';
 /*
         const cy4 = cy2 + calendar_step_vertical;
         content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="' + cx2 + '" y="' + cy4 + '" font-weight="bold">RU1987M</text>';
@@ -272,12 +272,12 @@
         let cy = calendar_height - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height + 1;
         if (is_mobile)
           cy += 10;
-        const cx = cx2 - 39 - 4;
-        let content = '<rect x="' + cx + '" y="' + cy + '" width="45" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
+        const cx = cx2 - 29 - 5;
+        let content = '<rect x="' + cx + '" y="' + cy + '" width="35" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
         let cy2 = cy + 3;
         if (is_mobile)
           cy2 -= 9;
-        content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="' + cx2 + '" y="' + cy2 + '" font-weight="bold">Probability to die at age</text>';
+        content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="' + cx2 + '" y="' + cy2 + '" font-weight="bold-">Chance to die at age</text>';
         return content
       }
 
@@ -668,12 +668,12 @@
           set_user_selected_parameters(user_values);
 
         draw_calendar(user_values);
-        //qrcode = init_qrcode(user_values);
+        qrcode = init_qrcode(user_values, 64);
       };
     </script>
   </head>
   <body>
-    <!--div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 84.1%; left: 66.4%; border-radius: 0px;"></div-->
+    <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 83.9%; left: 65%; border-radius: 0px; display: none;"></div>
     <div id="calendar"></div>
 
     <table style="color: black; width: 100%; margin: 20px 0 10% 0; font-size: 0.7em; display: none-;">
