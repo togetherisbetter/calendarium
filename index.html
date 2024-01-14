@@ -124,7 +124,8 @@
             enrich_data_mdx_dict(data_mx, mx_data, country_code, sex, target_year);
             data_all['dx'] = data_all['dx'].concat(dx_data.map(Number));
             enrich_data_mdx_dict(data_dx, dx_data, country_code, sex, target_year);
-          });
+          }
+        );
       }
 
       function get_total(range) {
@@ -460,6 +461,10 @@
         const data_to_draw_mx_birthday = data_mx[country_code][sex][birthday_year];
         const data_to_draw_dx_birthday = data_dx[country_code][sex][birthday_year];
         
+        let have_data_for_charts = true
+        if (data_to_draw_dx_birthday.length == 0)
+          have_data_for_charts = false;
+
         await get_mortality_data(country_code, sex);
         // birthday_year = last_year_in_dataset
         const data_to_draw_mx_latest = data_mx[country_code][sex][last_year_in_dataset];
@@ -470,10 +475,12 @@
         const data_to_draw_dx_another_country = data_dx[country_code_latest][sex][last_year_in_dataset];
         //const all_data = data_all;
 
-        const percentiles_to_draw = [50, 80, 90];
-        const year_percentiles_dx_birthday = get_percentiles(data_to_draw_dx_birthday, percentiles_to_draw);
-        const year_percentiles_dx_latest = get_percentiles(data_to_draw_dx_latest, percentiles_to_draw);
-        const year_percentiles_dx_another_country = get_percentiles(data_to_draw_dx_another_country, percentiles_to_draw);
+        if (have_data_for_charts) {
+          const percentiles_to_draw = [50, 80, 90];
+          const year_percentiles_dx_birthday = get_percentiles(data_to_draw_dx_birthday, percentiles_to_draw);
+          const year_percentiles_dx_latest = get_percentiles(data_to_draw_dx_latest, percentiles_to_draw);
+          const year_percentiles_dx_another_country = get_percentiles(data_to_draw_dx_another_country, percentiles_to_draw);
+        }
 
         let fill_ranges = [ // init
           {"fill": "white"},
@@ -550,37 +557,39 @@
             // drawing percentiles labels
             //const cx2 = cx + 5;
             
-            const cx2 = 19;
-            const cx4 = cx2 + 10;
-            let cy2 = cy + 1;
-            if (is_mobile)
-              cy2 = cy2 - 10 + 1;
-
-            for (let i = 0; i < percentiles_to_draw.length; i++) {
-              let percentile = percentiles_to_draw[i];
-              const cx5 = cx2 - 2;
-              let cy5 = cy2 - 3;
+            if (have_data_for_charts) {
+              const cx2 = 19;
+              const cx4 = cx2 + 10;
+              let cy2 = cy + 1;
               if (is_mobile)
-                cy5 = cy5 + 10 - 1;
+                cy2 = cy2 - 10 + 1;
 
-              if (country_code != country_code_latest) {
-                if (year == year_percentiles_dx_another_country[percentile] && week == number_of_weeks_in_a_row) {
-                  content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="20" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
-                  content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx4 + '" y="' + cy2 + '">';
+              for (let i = 0; i < percentiles_to_draw.length; i++) {
+                let percentile = percentiles_to_draw[i];
+                const cx5 = cx2 - 2;
+                let cy5 = cy2 - 3;
+                if (is_mobile)
+                  cy5 = cy5 + 10 - 1;
+
+                if (country_code != country_code_latest) {
+                  if (year == year_percentiles_dx_another_country[percentile] && week == number_of_weeks_in_a_row) {
+                    content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="20" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
+                    content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx4 + '" y="' + cy2 + '">';
+                    content += percentile + '%' + '</text>';
+                  }
+                }
+                if (year == year_percentiles_dx_birthday[percentile] && week == number_of_weeks_in_a_row) {
+                  content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="10" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
+
+                  content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '" font-weight="bold">';
                   content += percentile + '%' + '</text>';
                 }
-              }
-              if (year == year_percentiles_dx_birthday[percentile] && week == number_of_weeks_in_a_row) {
-                content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="10" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
+                if (year == year_percentiles_dx_latest[percentile] && week == number_of_weeks_in_a_row) {
+                  content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="10" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
 
-                content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '" font-weight="bold">';
-                content += percentile + '%' + '</text>';
-              }
-              if (year == year_percentiles_dx_latest[percentile] && week == number_of_weeks_in_a_row) {
-                content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="10" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
-
-                content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '" font-weight="bold">';
-                content += percentile + '%' + '</text>';
+                  content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '" font-weight="bold">';
+                  content += percentile + '%' + '</text>';
+                }
               }
             }
 
@@ -588,28 +597,32 @@
           }
 
           // drawing labels for special ages
-          if (special_ages.includes(year)) {
-            //if (!Object.keys(year_percentiles_dx).includes(year.toString())) {
-              let cy2 = cy + 1;
-              if (is_mobile)
-                cy2 = cy2 - 10 + 1;
-              const cx2 = calendar_step_horizontal * number_of_weeks_in_a_row + calendar_years_numbers_width + 10 - circle_radius;
-              content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '" font-weight="bold">';
-                content += data_mx[country_code][sex][birthday_year][year - 1].toFixed(1) + '%' + '</text>';
-            //}
-            if (country_code != country_code_latest) {
-              let cx6 = cx2 + 11;
-              if (data_mx[country_code][sex][birthday_year][year - 1] > 10)
-                cx6 += 2;
-              content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx6 + '" y="' + cy2 + '">';
-                content += data_mx[country_code_latest][sex][last_year_in_dataset][year - 1].toFixed(1) + '%' + '</text>';
+          if (have_data_for_charts) {
+            if (special_ages.includes(year)) {
+              //if (!Object.keys(year_percentiles_dx).includes(year.toString())) {
+                let cy2 = cy + 1;
+                if (is_mobile)
+                  cy2 = cy2 - 10 + 1;
+                const cx2 = calendar_step_horizontal * number_of_weeks_in_a_row + calendar_years_numbers_width + 10 - circle_radius;
+                content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '" font-weight="bold">';
+                  content += data_mx[country_code][sex][birthday_year][year - 1].toFixed(1) + '%' + '</text>';
+              //}
+              if (country_code != country_code_latest) {
+                let cx6 = cx2 + 11;
+                if (data_mx[country_code][sex][birthday_year][year - 1] > 10)
+                  cx6 += 2;
+                content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx6 + '" y="' + cy2 + '">';
+                  content += data_mx[country_code_latest][sex][last_year_in_dataset][year - 1].toFixed(1) + '%' + '</text>';
+              }
             }
           }
         }
-        
-        antistroke = "black"
-        content += draw_line("mx", data_to_draw_mx_birthday, "black", age);
-        content += draw_line("dx", data_to_draw_dx_birthday, "black", age);
+
+        if (have_data_for_charts) {
+          antistroke = "black"
+          content += draw_line("mx", data_to_draw_mx_birthday, "black", age);
+          content += draw_line("dx", data_to_draw_dx_birthday, "black", age);
+        }
 
         antistroke = "gray"
         const latest = "gray"
