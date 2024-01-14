@@ -1,5 +1,6 @@
 <html>
   <head>
+    <title>Calendarium - smart life calendar with data skins</title>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-BPS2S5MCLH"></script>
     <script>
@@ -161,8 +162,7 @@
       }
 
       function generate_qrcode_url(user_values) {
-        const url = `${calendar_qrcode_url_domain}?bd=${user_values.birthday}&cc=${user_values.country_code}&&ccl=${user_values.country_code_latest}&s=${user_values.sex}&cid=${calendar_id}&a=abc&b=cde&c=def`
-        //console.log(url)
+        const url = `${calendar_qrcode_url_domain}?p=${user_values.birthday},${user_values.country_code},${user_values.country_code_latest},${user_values.sex}&cid=${calendar_id}&a=abc&b=cde&c=def`
         return url;
       }
 
@@ -178,7 +178,7 @@
         return qrcode;
       }
 
-      function get_user_selected_values() {
+      function get_user_selected_parameters() {
         const birthday = document.getElementById('birthday').value;
         const country_code = document.getElementById('country_code').value;
         const country_code_latest = document.getElementById('country_code_latest').value;
@@ -186,17 +186,33 @@
         return {'birthday': birthday, 'country_code': country_code, 'country_code_latest': country_code_latest, 'sex': sex};
       }
 
-      function recalculate_calendar() {
-        const user_values = get_user_selected_values();
+      function set_user_selected_parameters(user_values) {
+        document.getElementById('birthday').value = user_values.birthday;
+        document.getElementById('country_code').value = user_values.country_code;
+        document.getElementById('country_code_latest').value = user_values.country_code_latest;
+        document.getElementById('sex').value = user_values.sex;
+      }
+
+      function update_qrcode_url(new_url) {
+        qrcode.clear();
+        qrcode.makeCode(new_url);
+      }
+
+      function redraw_calendar() {
+        const user_values = get_user_selected_parameters();
+        const new_url = generate_qrcode_url(user_values);
+        if (window.location.protocol != 'file:') {  // doesn't work for local files
+          window.history.replaceState(null, null, new_url);
+        }
+
         draw_calendar(user_values);
-        //qrcode.clear();
-        //qrcode.makeCode(generate_qrcode_url(user_values));
+        //update_qrcode_url(new_url);
       }
 
       function change_country_of_birth() {
         const country_code = document.getElementById('country_code').value;
         document.getElementById('country_code_latest').value = country_code;
-        recalculate_calendar();
+        redraw_calendar();
       }
 
       function calculate_weeks_between(earlier_date, later_date) {  // https://stackoverflow.com/questions/542938/how-to-calculate-number-of-days-between-two-dates
@@ -502,7 +518,7 @@
             
             let circle_color = "";
             let stroke = "black";
-            let stroke_width = "0.1";
+            let stroke_width = "0.07";
             let blink = false;
             for (let i in fill_ranges_transformed) {
               const range = fill_ranges_transformed[i];
@@ -595,10 +611,11 @@
         content += draw_line("dx", data_to_draw_dx_birthday, "black", age);
 
         antistroke = "gray"
+        const latest = "gray"
         content += draw_line("mx", data_to_draw_mx_another_country, "gray", age, "4 2");
-        content += draw_line("mx", data_to_draw_mx_latest, "gray", age);
+        content += draw_line("mx", data_to_draw_mx_latest, latest, age);
         content += draw_line("dx", data_to_draw_dx_another_country, "gray", age, "4 2");
-        content += draw_line("dx", data_to_draw_dx_latest, "gray", age);
+        content += draw_line("dx", data_to_draw_dx_latest, latest, age);
 
         content += prepare_label_new_year(week_new_year);
         //content += prepare_label_integral();
@@ -608,8 +625,23 @@
         document.getElementById("calendar").innerHTML = content;
       }
 
+      function get_parameters_from_url() {
+        const current_url = new URL(window.location.href);
+        const params = current_url.searchParams.get("p");
+        if (!params)
+          return;
+
+        const splitted_params = params.split(',');
+        return {'birthday': splitted_params[0], 'country_code': splitted_params[1], 'country_code_latest': splitted_params[2], 'sex': splitted_params[3]};
+      }
+
       window.onload = function() {
-        const user_values = get_user_selected_values();
+        let user_values = get_parameters_from_url();
+        if (!user_values)
+          user_values = get_user_selected_parameters();
+        else
+          set_user_selected_parameters(user_values);
+
         draw_calendar(user_values);
         //qrcode = init_qrcode(user_values);
       };
@@ -623,7 +655,7 @@
       <tr>
         <td class="right">Birthday:</td>
         <td class="left">
-          <input id="birthday" type="date" value="1987-06-30" onchange="recalculate_calendar();">
+          <input id="birthday" type="date" value="1987-06-30" onchange="redraw_calendar();">
         </td>
       </tr>
       <tr>
@@ -675,7 +707,7 @@
       <tr>
         <td class="right">Country mostly lived in during last 10+ years:</td>
         <td class="left">
-          <select id="country_code_latest" onchange="recalculate_calendar();">
+          <select id="country_code_latest" onchange="redraw_calendar();">
             <option value="at">Austria</option>
             <option value="au">Australia</option>
             <option value="be">Belgium</option>
@@ -721,7 +753,7 @@
       <tr>
         <td class="right">Sex at birth:</td>
         <td class="left">
-          <select id="sex" onchange="recalculate_calendar();">
+          <select id="sex" onchange="redraw_calendar();">
             <option value="m" selected>Male</option>
             <option value="f">Female</option>
           </select>
