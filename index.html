@@ -475,13 +475,6 @@
         const data_to_draw_dx_another_country = data_dx[country_code_latest][sex][last_year_in_dataset];
         //const all_data = data_all;
 
-        if (have_data_for_charts) {
-          const percentiles_to_draw = [50, 80, 90];
-          const year_percentiles_dx_birthday = get_percentiles(data_to_draw_dx_birthday, percentiles_to_draw);
-          const year_percentiles_dx_latest = get_percentiles(data_to_draw_dx_latest, percentiles_to_draw);
-          const year_percentiles_dx_another_country = get_percentiles(data_to_draw_dx_another_country, percentiles_to_draw);
-        }
-
         let fill_ranges = [ // init
           {"fill": "white"},
           {"fill": "black", "to": new Date(), "stroke_width": "0.2"},
@@ -558,6 +551,11 @@
             //const cx2 = cx + 5;
             
             if (have_data_for_charts) {
+              const percentiles_to_draw = [50, 80, 90];
+              const year_percentiles_dx_birthday = get_percentiles(data_to_draw_dx_birthday, percentiles_to_draw);
+              const year_percentiles_dx_latest = get_percentiles(data_to_draw_dx_latest, percentiles_to_draw);
+              const year_percentiles_dx_another_country = get_percentiles(data_to_draw_dx_another_country, percentiles_to_draw);
+
               const cx2 = 19;
               const cx4 = cx2 + 10;
               let cy2 = cy + 1;
