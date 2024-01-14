@@ -489,6 +489,12 @@
         return new_fill_ranges;
       }
 
+      function draw_label(data) {
+        content = `<rect x="${data.rect.x}" y="${data.rect.y}" width="${data.rect.width}" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />`;
+        content += `<text font-size="3" fill="${data.text.fill}" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${data.text.x}" y="${data.text.y}" font-weight="${data.text.weight}">${data.text.text}</text>`;
+        return content;
+      }
+
       async function draw_calendar(user_values) {
         data_all = {'mx': [], 'dx': []}; // reset
 
@@ -513,17 +519,18 @@
 
         await get_mortality_data(country_code, sex);
         // birthday_year = last_year_in_dataset
-        const data_to_draw_mx_latest = data_mx[country_code][sex][last_year_in_dataset];
-        const data_to_draw_dx_latest = data_dx[country_code][sex][last_year_in_dataset];
-        const label_chart_second = `${country_code}${last_year_in_dataset}${sex}`.toUpperCase();
         const last_year_in_dataset_1 = last_year_in_dataset;
+        const data_to_draw_mx_latest = data_mx[country_code][sex][last_year_in_dataset_1];
+        const data_to_draw_dx_latest = data_dx[country_code][sex][last_year_in_dataset_1];
+        const label_chart_second = `${country_code}${last_year_in_dataset_1}${sex}`.toUpperCase();
 
         if (country_code_latest != country_code)
           await get_mortality_data(country_code_latest, sex); // to fix last year will be calculated automatically because not set
-        const data_to_draw_mx_another_country = data_mx[country_code_latest][sex][last_year_in_dataset];
-        const data_to_draw_dx_another_country = data_dx[country_code_latest][sex][last_year_in_dataset];
-        const label_chart_third = `${country_code_latest}${last_year_in_dataset}${sex}`.toUpperCase();
         const last_year_in_dataset_2 = last_year_in_dataset;
+        const data_to_draw_mx_another_country = data_mx[country_code_latest][sex][last_year_in_dataset_2];
+        const data_to_draw_dx_another_country = data_dx[country_code_latest][sex][last_year_in_dataset_2];
+        const label_chart_third = `${country_code_latest}${last_year_in_dataset_2}${sex}`.toUpperCase();
+        
         //const all_data = data_all;
 
         const percentiles_to_draw = [50, 80, 90];
@@ -557,6 +564,8 @@
         const special_ages = [1, 2, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, age + 1, number_of_years];  // to draw integral values for these years
 
         let total_weeks = 1;
+        //let percentiles_labels = {};
+        let labels = '';
         for (let year = 1; year <= number_of_years; year++) {
           let y_offset = calendar_height - year * calendar_step_vertical;
           if (is_mobile)
@@ -607,68 +616,52 @@
               content += `<circle cx="${cx}" cy="${cy}" r="0.2" fill="${dot_color}" stroke="${dot_color}" stroke-width="0.2"/>`;
             }
 
-            
-              /*
-              const percentiles_to_draw = [50, 80, 90];
-              const year_percentiles_dx_birthday = get_percentiles(data_to_draw_dx_birthday, percentiles_to_draw);
-              const year_percentiles_dx_latest = get_percentiles(data_to_draw_dx_latest, percentiles_to_draw);
-              const year_percentiles_dx_another_country = get_percentiles(data_to_draw_dx_another_country, percentiles_to_draw);
-              */
-              const cx2 = 19;
-              const cx4 = cx2 + 10;
-              let cy2 = cy + 1;
-              if (is_mobile)
-                cy2 = cy2 - 10 + 1;
-
-              for (let i = 0; i < percentiles_to_draw.length; i++) {
-                let percentile = percentiles_to_draw[i];
-                const cx5 = cx2 - 2;
-                let cy5 = cy2 - 3;
-                if (is_mobile)
-                  cy5 = cy5 + 10 - 1;
-                
-                if (country_code != country_code_latest) {
-                  if (year == year_percentiles_dx_another_country[percentile] && week == number_of_weeks_in_a_row) {
-                    content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="20" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
-                    content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx4 + '" y="' + cy2 + '">';
-                    content += percentile + '%' + '</text>';
-                  }
-                }
-                if (have_data_for_charts) {
-                  if (year == year_percentiles_dx_birthday[percentile] && week == number_of_weeks_in_a_row) {
-                    content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="10" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
-
-                    content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '" font-weight="bold">';
-                    content += percentile + '%' + '</text>';
-                  }
-                }
-                if (year == year_percentiles_dx_latest[percentile] && week == number_of_weeks_in_a_row) {
-                  content += '<rect x="' + cx5 + '" y="' + cy5 + '" width="10" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
-
-                  content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '" font-weight="bold">';
-                  content += percentile + '%' + '</text>';
-                }
-              }
-
             total_weeks++;
+          }
+
+          const cx2 = 19;
+          const cx4 = cx2 + 10;
+          let cy2 = cy + 1;
+          if (is_mobile)
+            cy2 = cy2 - 10 + 1;
+
+          for (let i = 0; i < percentiles_to_draw.length; i++) {
+            let percentile = percentiles_to_draw[i];
+            const cx5 = cx2 - 2;
+            let cy5 = cy2 - 3;
+            if (is_mobile)
+              cy5 = cy5 + 10 - 1;
+            
+            if (country_code != country_code_latest) {
+              if (year == year_percentiles_dx_another_country[percentile]) {
+                labels += draw_label({'rect': {'x': cx5, 'y': cy5, 'width': 20}, 'text': {'x': cx4, 'y': cy2, 'text': percentile + '%', 'fill': 'gray', 'weight': 'normal'}});
+              }
+            }
+            if (have_data_for_charts) {
+              if (year == year_percentiles_dx_birthday[percentile]) {
+                labels += draw_label({'rect': {'x': cx5, 'y': cy5, 'width': 10}, 'text': {'x': cx2, 'y': cy2, 'text': percentile + '%', 'fill': 'black', 'font-weight': 'bold'}});
+              }
+            }
+            if (year == year_percentiles_dx_latest[percentile]) {
+              labels += draw_label({'rect': {'x': cx5, 'y': cy5, 'width': 10}, 'text': {'x': cx2, 'y': cy2, 'text': percentile + '%', 'fill': 'gray', 'font-weight': 'bold'}});
+            }
           }
 
           // drawing labels for special ages
           if (special_ages.includes(year)) {
-            //if (!Object.keys(year_percentiles_dx).includes(year.toString())) {
-              let cy2 = cy + 1;
-              if (is_mobile)
-                cy2 = cy2 - 10 + 1;
-              const cx2 = calendar_step_horizontal * number_of_weeks_in_a_row + calendar_years_numbers_width + 10 - circle_radius;
-              content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '" font-weight="bold">';
-                content += data_mx[country_code][sex][last_year_in_dataset_1][year - 1].toFixed(1) + '%' + '</text>';
-            //}
+            let cy2 = cy + 1;
+            if (is_mobile)
+              cy2 = cy2 - 10 + 1;
+            const cx2 = calendar_step_horizontal * number_of_weeks_in_a_row + calendar_years_numbers_width + 10 - circle_radius;
+            content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '" font-weight="bold">';
+              content += data_mx[country_code][sex][last_year_in_dataset_1][year - 1].toFixed(1) + '%' + '</text>';
+
             if (country_code != country_code_latest) {
               let cx6 = cx2 + 11;
               if (data_mx[country_code][sex][last_year_in_dataset_1][year - 1] > 10)
                 cx6 += 2;
               content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx6 + '" y="' + cy2 + '">';
-                content += data_mx[country_code_latest][sex][last_year_in_dataset][year - 1].toFixed(1) + '%' + '</text>';
+                content += data_mx[country_code_latest][sex][last_year_in_dataset_2][year - 1].toFixed(1) + '%' + '</text>';
             }
           }
         }
@@ -694,6 +687,7 @@
         content += draw_label_deaths();
 
         content += draw_legend(label_chart_first, label_chart_second, label_chart_third);
+        content += labels;
         content += '</svg>';
 
         document.getElementById("calendar").innerHTML = content;
@@ -722,7 +716,7 @@
     </script>
   </head>
   <body>
-    <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 83.9%; left: 65%; border-radius: 0px; display: none;"></div>
+    <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 83.9%; left: 64.9%; border-radius: 0px; display: none;"></div>
     <div id="calendar"></div>
 
     <table style="color: black; width: 100%; margin: 20px 0 10% 0; font-size: 0.7em; display: none-;">
