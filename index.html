@@ -161,9 +161,12 @@
         return {'peak': peak, 'value': max_value};
       }
 
-      function generate_qrcode_url(user_values) {
+      function generate_url(user_values) {
         const url = `${calendar_qrcode_url_domain}?p=${user_values.birthday},${user_values.country_code},${user_values.country_code_latest},${user_values.sex}&cid=${calendar_id}&a=abc&b=cde&c=def`
         return url;
+      }
+      function generate_qrcode_url(user_values) {
+        return generate_url(user_values) + `&cid=${calendar_id}&a=abc&b=cde&c=def`;
       }
 
       function init_qrcode(user_values) {
@@ -193,20 +196,19 @@
         document.getElementById('sex').value = user_values.sex;
       }
 
-      function update_qrcode_url(new_url) {
+      function update_qrcode_url(user_values) {
         qrcode.clear();
-        qrcode.makeCode(new_url);
+        qrcode.makeCode(generate_qrcode_url(user_values));
       }
 
       function redraw_calendar() {
         const user_values = get_user_selected_parameters();
-        const new_url = generate_qrcode_url(user_values);
         if (window.location.protocol != 'file:') {  // doesn't work for local files
-          window.history.replaceState(null, null, new_url);
+          window.history.replaceState(null, null, generate_url(user_values));
         }
 
         draw_calendar(user_values);
-        //update_qrcode_url(new_url);
+        //update_qrcode_url(user_values);
       }
 
       function change_country_of_birth() {
