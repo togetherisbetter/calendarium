@@ -539,17 +539,18 @@
 
             if (week == week_new_year) {  // dot for a new year week
               let dot_color = "black";
-              //if (year <= age) {
-              //  console.log(year)
-              //  dot_color = "white";
-              //}
+              if (year <= age) {
+                dot_color = "white";
+              }
+              if (year == age + 1) {
+                if (week_new_year < calculate_weeks_between(birthday_date, new Date()) % number_of_weeks_in_a_row) {
+                  dot_color = "white";
+                }
+              }
 
               content += `<circle cx="${cx}" cy="${cy}" r="0.2" fill="${dot_color}" stroke="${dot_color}" stroke-width="0.2"/>`;
             }
 
-            // drawing percentiles labels
-            //const cx2 = cx + 5;
-            
             if (have_data_for_charts) {
               const percentiles_to_draw = [50, 80, 90];
               const year_percentiles_dx_birthday = get_percentiles(data_to_draw_dx_birthday, percentiles_to_draw);
