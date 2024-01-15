@@ -127,6 +127,7 @@
       const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6 + 10 + 16;
       const calendar_qrcode_url_domain = "https://calendarium.me";
       const calendar_id = Math.random().toString(36).slice(2);  // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
+      const svg_margin = 5;
       var qrcode;
       var antistroke = "black";
       var antistroke_width = 1;
@@ -571,11 +572,15 @@
       }
 
       function calculate_svg_height() {
-        if (window.innerHeight > window.innerWidth) {
-          const svg_canvas_ratio_current = 316 / 521; // to fix
-          return (window.innerWidth / svg_canvas_ratio_current / window.innerHeight) * 100 - 10 + '%';
+        const ratio_current_svg_canvas = 521 / 316; // to fix
+        const margins_svg_canvas = svg_margin * 2;
+        const innerHeight = window.innerHeight - margins_svg_canvas;
+        const innerWidth = window.innerWidth - margins_svg_canvas;
+        const ratio_current_screen = innerHeight / (innerWidth - margins_svg_canvas);
+        if (ratio_current_screen > ratio_current_svg_canvas) {
+          return (((innerWidth * ratio_current_svg_canvas) * 100) / innerHeight) + '%';
         }
-        else
+        else  // optimize by height
           return '96%';
       }
 
@@ -639,7 +644,7 @@
         if (is_mobile)
           ch += calendar_weeks_numbers_height + calendar_new_year_label_height; // idk why
         const svg_height = calculate_svg_height();
-        let content = `<svg height="${svg_height}" viewBox="0 0 ${calendar_width} ${ch}" xmlns="http://www.w3.org/2000/svg" style="width: 89%; margin: 15px 6% 0 5%;">`;
+        let content = `<svg id="svg_canvas" height="${svg_height}" viewBox="0 0 ${calendar_width} ${ch}" xmlns="http://www.w3.org/2000/svg" style="width: calc(100% - ${svg_margin * 2}px); margin: ${svg_margin}px;">`;
 
         content += draw_weeks_numbers();
         content += draw_years_numbers(date);
