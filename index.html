@@ -639,11 +639,11 @@
             }
             if (have_data_for_charts) {
               if (year == year_percentiles_dx_birthday[percentile]) {
-                labels += draw_label({'rect': {'x': cx5, 'y': cy5, 'width': 10}, 'text': {'x': cx2, 'y': cy2, 'text': percentile + '%', 'fill': 'black', 'font-weight': 'bold'}});
+                labels += draw_label({'rect': {'x': cx5, 'y': cy5, 'width': 10}, 'text': {'x': cx2, 'y': cy2, 'text': percentile + '%', 'fill': 'black', 'weight': 'bold'}});
               }
             }
             if (year == year_percentiles_dx_latest[percentile]) {
-              labels += draw_label({'rect': {'x': cx5, 'y': cy5, 'width': 10}, 'text': {'x': cx2, 'y': cy2, 'text': percentile + '%', 'fill': 'gray', 'font-weight': 'bold'}});
+              labels += draw_label({'rect': {'x': cx5, 'y': cy5, 'width': 10}, 'text': {'x': cx2, 'y': cy2, 'text': percentile + '%', 'fill': 'gray', 'weight': 'bold'}});
             }
           }
 
