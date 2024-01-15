@@ -188,6 +188,8 @@
         const country_code = document.getElementById('country_code').value;
         const country_code_latest = document.getElementById('country_code_latest').value;
         const sex_to_compare = document.getElementById('sex_to_compare').value;
+        if (!sex_to_compare)
+          sex_to_compare = sex;
         return {'birthday': birthday, 'country_code': country_code, 'country_code_latest': country_code_latest, 'sex': sex, 'sex_to_compare': sex_to_compare};
       }
 
@@ -721,7 +723,10 @@
           return;
 
         const splitted_params = params.split(',');
-        return {'birthday': splitted_params[0], 'country_code': splitted_params[1], 'country_code_latest': splitted_params[2], 'sex': splitted_params[3], 'sex_to_compare': splitted_params[4]};
+        let sex_to_compare = splitted_params[4];
+        if (!sex_to_compare)
+          sex_to_compare = splitted_params[3]
+        return {'birthday': splitted_params[0], 'country_code': splitted_params[1], 'country_code_latest': splitted_params[2], 'sex': splitted_params[3], 'sex_to_compare': sex_to_compare};
       }
 
       window.onload = function() {
