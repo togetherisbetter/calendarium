@@ -570,6 +570,15 @@
         return `<text font-size="3" fill="${data.color}" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${data.x}" y="${data.y}" font-weight="${data.weight}">${data.text}</text>`;
       }
 
+      function calculate_svg_height() {
+        if (window.innerHeight > window.innerWidth) {
+          const svg_canvas_ratio_current = 316 / 521; // to fix
+          return (window.innerWidth / svg_canvas_ratio_current / window.innerHeight) * 100 - 10 + '%';
+        }
+        else
+          return '96%';
+      }
+
       async function draw_calendar(user_values) {
         data_all = {'mx': [], 'dx': []}; // reset
 
@@ -629,7 +638,8 @@
         let ch = calendar_height + 1;
         if (is_mobile)
           ch += calendar_weeks_numbers_height + calendar_new_year_label_height; // idk why
-        let content = '<svg height="96%" viewBox="0 0 ' + calendar_width + ' ' + ch + '" xmlns="http://www.w3.org/2000/svg" style="width: 89%; margin: 15px 6% 0 5%;">';
+        const svg_height = calculate_svg_height();
+        let content = `<svg height="${svg_height}" viewBox="0 0 ${calendar_width} ${ch}" xmlns="http://www.w3.org/2000/svg" style="width: 89%; margin: 15px 6% 0 5%;">`;
 
         content += draw_weeks_numbers();
         content += draw_years_numbers(date);
