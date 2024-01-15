@@ -59,11 +59,15 @@
         text-align: center;
         font-size: 1.5em;
       }
-      #faq p, ul {
+      p, ul {
         font-size: 0.7em;
       }
       ul {
         padding: 0 2em;
+      }
+      #loading {
+        text-align: center;
+        margin-top: 50%;
       }
     </style>
 
@@ -753,6 +757,7 @@
         content += '</svg>';
 
         document.getElementById("calendar").innerHTML = content;
+        switch_off_loading();
       }
 
       function get_parameters_from_url() {
@@ -768,6 +773,12 @@
         return {'birthday': splitted_params[0], 'country_code': splitted_params[1], 'country_code_latest': splitted_params[2], 'sex': splitted_params[3], 'sex_to_compare': sex_to_compare};
       }
 
+      function switch_off_loading() {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('controls').style.display = '';
+        document.getElementById('faq').style.display = '';
+      }
+
       window.onload = function() {
         let user_values = get_parameters_from_url();
         if (!user_values)
@@ -781,10 +792,13 @@
     </script>
   </head>
   <body>
+    <div id="loading">
+      <p>Loading Calendarium...</p>
+    </div>
     <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 83.9%; left: 64.9%; border-radius: 0px; display: none;"></div>
     <div id="calendar"></div>
 
-    <table style="color: black; width: 100%; margin: 10% 0 10% 0; font-size: 0.7em; display: none-;">
+    <table id="controls" style="color: black; width: 100%; margin: 10% 0 10% 0; font-size: 0.7em; display: none;">
       <tr>
         <td class="right">Sex:</td>
         <td class="left">
@@ -903,7 +917,7 @@
       </tr>
     </table>
 
-    <div id="faq">
+    <div id="faq" style="display: none;">
       <h1>FAQ:</h1>
       <p>
           <b>Q:</b> What are charts on the left and on the right?<br>
@@ -947,9 +961,6 @@
       </p>
     </div>
     
-    
-    <!--p style="color: black; text-align: center; width: 100%; margin: 10% 0 0 0; font-size: 1em;">Share calendar with others:</p>
-    <img src="https://www.dropbox.com/s/6j8prd7zq4htyx4/calendar-qr-code.jpg?raw=1" style="width: 50%; margin: 0 25% 20% 25%;">
-    <p id="log"></p-->
+    <!--p id="log"></p-->
   </body>
 </html>
