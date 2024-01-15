@@ -67,7 +67,7 @@
       const calendar_height = number_of_years * calendar_step_vertical + calendar_weeks_numbers_height + calendar_new_year_label_height + 5;
       //if (is_mobile)
       //  calendar_height += 100;
-      const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6;
+      const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6 + 10;
       const calendar_qrcode_url_domain = "https://calendarium.me";
       const calendar_id = Math.random().toString(36).slice(2);  // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
       var qrcode;
@@ -499,6 +499,10 @@
         return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="5" font-weight="normal">Data source: mortality.org</text>';
       }
 
+      function draw_special_age_label(data) {
+        return `<text font-size="3" fill="${data.color}" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${data.x}" y="${data.y}" font-weight="${data.weight}">${data.text}</text>`;
+      }
+
       async function draw_calendar(user_values) {
         data_all = {'mx': [], 'dx': []}; // reset
 
@@ -570,6 +574,7 @@
         let total_weeks = 1;
         //let percentiles_labels = {};
         let labels = '';
+        let labels_special_years = '';
         for (let year = 1; year <= number_of_years; year++) {
           let y_offset = calendar_height - year * calendar_step_vertical;
           if (is_mobile)
@@ -656,16 +661,22 @@
             let cy2 = cy + 1;
             if (is_mobile)
               cy2 = cy2 - 10 + 1;
-            const cx2 = calendar_step_horizontal * number_of_weeks_in_a_row + calendar_years_numbers_width + 10 - circle_radius;
-            content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx2 + '" y="' + cy2 + '" font-weight="bold">';
-              content += data_mx[country_code][sex][last_year_in_dataset_1][year - 1].toFixed(1) + '%' + '</text>';
+            let cx2 = calendar_step_horizontal * number_of_weeks_in_a_row + calendar_years_numbers_width + 10 - circle_radius;
+
+            if (have_data_for_charts) {
+              labels_special_years += draw_special_age_label({'color': 'black', 'x': cx2, 'y': cy2, 'weight': 'bold', 'text': data_mx[country_code][sex][birthday_year][year - 1].toFixed(1) + '%'});
+              cx2 += 11;
+              if (data_mx[country_code][sex][birthday_year][year - 1] > 10)
+                cx2 += 2;
+            }
+
+            labels_special_years += draw_special_age_label({'color': 'gray', 'x': cx2, 'y': cy2, 'weight': 'bold', 'text': data_mx[country_code][sex][last_year_in_dataset_1][year - 1].toFixed(1) + '%'});
 
             if (country_code != country_code_latest) {
-              let cx6 = cx2 + 11;
+              cx2 += 11;
               if (data_mx[country_code][sex][last_year_in_dataset_1][year - 1] > 10)
-                cx6 += 2;
-              content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="'+ cx6 + '" y="' + cy2 + '">';
-                content += data_mx[country_code_latest][sex][last_year_in_dataset_2][year - 1].toFixed(1) + '%' + '</text>';
+                cx2 += 2;
+              labels_special_years += draw_special_age_label({'color': 'gray', 'x': cx2, 'y': cy2, 'weight': 'normal', 'text': data_mx[country_code_latest][sex][last_year_in_dataset_2][year - 1].toFixed(1) + '%'});
             }
           }
         }
@@ -693,6 +704,7 @@
         content += draw_legend(label_chart_first, label_chart_second, label_chart_third);
         content += draw_datasource();
         content += labels;
+        content += labels_special_years;
         content += '</svg>';
 
         document.getElementById("calendar").innerHTML = content;
