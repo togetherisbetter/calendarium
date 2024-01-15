@@ -51,6 +51,7 @@
       }
       .left {
         text-align: left;
+        padding-right: 10px;
       }
       #faq {
         margin: 10%;
@@ -66,8 +67,10 @@
         padding: 0 2em;
       }
       #loading {
-        text-align: center;
-        margin-top: 50%;
+        left: 50%;
+        top: 50%;
+        position: absolute;
+        transform: translate(-50%, -50%);
       }
     </style>
 
@@ -105,7 +108,7 @@
       const calendar_height = number_of_years * calendar_step_vertical + calendar_weeks_numbers_height + calendar_new_year_label_height + 5;
       //if (is_mobile)
       //  calendar_height += 100;
-      const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6 + 10;
+      const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6 + 10 + 16;
       const calendar_qrcode_url_domain = "https://calendarium.me";
       const calendar_id = Math.random().toString(36).slice(2);  // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
       var qrcode;
@@ -793,7 +796,7 @@
   </head>
   <body>
     <div id="loading">
-      <p>Loading Calendarium...</p>
+      <p>📅 Loading Calendarium...</p>
     </div>
     <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 83.9%; left: 64.9%; border-radius: 0px; display: none;"></div>
     <div id="calendar"></div>
