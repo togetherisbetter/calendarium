@@ -54,7 +54,9 @@
         padding-right: 10px;
       }
       #faq {
-        margin: 0 10% 10% 10%;
+        width: 600px;
+        margin-left: calc(50% - 300px);
+        margin-bottom: 10%;
       }
       #faq h1 {
         text-align: center;
@@ -78,8 +80,12 @@
       }
       @media only screen and (max-width: 600px) {
         #controls {
-          width: 100%; 
-          margin: 0;
+          width: 90%; 
+          margin: 5%;
+        }
+        #faq {
+          margin: 10%;
+          width: auto;
         }
       }
     </style>
@@ -828,7 +834,7 @@
         </td>
       </tr>
       <tr>
-        <td class="right">Country of birth & childhood:<br>(with available data-years)</td>
+        <td class="right">Country of birth & childhood (with available data-years):</td>
         <td class="left">
           <select id="country_code" onchange="change_country_of_birth();">
             <option value="at">Austria (1947-2019)</option>
