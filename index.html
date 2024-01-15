@@ -242,7 +242,7 @@
       }
 
       function draw_legend(first, second, third) {
-        const cx = 17;
+        const cx = 18;
         let cy = 0;
         if (is_mobile)
           cy += 10;
@@ -495,6 +495,10 @@
         return content;
       }
 
+      function draw_datasource() {
+        return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="5" font-weight="normal">Data source: mortality.org</text>';
+      }
+
       async function draw_calendar(user_values) {
         data_all = {'mx': [], 'dx': []}; // reset
 
@@ -687,6 +691,7 @@
         content += draw_label_deaths();
 
         content += draw_legend(label_chart_first, label_chart_second, label_chart_third);
+        content += draw_datasource();
         content += labels;
         content += '</svg>';
 
