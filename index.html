@@ -724,7 +724,7 @@
             if (is_mobile)
               cy5 = cy5 + 10 - 1;
             
-            if (country_code != country_code_latest) {
+            if (country_code != country_code_latest || sex != sex_to_compare) {
               if (year == year_percentiles_dx_another_country[percentile]) {
                 labels += draw_label({'rect': {'x': cx5, 'y': cy5, 'width': 20}, 'text': {'x': cx4, 'y': cy2, 'text': percentile + '%', 'fill': 'gray', 'weight': 'normal'}});
               }
@@ -755,7 +755,7 @@
 
             labels_special_years += draw_special_age_label({'color': 'gray', 'x': cx2, 'y': cy2, 'weight': 'bold', 'text': data_mx[country_code][sex][last_year_in_dataset_1][year - 1].toFixed(1) + '%'});
 
-            if (country_code != country_code_latest) {
+            if (country_code != country_code_latest || sex != sex_to_compare) {
               cx2 += 11;
               if (data_mx[country_code][sex][last_year_in_dataset_1][year - 1] > 10)
                 cx2 += 2;
