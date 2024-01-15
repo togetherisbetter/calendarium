@@ -42,6 +42,19 @@
       .left {
         text-align: left;
       }
+      #faq {
+        margin: 10%;
+      }
+      #faq h1 {
+        text-align: center;
+        font-size: 1.5em;
+      }
+      #faq p, ul {
+        font-size: 0.7em;
+      }
+      ul {
+        padding: 0 2em;
+      }
     </style>
 
     <!-- https://github.com/davidshimjs/qrcodejs -->
@@ -751,7 +764,7 @@
     <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 83.9%; left: 64.9%; border-radius: 0px; display: none;"></div>
     <div id="calendar"></div>
 
-    <table style="color: black; width: 100%; margin: 20px 0 10% 0; font-size: 0.7em; display: none-;">
+    <table style="color: black; width: 100%; margin: 10% 0 10% 0; font-size: 0.7em; display: none-;">
       <tr>
         <td class="right">Sex:</td>
         <td class="left">
@@ -869,6 +882,51 @@
         </td>
       </tr>
     </table>
+
+    <div id="faq">
+      <h1>FAQ:</h1>
+      <p>
+          <b>Q:</b> What are charts on the left and on the right?<br>
+          <b>A:</b> Left charts are "Deaths by age" and right ones are "Chance to die at age". 
+      </p>
+      <p>
+          <b>Q:</b> What do these charts show?<br>
+          <b>A:</b> Charts on the left ("Deaths by age") show how many people (of particular sex and country) have died on a specified year. Charts on the right ("Chance to die at age") show how many people of each age (among all the people of that age and sex in that country) have died on a specified year.
+      </p>
+      <p>
+          <b>Q:</b> Why do we have some "random year" chart as well?<br>
+          <b>A:</b> This is not "random year", but "latest available data year" for specified country and sex:
+          <ul>
+            <li>Solid black bold line (and black bold digits) show data for a specified birthday year.</li>
+            <li>Solid gray bold line (and gray bold digits) show the latest available data for specified country and sex. It is displayed to: (1) let you to compare the trends since birthday year with the latest available data, (2) show you how things go according to latest available data since you tend to stick with it more than with charts made for birthday year.</li>
+          </ul>
+      </p>
+      <p>
+          <b>Q:</b> How do I know the year for a gray bold line (and gray bold digits)?<br>
+          <b>A:</b> In the top left corner there's a legend for data. For example <span style="color: gray; font-weight: bold;">PL2000M</span> means, that solid gray bold chart (and gray bold digits) are for: Poland, 2000 year, male.
+      </p>
+      <p>
+          <b>Q:</b> What are gray dashed charts (and gray thin digits)?<br>
+          <b>A:</b> These are charts built for latest available data year for a "target country" (country you've lived in during last 10+ years or have plans to relocate to) for a specified sex. In the top left corner legend is updated as well. For example <span style="color: gray; font-weight: normal;">UK2020F</span> means, that solid gray thin chart (and gray thin digits) are for: United Kingdom, 2020 latest available data year, female.
+      </p>
+      <p>
+          <b>Q:</b> What is the purpose of this calendar?<br>
+          <b>A:</b> The purpose is to help me (and other people) to: (1) visualise their life in terms of volumes, spaces rather than in abstract digits, (2) provide latest available scientific information about fair life expectancies for different countries, years and sexes, (3) be informed on life expectancy change when relocate.
+      </p>
+      <p>
+          <b>Q:</b> Where does this data come from?<br>
+          <b>A:</b> <a href="https://mortality.org" target="_blank">mortality.org</a>
+      </p>
+      <p>
+          <b>Q:</b> Who builds this calendar?<br>
+          <b>A:</b> <a href="https://www.linkedin.com/in/aleksei-sotskov" target="_blank">Aleksei Sotskov</a>
+      </p>
+      <p>
+          <b>Q:</b> I'd like to help / contribute / ask a question. How can I?<br>
+          <b>A:</b> Please contact me on <a href="mailto:alexeyhimself@gmail.com?subject=[Contact you from calendarium.me] ...">alexeyhimself@gmail.com</a>.
+      </p>
+    </div>
+    
     
     <!--p style="color: black; text-align: center; width: 100%; margin: 10% 0 0 0; font-size: 1em;">Share calendar with others:</p>
     <img src="https://www.dropbox.com/s/6j8prd7zq4htyx4/calendar-qr-code.jpg?raw=1" style="width: 50%; margin: 0 25% 20% 25%;">
