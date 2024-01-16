@@ -270,7 +270,7 @@
         }
 
         draw_calendar(user_values);
-        //update_qrcode_url(user_values);
+        update_qrcode_url(user_values);
       }
 
       function change_country_of_birth() {
@@ -813,6 +813,16 @@
         document.getElementById('faq').style.display = '';
       }
 
+      function prepare_for_print() {
+        document.getElementById('controls').style.display = 'none';
+        document.getElementById('faq').style.display = 'none';
+        document.getElementById('qrcode').style.display = '';
+        
+        const svg_canvas = document.getElementById('svg_canvas');
+        svg_canvas.style.marginTop = '2.5%';
+        print();
+      }
+
       window.onload = function() {
         let user_values = get_parameters_from_url();
         if (!user_values)
@@ -821,7 +831,7 @@
           set_user_selected_parameters(user_values);
 
         draw_calendar(user_values);
-        qrcode = init_qrcode(user_values, 64);
+        qrcode = init_qrcode(user_values, 66);
       };
     </script>
   </head>
@@ -829,7 +839,7 @@
     <div id="loading">
       <p>📅 Loading Calendarium...</p>
     </div>
-    <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 83.9%; left: 64.9%; border-radius: 0px; display: none;"></div>
+    <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 83.9%; left: 64.7%; border-radius: 0px; display: none;"></div>
     <div id="calendar"></div>
 
     <table id="controls" style="color: black; font-size: 0.7em; display: none;">
