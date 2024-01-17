@@ -76,30 +76,9 @@
         position: absolute;
         transform: translate(-50%, -50%);
       }
-      /*
-      #controls {
-        width: 80%; 
-        margin: 5% 0 5% 10%;
-      }
-      @media only screen and (max-width: 600px) {
-        #controls {
-          width: 90%; 
-          margin: 5%;
-        }
-        #faq {
-          margin: 10%;
-          width: auto;
-        }
-      }
-      */
       label {
-        margin: 10px 0 0 2px;
-        font-weight: bold;
+        margin: 10px 0 2px 2px;
         color: gray;
-        margin-bottom: 0;
-      }
-      select {
-
       }
     </style>
 
@@ -881,7 +860,7 @@
       
       function process_resize() {
         zoom_ratio_current = window.devicePixelRatio;
-        if (zoom_ratio_current > zoom_ratio_previous)  // zoom in
+        if (zoom_ratio_current > zoom_ratio_previous && !is_mobile)  // zoom in
           document.getElementById('svg_canvas').style.height = '200%';
         else if (zoom_ratio_current < zoom_ratio_previous)  // zoom out
           document.getElementById('svg_canvas').style.height = calculate_svg_height();
@@ -901,7 +880,7 @@
 
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-5 col-md col-sm col-11">
+        <div class="col-lg-5 col-md-8 col-sm-10 col-11">
           <div id="controls" style="color: black; font-size: 0.7em; display: none;">
             <label>Sex:</label>
             <select id="sex" onchange="change_sex();" class="form-control form-select form-select-sm">
@@ -955,7 +934,7 @@
               <option value="us">United States (1933-2021)</option>        
             </select>
 
-            <label>Country mostly lived in during last 10+ years (or have plans to relocate to):</label>
+            <label>Country mostly lived in during last 10+ years (or plan to relocate to):</label>
             <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
               <option value="at">Austria</option>
               <option value="au">Australia</option>
@@ -1007,11 +986,19 @@
         </div>
       </div>
       <div class="row justify-content-center">
-        <div class="col-lg-5 col-md col-sm col-11">
+        <div class="col-lg-5 col-md-8 col-sm-10 col-11">
           <div id="faq" style="display: none;">
             <h1>FAQ:</h1>
             <p>
-                <b>Q:</b> What are charts on the left and on the right?<br>
+                <b>Q:</b> Where is a legend?<br>
+                <b>A:</b> It's in the left top corner.
+            </p>
+            <p>
+                <b>Q:</b> What does <b>PL2000F</b> mean in a legend?<br>
+                <b>A:</b> <b>Bold black</b> means "data for birthday year", <b>PL</b> means "Poland", <b>2000</b> means "data year", <b>F</b> means "Female". Other available colors: <b style="color: gray;">Bold gray</b> means "last data available year for the origin country and sex". <span style="color: gray;">Thin gray</span> means "data for 'compare to' country and/or sex".
+            </p>
+            <p>
+                <b>Q:</b> What are the charts on the left and on the right?<br>
                 <b>A:</b> Left charts are "Deaths by age" and right ones are "Chance to die at age". 
             </p>
             <p>
@@ -1020,23 +1007,19 @@
             </p>
             <p>
                 <b>Q:</b> Why do we have some "random year" chart as well?<br>
-                <b>A:</b> This is not "random year", but "latest available data year" for specified country and sex:
+                <b>A:</b> This is not "random year", but "latest data-available year" for specified country and sex:
                 <ul>
-                  <li>Solid black bold line (and black bold digits) show data for a specified birthday year.</li>
-                  <li>Solid gray bold line (and gray bold digits) show the latest available data for specified country and sex. It is displayed to: (1) let you to compare the trends since birthday year with the latest available data, (2) show you how things go according to latest available data since you tend to stick with it more than with charts made for birthday year.</li>
+                  <li>Solid black bold line (and black bold digits) show data for a specified "birthday year".</li>
+                  <li>Solid gray bold line (and gray bold digits) show the latest available data for specified country and sex. It is displayed (1) to let you to compare the trends of your birthday year with the latest data-available year, and (2) to show you how things go right now according to latest available data since you tend to stick with it more than with charts made for your "birthday year".</li>
                 </ul>
             </p>
             <p>
-                <b>Q:</b> How do I know the year for a gray bold line (and gray bold digits)?<br>
-                <b>A:</b> In the top left corner there's a legend for data. For example <span style="color: gray; font-weight: bold;">PL2000M</span> means, that solid gray bold chart (and gray bold digits) are for: Poland, 2000 year, male.
-            </p>
-            <p>
                 <b>Q:</b> What are gray dashed charts (and gray thin digits)?<br>
-                <b>A:</b> These are charts built for latest available data year for a "target country" (country you've lived in during last 10+ years or have plans to relocate to) for a specified sex. In the top left corner legend is updated as well. For example <span style="color: gray; font-weight: normal;">UK2020F</span> means, that solid gray thin chart (and gray thin digits) are for: United Kingdom, 2020 latest available data year, female.
+                <b>A:</b> These are charts built for latest available data year for a "target country and sex" (country you've lived in during last 10+ years or plan to relocate to). In the top left corner legend is updated as well.
             </p>
             <p>
                 <b>Q:</b> What is the purpose of this calendar?<br>
-                <b>A:</b> The purpose is to help me (and other people) to: (1) visualise their life in terms of volumes, spaces rather than in abstract digits, (2) provide latest available scientific information about fair life expectancies for different countries, years and sexes, (3) be informed on life expectancy change when relocate.
+                <b>A:</b> The purpose of this calendar is to help me (and other people) (1) to visualise their life in terms of volumes and spaces rather than in abstract digits, (2) to provide latest available scientific information about fair life expectancies for different countries, years and sexes, (3) to be informed on life expectancy change if you decide to relocate.
             </p>
             <p>
                 <b>Q:</b> Where does this data come from?<br>
@@ -1048,7 +1031,7 @@
             </p>
             <p>
                 <b>Q:</b> I'd like to help / contribute / ask a question. How can I?<br>
-                <b>A:</b> Please contact me on <a href="mailto:alexeyhimself@gmail.com?subject=[Contact you from calendarium.me] ...">alexeyhimself@gmail.com</a>.
+                <b>A:</b> Please contact me via <a href="mailto:alexeyhimself@gmail.com?subject=[Contact you from calendarium.me] ...">alexeyhimself@gmail.com</a>
             </p>
           </div>
         </div>
