@@ -111,6 +111,8 @@
         ].includes(navigator.platform)
       }
       const is_mobile = is_iOS();//window.mobileCheck();
+      let zoom_ratio_current = window.devicePixelRatio;
+      let zoom_ratio_previous = zoom_ratio_current;
 
       const circle_radius = 2;
       const number_of_weeks_in_a_row = 52;
@@ -833,6 +835,18 @@
         draw_calendar(user_values);
         qrcode = init_qrcode(user_values, 66);
       };
+      
+      function resize() {
+        zoom_ratio_current = window.devicePixelRatio;
+        if (zoom_ratio_current > zoom_ratio_previous)  // zoom in
+          document.getElementById('svg_canvas').style.height = 'auto';
+        else if (zoom_ratio_current < zoom_ratio_previous)  // zoom out
+          document.getElementById('svg_canvas').style.height = calculate_svg_height();
+        else // resize
+          ;
+        zoom_ratio_previous = zoom_ratio_current;
+      }
+      window.onresize = resize;
     </script>
   </head>
   <body>
