@@ -630,6 +630,8 @@
         const year_percentiles_dx_latest = get_percentiles(data_to_draw_dx_latest, percentiles_to_draw);
         const year_percentiles_dx_another_country = get_percentiles(data_to_draw_dx_another_country, percentiles_to_draw);
 
+        const new_year_dot_color_above_the_age = "black";
+        const new_year_dot_color_below_the_age = "black";
         let fill_ranges = [ // init
           {"fill": "white"},
           {"fill": "skyblue", "to": new Date(), "stroke_width": "0.2"},
@@ -697,13 +699,13 @@
             content += 'stroke="' + stroke + '" stroke-width="' + stroke_width + '"/>';
 
             if (week == week_new_year) {  // dot for a new year week
-              let dot_color = "black";
+              let dot_color = new_year_dot_color_above_the_age;
               if (year <= age) {
-                dot_color = "white";
+                dot_color = new_year_dot_color_below_the_age;
               }
               if (year == age + 1) {
                 if (week_new_year < calculate_weeks_between(birthday_date, new Date()) % number_of_weeks_in_a_row) {
-                  dot_color = "white";
+                  dot_color = new_year_dot_color_below_the_age;
                 }
               }
 
