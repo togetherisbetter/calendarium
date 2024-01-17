@@ -646,7 +646,7 @@
         if (is_mobile)
           ch += calendar_weeks_numbers_height + calendar_new_year_label_height; // idk why
         const svg_height = calculate_svg_height();
-        let content = `<svg id="svg_canvas" height="${svg_height}" viewBox="0 0 ${calendar_width} ${ch}" xmlns="http://www.w3.org/2000/svg" style="width: calc(100% - ${svg_margin * 2}px); margin: ${svg_margin}px;">`;
+        let content = `<svg id="svg_canvas" height="${svg_height}" viewBox="0 0 ${calendar_width} ${ch}" xmlns="http://www.w3.org/2000/svg" style="width: calc(100% - ${svg_margin * 2}px); margin: ${svg_margin}px; margin-top: 10px;">`;
 
         content += draw_weeks_numbers();
         content += draw_years_numbers(date);
