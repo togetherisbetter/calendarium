@@ -14,6 +14,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
     <!--link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
@@ -54,8 +56,8 @@
         padding-right: 10px;
       }
       #faq {
-        width: 600px;
-        margin-left: calc(50% - 300px);
+        /*width: 600px;
+        margin-left: calc(50% - 300px);*/
         margin-bottom: 10%;
       }
       #faq h1 {
@@ -74,6 +76,7 @@
         position: absolute;
         transform: translate(-50%, -50%);
       }
+      /*
       #controls {
         width: 80%; 
         margin: 5% 0 5% 10%;
@@ -87,6 +90,16 @@
           margin: 10%;
           width: auto;
         }
+      }
+      */
+      label {
+        margin: 10px 0 0 2px;
+        font-weight: bold;
+        color: gray;
+        margin-bottom: 0;
+      }
+      select {
+
       }
     </style>
 
@@ -866,17 +879,17 @@
         qrcode = init_qrcode(user_values, 66);
       };
       
-      function resize() {
+      function process_resize() {
         zoom_ratio_current = window.devicePixelRatio;
         if (zoom_ratio_current > zoom_ratio_previous)  // zoom in
-          document.getElementById('svg_canvas').style.height = 'auto';
+          document.getElementById('svg_canvas').style.height = '200%';
         else if (zoom_ratio_current < zoom_ratio_previous)  // zoom out
           document.getElementById('svg_canvas').style.height = calculate_svg_height();
         else // resize
           ;
         zoom_ratio_previous = zoom_ratio_current;
       }
-      window.onresize = resize;
+      window.onresize = process_resize;
     </script>
   </head>
   <body>
@@ -886,169 +899,162 @@
     <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 83.9%; left: 64.7%; border-radius: 0px; display: none;"></div>
     <div id="calendar"></div>
 
-    <table id="controls" style="color: black; font-size: 0.7em; display: none;">
-      <tr>
-        <td class="right">Sex:</td>
-        <td class="left">
-          <select id="sex" onchange="change_sex();">
-            <option value="m" selected>Male</option>
-            <option value="f">Female</option>
-          </select>
-        </td>
-      </tr>
-      <tr>
-        <td class="right">Birthday:</td>
-        <td class="left">
-          <input id="birthday" type="date" value="1987-06-30" onchange="redraw_calendar();">
-        </td>
-      </tr>
-      <tr>
-        <td class="right">Country of birth & childhood (with available data-years):</td>
-        <td class="left">
-          <select id="country_code" onchange="change_country_of_birth();">
-            <option value="at">Austria (1947-2019)</option>
-            <option value="au">Australia (1921-2020)</option>
-            <option value="by">Belarus (1959-2018)</option>
-            <option value="be">Belgium (1841-2022)</option>
-            <option value="bg">Bulgaria (1947-2021)</option>
-            <option value="ca">Canada (1921-2021)</option>
-            <option value="cl">Chile (1992-2020)</option>
-            <option value="hr">Croatia (2001-2020)</option>
-            <option value="cz">Czechia (1950-2021)</option>
-            <option value="fi">Finland (1878-2022)</option>
-            <option value="fr">France (1816-2021)</option>
-            <option value="de">Germany (1990-2020)</option>
-            <option value="gr">Greece (1981-2019)</option>
-            <option value="hk">Hong Kong (1986-2020)</option>
-            <option value="hu">Hungary (1950-2020)</option>
-            <option value="is">Iceland (1838-2021)</option>
-            <option value="ie">Ireland (1950-2020)</option>
-            <option value="il">Israel (1983-2016)</option>
-            <option value="it">Italy (1872-2020)</option>
-            <option value="jp">Japan (1947-2021)</option>
-            <option value="lv">Latvia (1959-2019)</option>
-            <option value="lt">Lithuania (1959-2020)</option>
-            <option value="lu">Luxembourg (1960-2022)</option>
-            <option value="nl">Netherlands (1850-2021)</option>
-            <option value="nz">New Zealand (1948-2021)</option>
-            <option value="no">Norway (1846-2022)</option>
-            <option value="pl">Poland (1958-2019)</option>
-            <option value="pt">Portugal (1940-2022)</option>
-            <option value="kr">Republic of Korea (2003-2020)</option>
-            <option value="ru" selected>Russia (1959-2014)</option>
-            <option value="sk">Slovakia (1950-2019)</option>
-            <option value="si">Slovenia (1983-2019)</option>
-            <option value="es">Spain (1908-2021)</option>
-            <option value="se">Sweden (1751-2022)</option>
-            <option value="ch">Switzerland (1876-2022)</option>
-            <option value="tw">Taiwan (1970-2021)</option>
-            <option value="ua">Ukraine (1959-2013)</option>
-            <option value="uk">United Kingdom (1922-2021)</option>
-            <option value="us">United States (1933-2021)</option>        
-          </select>
-        </td>
-      </tr>
-      <tr>
-        <td class="right">Country mostly lived in during last 10+ years or have plans to relocate to:</td>
-        <td class="left">
-          <select id="country_code_latest" onchange="redraw_calendar();">
-            <option value="at">Austria</option>
-            <option value="au">Australia</option>
-            <option value="by">Belarus</option>
-            <option value="be">Belgium</option>
-            <option value="bg">Bulgaria</option>
-            <option value="ca">Canada</option>
-            <option value="cl">Chile</option>
-            <option value="hr">Croatia</option>
-            <option value="cz">Czechia</option>
-            <option value="fi">Finland</option>
-            <option value="fr">France</option>
-            <option value="de">Germany</option>
-            <option value="gr">Greece</option>
-            <option value="hk">Hong Kong</option>
-            <option value="hu">Hungary</option>
-            <option value="is">Iceland</option>
-            <option value="ie">Ireland</option>
-            <option value="il">Israel</option>
-            <option value="it">Italy</option>
-            <option value="jp">Japan</option>
-            <option value="lv">Latvia</option>
-            <option value="lt">Lithuania</option>
-            <option value="lu">Luxembourg</option>
-            <option value="nl">Netherlands</option>
-            <option value="nz">New Zealand</option>
-            <option value="no">Norway</option>
-            <option value="pl">Poland</option>
-            <option value="pt">Portugal</option>
-            <option value="kr">Republic of Korea</option>
-            <option value="ru" selected>Russia</option>
-            <option value="sk">Slovakia</option>
-            <option value="si">Slovenia</option>
-            <option value="es">Spain</option>
-            <option value="se">Sweden</option>
-            <option value="ch">Switzerland</option>
-            <option value="tw">Taiwan</option>
-            <option value="ua">Ukraine</option>
-            <option value="uk">United Kingdom</option>
-            <option value="us">United States</option>       
-          </select>
-        </td>
-      </tr>
-      <tr>
-        <td class="right">Sex to compare with:</td>
-        <td class="left">
-          <select id="sex_to_compare" onchange="redraw_calendar();">
-            <option value="m" selected>Male</option>
-            <option value="f">Female</option>
-          </select>
-        </td>
-      </tr>
-    </table>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-5 col-md col-sm">
+          <div id="controls" style="color: black; font-size: 0.7em; display: none;">
+            <label>Sex:</label>
+            <select id="sex" onchange="change_sex();" class="form-control form-select form-select-sm">
+              <option value="m" selected>Male</option>
+              <option value="f">Female</option>
+            </select>
 
-    <div id="faq" style="display: none;">
-      <h1>FAQ:</h1>
-      <p>
-          <b>Q:</b> What are charts on the left and on the right?<br>
-          <b>A:</b> Left charts are "Deaths by age" and right ones are "Chance to die at age". 
-      </p>
-      <p>
-          <b>Q:</b> What do these charts show?<br>
-          <b>A:</b> Charts on the left ("Deaths by age") show how many people (of particular sex and country) have died on a specified year. Charts on the right ("Chance to die at age") show how many people of each age (among all the people of that age and sex in that country) have died on a specified year.
-      </p>
-      <p>
-          <b>Q:</b> Why do we have some "random year" chart as well?<br>
-          <b>A:</b> This is not "random year", but "latest available data year" for specified country and sex:
-          <ul>
-            <li>Solid black bold line (and black bold digits) show data for a specified birthday year.</li>
-            <li>Solid gray bold line (and gray bold digits) show the latest available data for specified country and sex. It is displayed to: (1) let you to compare the trends since birthday year with the latest available data, (2) show you how things go according to latest available data since you tend to stick with it more than with charts made for birthday year.</li>
-          </ul>
-      </p>
-      <p>
-          <b>Q:</b> How do I know the year for a gray bold line (and gray bold digits)?<br>
-          <b>A:</b> In the top left corner there's a legend for data. For example <span style="color: gray; font-weight: bold;">PL2000M</span> means, that solid gray bold chart (and gray bold digits) are for: Poland, 2000 year, male.
-      </p>
-      <p>
-          <b>Q:</b> What are gray dashed charts (and gray thin digits)?<br>
-          <b>A:</b> These are charts built for latest available data year for a "target country" (country you've lived in during last 10+ years or have plans to relocate to) for a specified sex. In the top left corner legend is updated as well. For example <span style="color: gray; font-weight: normal;">UK2020F</span> means, that solid gray thin chart (and gray thin digits) are for: United Kingdom, 2020 latest available data year, female.
-      </p>
-      <p>
-          <b>Q:</b> What is the purpose of this calendar?<br>
-          <b>A:</b> The purpose is to help me (and other people) to: (1) visualise their life in terms of volumes, spaces rather than in abstract digits, (2) provide latest available scientific information about fair life expectancies for different countries, years and sexes, (3) be informed on life expectancy change when relocate.
-      </p>
-      <p>
-          <b>Q:</b> Where does this data come from?<br>
-          <b>A:</b> <a href="https://mortality.org" target="_blank">mortality.org</a>
-      </p>
-      <p>
-          <b>Q:</b> Who builds this calendar?<br>
-          <b>A:</b> <a href="https://www.linkedin.com/in/aleksei-sotskov" target="_blank">Aleksei Sotskov</a>
-      </p>
-      <p>
-          <b>Q:</b> I'd like to help / contribute / ask a question. How can I?<br>
-          <b>A:</b> Please contact me on <a href="mailto:alexeyhimself@gmail.com?subject=[Contact you from calendarium.me] ...">alexeyhimself@gmail.com</a>.
-      </p>
+            <label>Birthday:</label>
+            <input id="birthday" type="date" value="1987-06-30" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
+
+            <label>Country of birth & childhood (with available data-years):</label>
+            <select id="country_code" onchange="change_country_of_birth();" class="form-control form-select form-select-sm">
+              <option value="at">Austria (1947-2019)</option>
+              <option value="au">Australia (1921-2020)</option>
+              <option value="by">Belarus (1959-2018)</option>
+              <option value="be">Belgium (1841-2022)</option>
+              <option value="bg">Bulgaria (1947-2021)</option>
+              <option value="ca">Canada (1921-2021)</option>
+              <option value="cl">Chile (1992-2020)</option>
+              <option value="hr">Croatia (2001-2020)</option>
+              <option value="cz">Czechia (1950-2021)</option>
+              <option value="fi">Finland (1878-2022)</option>
+              <option value="fr">France (1816-2021)</option>
+              <option value="de">Germany (1990-2020)</option>
+              <option value="gr">Greece (1981-2019)</option>
+              <option value="hk">Hong Kong (1986-2020)</option>
+              <option value="hu">Hungary (1950-2020)</option>
+              <option value="is">Iceland (1838-2021)</option>
+              <option value="ie">Ireland (1950-2020)</option>
+              <option value="il">Israel (1983-2016)</option>
+              <option value="it">Italy (1872-2020)</option>
+              <option value="jp">Japan (1947-2021)</option>
+              <option value="lv">Latvia (1959-2019)</option>
+              <option value="lt">Lithuania (1959-2020)</option>
+              <option value="lu">Luxembourg (1960-2022)</option>
+              <option value="nl">Netherlands (1850-2021)</option>
+              <option value="nz">New Zealand (1948-2021)</option>
+              <option value="no">Norway (1846-2022)</option>
+              <option value="pl">Poland (1958-2019)</option>
+              <option value="pt">Portugal (1940-2022)</option>
+              <option value="kr">Republic of Korea (2003-2020)</option>
+              <option value="ru" selected>Russia (1959-2014)</option>
+              <option value="sk">Slovakia (1950-2019)</option>
+              <option value="si">Slovenia (1983-2019)</option>
+              <option value="es">Spain (1908-2021)</option>
+              <option value="se">Sweden (1751-2022)</option>
+              <option value="ch">Switzerland (1876-2022)</option>
+              <option value="tw">Taiwan (1970-2021)</option>
+              <option value="ua">Ukraine (1959-2013)</option>
+              <option value="uk">United Kingdom (1922-2021)</option>
+              <option value="us">United States (1933-2021)</option>        
+            </select>
+
+            <label>Country mostly lived in during last 10+ years (or have plans to relocate to):</label>
+            <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
+              <option value="at">Austria</option>
+              <option value="au">Australia</option>
+              <option value="by">Belarus</option>
+              <option value="be">Belgium</option>
+              <option value="bg">Bulgaria</option>
+              <option value="ca">Canada</option>
+              <option value="cl">Chile</option>
+              <option value="hr">Croatia</option>
+              <option value="cz">Czechia</option>
+              <option value="fi">Finland</option>
+              <option value="fr">France</option>
+              <option value="de">Germany</option>
+              <option value="gr">Greece</option>
+              <option value="hk">Hong Kong</option>
+              <option value="hu">Hungary</option>
+              <option value="is">Iceland</option>
+              <option value="ie">Ireland</option>
+              <option value="il">Israel</option>
+              <option value="it">Italy</option>
+              <option value="jp">Japan</option>
+              <option value="lv">Latvia</option>
+              <option value="lt">Lithuania</option>
+              <option value="lu">Luxembourg</option>
+              <option value="nl">Netherlands</option>
+              <option value="nz">New Zealand</option>
+              <option value="no">Norway</option>
+              <option value="pl">Poland</option>
+              <option value="pt">Portugal</option>
+              <option value="kr">Republic of Korea</option>
+              <option value="ru" selected>Russia</option>
+              <option value="sk">Slovakia</option>
+              <option value="si">Slovenia</option>
+              <option value="es">Spain</option>
+              <option value="se">Sweden</option>
+              <option value="ch">Switzerland</option>
+              <option value="tw">Taiwan</option>
+              <option value="ua">Ukraine</option>
+              <option value="uk">United Kingdom</option>
+              <option value="us">United States</option>       
+            </select>
+
+            <label>Sex to compare with:</label>
+            <select id="sex_to_compare" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
+              <option value="m" selected>Male</option>
+              <option value="f">Female</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-lg-5 col-md col-sm">
+          <div id="faq" style="display: none;">
+            <h1>FAQ:</h1>
+            <p>
+                <b>Q:</b> What are charts on the left and on the right?<br>
+                <b>A:</b> Left charts are "Deaths by age" and right ones are "Chance to die at age". 
+            </p>
+            <p>
+                <b>Q:</b> What do these charts show?<br>
+                <b>A:</b> Charts on the left ("Deaths by age") show how many people (of particular sex and country) have died on a specified year. Charts on the right ("Chance to die at age") show how many people of each age (among all the people of that age and sex in that country) have died on a specified year.
+            </p>
+            <p>
+                <b>Q:</b> Why do we have some "random year" chart as well?<br>
+                <b>A:</b> This is not "random year", but "latest available data year" for specified country and sex:
+                <ul>
+                  <li>Solid black bold line (and black bold digits) show data for a specified birthday year.</li>
+                  <li>Solid gray bold line (and gray bold digits) show the latest available data for specified country and sex. It is displayed to: (1) let you to compare the trends since birthday year with the latest available data, (2) show you how things go according to latest available data since you tend to stick with it more than with charts made for birthday year.</li>
+                </ul>
+            </p>
+            <p>
+                <b>Q:</b> How do I know the year for a gray bold line (and gray bold digits)?<br>
+                <b>A:</b> In the top left corner there's a legend for data. For example <span style="color: gray; font-weight: bold;">PL2000M</span> means, that solid gray bold chart (and gray bold digits) are for: Poland, 2000 year, male.
+            </p>
+            <p>
+                <b>Q:</b> What are gray dashed charts (and gray thin digits)?<br>
+                <b>A:</b> These are charts built for latest available data year for a "target country" (country you've lived in during last 10+ years or have plans to relocate to) for a specified sex. In the top left corner legend is updated as well. For example <span style="color: gray; font-weight: normal;">UK2020F</span> means, that solid gray thin chart (and gray thin digits) are for: United Kingdom, 2020 latest available data year, female.
+            </p>
+            <p>
+                <b>Q:</b> What is the purpose of this calendar?<br>
+                <b>A:</b> The purpose is to help me (and other people) to: (1) visualise their life in terms of volumes, spaces rather than in abstract digits, (2) provide latest available scientific information about fair life expectancies for different countries, years and sexes, (3) be informed on life expectancy change when relocate.
+            </p>
+            <p>
+                <b>Q:</b> Where does this data come from?<br>
+                <b>A:</b> <a href="https://mortality.org" target="_blank">mortality.org</a>
+            </p>
+            <p>
+                <b>Q:</b> Who builds this calendar?<br>
+                <b>A:</b> <a href="https://www.linkedin.com/in/aleksei-sotskov" target="_blank">Aleksei Sotskov</a>
+            </p>
+            <p>
+                <b>Q:</b> I'd like to help / contribute / ask a question. How can I?<br>
+                <b>A:</b> Please contact me on <a href="mailto:alexeyhimself@gmail.com?subject=[Contact you from calendarium.me] ...">alexeyhimself@gmail.com</a>.
+            </p>
+          </div>
+        </div>
+      </div>          
     </div>
-    
+
     <!--p id="log"></p-->
   </body>
 </html>
