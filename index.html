@@ -877,12 +877,14 @@
       <p>📅 Loading Calendarium...</p>
     </div>
     <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 83.9%; left: 64.7%; border-radius: 0px; display: none;"></div>
-    <div id="calendar"></div>
-
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-5 col-md-8 col-sm-10 col-11">
-          <div id="controls" style="color: black; font-size: 0.7em; display: none;">
+        <div class="col-lg-5 offset-lg-0 col-md-12 col-sm-12" style="height: 100%;">
+          <div id="calendar" style="float: right;"></div>
+        </div>
+      
+        <div class="col-lg-3 col-md-8 col-sm-10 col-11">
+          <div id="controls" style="color: black; font-size: 0.7em; display: none; margin-top: 10px;">
             <label>Sex at birth:</label>
             <select id="sex" onchange="change_sex();" class="form-control form-select form-select-sm">
               <option value="m" selected>Male</option>
