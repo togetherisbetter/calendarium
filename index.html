@@ -80,13 +80,20 @@
         margin: 10px 0 2px 2px;
         color: gray;
       }
-      /*
+      /**/
       #calendar {
-        margin-left: 3%;
-        margin-right: 3%;
-        margin-top: 0;
+        margin-left: 10px;
+        margin-right: 10px;
+        margin-top: 10px;
       }
-      */
+      /**/
+      .container {
+        padding: 0;
+      }
+      .row {
+        margin-left: 0;
+        margin-right: 0;
+      }
     </style>
 
     <!-- https://github.com/davidshimjs/qrcodejs -->
@@ -110,8 +117,6 @@
         ].includes(navigator.platform)
       }
       const is_mobile = is_iOS();//window.mobileCheck();
-      let zoom_ratio_current = window.devicePixelRatio;
-      let zoom_ratio_previous = zoom_ratio_current;
 
       const circle_radius = 2;
       const number_of_weeks_in_a_row = 52;
@@ -594,7 +599,7 @@
       }
 
       function calculate_svg_height() {
-        const ratio_current_svg_canvas = 521 / 316; // to fix
+        const ratio_current_svg_canvas = 521 / (316 + 20); // to fix
         const margins_svg_canvas = svg_margin * 2;
         const innerHeight = window.innerHeight - margins_svg_canvas;
         const innerWidth = window.innerWidth - margins_svg_canvas;
@@ -603,7 +608,7 @@
           return (((innerWidth * ratio_current_svg_canvas) * 100) / innerHeight) + '%';
         }
         else  // optimize by height
-          return '96%';
+          return innerHeight - 30 + 'px';
       }
 
       async function draw_calendar(user_values) {
@@ -864,18 +869,6 @@
         draw_calendar(user_values);
         qrcode = init_qrcode(user_values, 66);
       };
-      
-      function process_resize() {
-        zoom_ratio_current = window.devicePixelRatio;
-        if (zoom_ratio_current > zoom_ratio_previous && !is_mobile)  // zoom in
-          document.getElementById('svg_canvas').style.height = '200%';
-        else if (zoom_ratio_current < zoom_ratio_previous)  // zoom out
-          document.getElementById('svg_canvas').style.height = calculate_svg_height();
-        else // resize
-          ;
-        zoom_ratio_previous = zoom_ratio_current;
-      }
-      window.onresize = process_resize;
     </script>
   </head>
   <body>
