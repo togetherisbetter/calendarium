@@ -38,7 +38,7 @@
       body, html {
         padding: 0;
         margin: 0;
-        background-color: white;
+        background-color: snow;
         font-family: 'Open Sans', sans-serif;
       }
       /* https://stackoverflow.com/questions/29205294/how-to-achieve-blinking-effect-in-svg */
@@ -143,6 +143,7 @@
       var qrcode;
       var antistroke = "black";
       var antistroke_width = 1;
+      const color_base = "snow";
 
       var data_dx = {};
       var data_mx = {};
@@ -358,23 +359,13 @@
         if (is_mobile)
           cy += 10;
 
-        let content = '<rect x="' + cx + '" y="' + cy + '" width="25" height="5" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
+        let content = `<rect x="${cx}" y="${cy}" width="25" height="5" rx="0" fill="${color_base}" stroke="${color_base}" stroke-width="0.3" />`;
         const cy3 = cy + calendar_step_vertical;
-/*        content += '<rect x="' + cx + '" y="' + cy3 + '" width="55" height="5" rx="0" fill="white" stroke="white" stroke-width="0.3" />';*/
         const cx2 = cx + 1.5;
         let cy2 = cy + 3 + 1;
         if (is_mobile)
           cy2 -= 9;
         content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="' + cx2 + '" y="' + cy2 + '" font-weight="bold-">Deaths at age</text>';
-/*
-        const cy4 = cy2 + calendar_step_vertical;
-        content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="' + cx2 + '" y="' + cy4 + '" font-weight="bold">RU1987M</text>';
-        const cx5 = cx2 + 19;
-        content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="' + cx5 + '" y="' + cy4 + '" font-weight="bold">RU2014M</text>';
-
-        const cx6 = cx5 + 19;
-        content += '<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="' + cx6 + '" y="' + cy4 + '" font-weight="bold-">JP2020M</text>';
-*/
         return content
       }
 
@@ -384,7 +375,7 @@
         if (is_mobile)
           cy += 10;
         const cx = cx2 - 29 - 5;
-        let content = '<rect x="' + cx + '" y="' + cy + '" width="35" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />';
+        let content = `<rect x="${cx}" y="${cy}" width="35" height="4" rx="0" fill="${color_base}" stroke="${color_base}" stroke-width="0.3" />`;
         let cy2 = cy + 3;
         if (is_mobile)
           cy2 -= 9;
@@ -591,7 +582,7 @@
       }
 
       function draw_label(data) {
-        content = `<rect x="${data.rect.x}" y="${data.rect.y}" width="${data.rect.width}" height="4" rx="0" fill="white" stroke="white" stroke-width="0.3" />`;
+        content = `<rect x="${data.rect.x}" y="${data.rect.y}" width="${data.rect.width}" height="4" rx="0" fill="${color_base}" stroke="${color_base}" stroke-width="0.3" />`;
         content += `<text font-size="3" fill="${data.text.fill}" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${data.text.x}" y="${data.text.y}" font-weight="${data.text.weight}">${data.text.text}</text>`;
         return content;
       }
@@ -940,7 +931,7 @@
               <option value="us">United States (1933-2021)</option>        
             </select>
 
-            <label>Country mostly lived in during last 10+ years (or plan to relocate to):</label>
+            <label>Country mostly lived in during last 10+ years / plan to relocate to:</label>
             <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
               <option value="at">Austria</option>
               <option value="au">Australia</option>
