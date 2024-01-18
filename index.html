@@ -100,6 +100,10 @@
       input::-webkit-date-and-time-value {
         text-align: left;
       }
+      .clarify_field {
+        color: gray;
+        padding-left: 3px;
+      }
     </style>
 
     <!-- https://github.com/davidshimjs/qrcodejs -->
@@ -888,7 +892,7 @@
             <label>Date of birth:</label>
             <input id="birthday" type="date" value="1987-06-30" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
 
-            <label>Country of birth & childhood (in brackets: data-available years):</label>
+            <label>Country of birth & childhood:</label>
             <select id="country_code" onchange="change_country_of_birth();" class="form-control form-select form-select-sm">
               <option value="at">Austria (1947-2019)</option>
               <option value="au">Australia (1921-2020)</option>
@@ -930,8 +934,9 @@
               <option value="uk">United Kingdom (1922-2021)</option>
               <option value="us">United States (1933-2021)</option>        
             </select>
+            <span class="clarify_field">(in brackets are data-available years)</span><br>
 
-            <label>Country mostly lived in during last 10+ years / plan to relocate to:</label>
+            <label>Country mostly lived in during last years:</label>
             <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
               <option value="at">Austria</option>
               <option value="au">Australia</option>
@@ -973,6 +978,7 @@
               <option value="uk">United Kingdom</option>
               <option value="us">United States</option>       
             </select>
+            <span class="clarify_field">(or a country you plan to relocate to)</span><br>
 
             <label>Sex to compare with:</label>
             <select id="sex_to_compare" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
