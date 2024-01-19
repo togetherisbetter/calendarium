@@ -132,6 +132,7 @@
         ].includes(navigator.platform)
       }
       const is_mobile = is_iOS();//window.mobileCheck();
+      const supported_countries = ['at', 'au', 'by', 'be', 'bg', 'ca', 'cl', 'hr', 'cz', 'fi', 'fr', 'de', 'gr', 'hk', 'hu', 'is', 'ie', 'il', 'it', 'jp', 'lv', 'lt', 'lu', 'nl', 'nz', 'no', 'pl', 'pt', 'kr', 'ru', 'sk', 'si', 'es', 'se', 'ch', 'tw', 'ua', 'uk', 'us'];
 
       const circle_radius = 2;
       const number_of_weeks_in_a_row = 52;
@@ -865,7 +866,21 @@
         print();
       }
 
+      function guess_the_country() {
+        const browser_language = navigator.language || navigator.userLanguage;
+        if (!browser_language)
+          return;
+
+        const browser_country = browser_language.toLowerCase().split('-')[1];
+        if (!supported_countries.includes(browser_country))
+          return;
+
+        document.getElementById('country_code').value = browser_country;
+        document.getElementById('country_code_latest').value = browser_country;
+      }
+
       window.onload = function() {
+        guess_the_country();
         let user_values = get_parameters_from_url();
         if (!user_values)
           user_values = get_user_selected_parameters();
@@ -892,12 +907,12 @@
           <div id="controls" style="color: black; font-size: 0.7em; display: none; margin-top: 10px;">
             <label>Sex at birth:</label>
             <select id="sex" onchange="change_sex();" class="form-control form-select form-select-sm">
-              <option value="m" selected>Male</option>
+              <option value="m">Male</option>
               <option value="f">Female</option>
             </select>
 
             <label>Date of birth:</label>
-            <input id="birthday" type="date" value="1987-06-30" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
+            <input id="birthday" type="date" value="1990-01-01" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
 
             <label>Country of birth & childhood:</label>
             <select id="country_code" onchange="change_country_of_birth();" class="form-control form-select form-select-sm">
@@ -930,7 +945,7 @@
               <option value="pl">Poland (1958-2019)</option>
               <option value="pt">Portugal (1940-2022)</option>
               <option value="kr">Republic of Korea (2003-2020)</option>
-              <option value="ru" selected>Russia (1959-2014)</option>
+              <option value="ru">Russia (1959-2014)</option>
               <option value="sk">Slovakia (1950-2019)</option>
               <option value="si">Slovenia (1983-2019)</option>
               <option value="es">Spain (1908-2021)</option>
@@ -974,7 +989,7 @@
               <option value="pl">Poland</option>
               <option value="pt">Portugal</option>
               <option value="kr">Republic of Korea</option>
-              <option value="ru" selected>Russia</option>
+              <option value="ru">Russia</option>
               <option value="sk">Slovakia</option>
               <option value="si">Slovenia</option>
               <option value="es">Spain</option>
@@ -989,7 +1004,7 @@
 
             <label>Sex at birth to compare with:</label>
             <select id="sex_to_compare" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
-              <option value="m" selected>Male</option>
+              <option value="m">Male</option>
               <option value="f">Female</option>
             </select>
           </div>
