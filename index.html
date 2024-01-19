@@ -126,13 +126,18 @@
         return [
           'iPad Simulator',
           'iPhone Simulator',
-          'iPod Simulator',
           'iPad',
           'iPhone',
-          'iPod'
         ].includes(navigator.platform)
       }
-      const is_mobile = is_iOS();//window.mobileCheck();
+      function is_bad_mobile() {
+        if (!is_iOS())
+          return false;
+
+        const iOS_version = /(iPhone|iPad) OS ([1-9]+)/g.exec(window.navigator.userAgent)?.[2] || 0; // https://gist.github.com/ngoclt/2857281
+        return iOS_version <= 15; // for iOS 15 svg offset incorrectly calculated
+      }
+      const is_mobile = is_bad_mobile();//is_iOS();//window.mobileCheck();
       const supported_countries = ['at', 'au', 'by', 'be', 'bg', 'ca', 'cl', 'hr', 'cz', 'fi', 'fr', 'de', 'gr', 'hk', 'hu', 'is', 'ie', 'il', 'it', 'jp', 'lv', 'lt', 'lu', 'nl', 'nz', 'no', 'pl', 'pt', 'kr', 'ru', 'sk', 'si', 'es', 'se', 'ch', 'tw', 'ua', 'uk', 'us'];
 
       const circle_radius = 2;
