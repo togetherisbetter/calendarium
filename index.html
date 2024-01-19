@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
     <title>Calendarium - smart life calendar with data skins</title>
     <!-- Google tag (gtag.js) -->
@@ -213,8 +214,8 @@
         return range.reduce((a, b) => a + b, 0);
       }
 
-      function get_age(birthday) {  // returns number of full years from birthday till now
-        const ms = new Date() - new Date(birthday);
+      function get_age(birthday_date) {  // returns number of full years from birthday till now
+        const ms = new Date() - birthday_date;
         return Math.floor(ms / (1000 * 60 * 60 * 24 * 365.242199));
       }
 
@@ -309,15 +310,14 @@
       }
 
       function calculate_weeks_between(earlier_date, later_date) {  // https://stackoverflow.com/questions/542938/how-to-calculate-number-of-days-between-two-dates
-        const diff_ms = new Date(later_date) - new Date(earlier_date);
+        const diff_ms = later_date - earlier_date;
         const diff_days = diff_ms / (1000 * 60 * 60 * 24);
         return Math.floor(diff_days / 7.024038461538462);  // (365*3+366)/4/52
       }
 
-      function calculate_new_year_week(birthday) {
-        const date = new Date(birthday);
-        const next_year = date.getFullYear() + 1;
-        const diff_ms = new Date(next_year + '-01-01') - date;
+      function calculate_new_year_week(birthday_date) {
+        const next_year = birthday_date.getFullYear() + 1;
+        const diff_ms = new Date(next_year + '-01-01') - birthday_date;
         const diff_days = diff_ms / (1000 * 60 * 60 * 24);
 
         let week_new_year = Math.floor(diff_days / 7) + 1;  // no errors for weeks during 1 year
@@ -412,7 +412,7 @@
         return content;
       }
 
-      function draw_years_numbers(birthday) {
+      function draw_years_numbers(birthday_date) {
         let content = '';
 
         for (let year = 1; year <= number_of_years; year++) {
@@ -429,7 +429,6 @@
             const cy2 = cy - calendar_step_vertical;
             content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="15" y="' + cy2 + '">'
 
-            const birthday_date = new Date(birthday);
             const birthday_year = birthday_date.getFullYear();
             if (birthday_date.getMonth() == 0 && birthday_date.getDate() <= 7)  // in case of birthday during 1st week of January don't write 2004/05, but 2004
               content += birthday_year + year;
@@ -517,28 +516,6 @@
         return content;
       }
 
-      /*
-      function draw_line2(mdx, data, stroke, age, stroke_dasharray) {
-        let content = '';
-
-        //const antistroke = "black"
-        let stroke_width = 0.5 * 3;
-        //const antistroke_width = stroke_width * 1.5;
-        let position = "left";
-        let scale_y = 0.7;
-        if (mdx == "mx") {
-          position = "right";
-          scale_y = 1;
-        }
-        const coordinates = make_coordinates(mdx, data, age, position, scale_y);
-
-        content += draw_polyline(coordinates.dotss_before_age, stroke, stroke_width, stroke_dasharray);
-        content += draw_polyline(coordinates.dotss_after_age, stroke, stroke_width, stroke_dasharray);
-
-        return content;
-      }
-      */
-
       function draw_line(mdx, data, stroke, age, stroke_dasharray) {
         let content = '';
 
@@ -559,7 +536,7 @@
         return content;
       }
 
-      function transform_fill_ranges_to_coordinates(fill_ranges, date) {
+      function transform_fill_ranges_to_coordinates(fill_ranges, birthday_date) {
         let new_fill_ranges = [];
         for (let i = 0; i < fill_ranges.length; i++) {
           const range = fill_ranges[i];
@@ -576,7 +553,7 @@
           else if (Number.isInteger(range["from"]))
             new_range["from_week"] = (range["from"] - 1) * number_of_weeks_in_a_row + 1;
           else  // date format
-            new_range["from_week"] = calculate_weeks_between(date, range["from"]);
+            new_range["from_week"] = calculate_weeks_between(birthday_date, range["from"]);
         
           // to
           if (!range["to"])
@@ -584,7 +561,7 @@
           else if (Number.isInteger(range["to"]))
             new_range["to_week"] = range["to"] * number_of_weeks_in_a_row;
           else  // date format
-            new_range["to_week"] = calculate_weeks_between(date, range["to"]);
+            new_range["to_week"] = calculate_weeks_between(birthday_date, range["to"]);
           
           new_fill_ranges.push(new_range);
         }
@@ -655,8 +632,6 @@
         const data_to_draw_dx_another_country = data_dx[country_code_latest][sex_to_compare][last_year_in_dataset_2];
         const label_chart_third = `${country_code_latest}${last_year_in_dataset_2}${sex_to_compare}`.toUpperCase();
         
-        //const all_data = data_all;
-
         const percentiles_to_draw = [50, 80, 90];
         const year_percentiles_dx_birthday = get_percentiles(data_to_draw_dx_birthday, percentiles_to_draw);
         const year_percentiles_dx_latest = get_percentiles(data_to_draw_dx_latest, percentiles_to_draw);
@@ -675,7 +650,7 @@
           //{"fill": "aquamarine", "from": "2014-06-04", "to": new Date()}, 
         ];
 
-        const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, date);
+        const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, birthday_date);
         let ch = calendar_height + 1;
         if (is_mobile)
           ch += calendar_weeks_numbers_height + calendar_new_year_label_height; // idk why
@@ -683,11 +658,11 @@
         let content = `<svg id="svg_canvas" height="${svg_height}" viewBox="0 0 ${calendar_width} ${ch}" xmlns="http://www.w3.org/2000/svg" style="width: calc(100% - ${svg_margin * 2}px); margin: ${svg_margin}px; margin-top: 10px;">`;
 
         content += draw_weeks_numbers();
-        content += draw_years_numbers(date);
+        content += draw_years_numbers(birthday_date);
 
-        const week_new_year = calculate_new_year_week(date);
+        const week_new_year = calculate_new_year_week(birthday_date);
 
-        const age = get_age(date);
+        const age = get_age(birthday_date);
         const special_ages = [1, 2, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, age + 1, number_of_years];  // to draw integral values for these years
 
         let total_weeks = 1;
@@ -799,13 +774,6 @@
             }
           }
         }
-
-        /*
-        content += draw_line2("mx", data_to_draw_mx_birthday, "white", age);
-        content += draw_line2("dx", data_to_draw_dx_birthday, "white", age);
-        content += draw_line2("mx", data_to_draw_mx_latest, "white", age);
-        content += draw_line2("dx", data_to_draw_dx_latest, "white", age);
-        */
 
         if (have_data_for_charts) {
           antistroke = "black"
