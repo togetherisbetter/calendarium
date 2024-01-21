@@ -140,6 +140,164 @@
       const is_mobile = is_bad_mobile();//is_iOS();//window.mobileCheck();
       const supported_countries = ['at', 'au', 'by', 'be', 'bg', 'ca', 'cl', 'hr', 'cz', 'fi', 'fr', 'de', 'gr', 'hk', 'hu', 'is', 'ie', 'il', 'it', 'jp', 'lv', 'lt', 'lu', 'nl', 'nz', 'no', 'pl', 'pt', 'kr', 'ru', 'sk', 'si', 'es', 'se', 'ch', 'tw', 'ua', 'uk', 'us'];
 
+      const who_age_groups = ['0-1', '1-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80-84', '85PLUS'];
+      const who_map_age_to_groups = {
+        0: '0-1', 
+        1: '1-4', 2: '1-4', 3: '1-4', 4: '1-4', 
+        5: '5-9', 6: '5-9', 7: '5-9', 8: '5-9', 9: '5-9', 
+        10: '10-14', 11: '10-14', 12: '10-14', 13: '10-14', 14: '10-14', 
+        15: '15-19', 16: '15-19', 17: '15-19', 18: '15-19', 19: '15-19', 
+        20: '20-24', 21: '20-24', 22: '20-24', 23: '20-24', 24: '20-24', 
+        25: '25-29', 26: '25-29', 27: '25-29', 28: '25-29', 29: '25-29', 
+        30: '30-34', 31: '30-34', 32: '30-34', 33: '30-34', 34: '30-34', 
+        35: '35-39', 36: '35-39', 37: '35-39', 38: '35-39', 39: '35-39', 
+        40: '40-44', 41: '40-44', 42: '40-44', 43: '40-44', 44: '40-44', 
+        45: '45-49', 46: '45-49', 47: '45-49', 48: '45-49', 49: '45-49', 
+        50: '50-54', 51: '50-54', 52: '50-54', 53: '50-54', 54: '50-54', 
+        55: '55-59', 56: '55-59', 57: '55-59', 58: '55-59', 59: '55-59', 
+        60: '60-64', 61: '60-64', 62: '60-64', 63: '60-64', 64: '60-64', 
+        65: '65-69', 66: '65-69', 67: '65-69', 68: '65-69', 69: '65-69', 
+        70: '70-74', 71: '70-74', 72: '70-74', 73: '70-74', 74: '70-74', 
+        75: '75-79', 76: '75-79', 77: '75-79', 78: '75-79', 79: '75-79', 
+        80: '80-84', 81: '80-84', 82: '80-84', 83: '80-84', 84: '80-84', 
+        85: '85PLUS', 86: '85PLUS', 87: '85PLUS', 88: '85PLUS', 89: '85PLUS', 
+      };
+      const who_sex_groups = ['MLE', 'FMLE'];
+      const who_causes_groups = ['Injuries', 'Chronic respiratory diseases', 'Cardiovascular diseases', 'Diabetes', 'Cancers', 'Other noncommunicable diseases', 'Maternal causes', 'Communicable diseases', 'Dimentias'];
+      const who_map_causes_to_groups = {
+        'Ischaemic heart disease': 'Cardiovascular diseases',
+        'Stroke': 'Cardiovascular diseases',
+        'Trachea, bronchus, lung cancers': 'Cancers',
+        'Chronic obstructive pulmonary disease': 'Chronic respiratory diseases',
+        'Colon and rectum cancers': 'Cancers',
+        'Prostate cancer': 'Cancers',
+        'Stomach cancer': 'Cancers',
+        'Pancreas cancer': 'Cancers',
+        'Cirrhosis of the liver': 'Other noncommunicable diseases',
+        'Lower respiratory infections': 'Communicable diseases',
+        'Cardiomyopathy, myocarditis, endocarditis': 'Cardiovascular diseases',
+        'Self-harm': 'Injuries',
+        'Liver cancer': 'Cancers',
+        'Bladder cancer': 'Cancers',
+        'Mouth and oropharynx cancers': 'Cancers',
+        'Hypertensive heart disease': 'Cardiovascular diseases',
+        'Kidney cancer': 'Cancers',
+        'Diabetes mellitus': 'Diabetes',
+        'Oesophagus cancer': 'Cancers',
+        'Alzheimer disease and other dementias': 'Dimentias',
+        'Lymphomas, multiple myeloma': 'Other noncommunicable diseases',
+        'Leukaemia': 'Cancers',
+        'Alcohol use disorders': 'Other noncommunicable diseases',
+        'Peptic ulcer disease': 'Other noncommunicable diseases',
+        'Parkinson disease': 'Other noncommunicable diseases',
+        'Larynx cancer': 'Cancers',
+        'Falls': 'Injuries',
+        'Kidney diseases': 'Other noncommunicable diseases',
+        'Brain and nervous system cancers': 'Cancers',
+        'Pancreatitis': 'Other noncommunicable diseases',
+        'Melanoma and other skin cancers': 'Cancers',
+        'Road injury': 'Injuries',
+        'Gallbladder and biliary tract cancer': 'Cancers',
+        'Fire, heat and hot substances': 'Injuries',
+        'Gallbladder and biliary diseases': 'Other noncommunicable diseases',
+        'Tuberculosis': 'Communicable diseases',
+        'Poisonings': 'Injuries',
+        'Drug use disorders': 'Other noncommunicable diseases',
+        'Paralytic ileus and intestinal obstruction': 'Other noncommunicable diseases',
+        'Drowning': 'Injuries',
+        'Interpersonal violence': 'Injuries',
+        'HIV/AIDS': 'Communicable diseases',
+        'Asthma': 'Chronic respiratory diseases',
+        'Skin diseases': 'Communicable diseases',
+        'Rheumatic heart disease': 'Cardiovascular diseases',
+        'Urolithiasis': 'Other noncommunicable diseases',
+        'Exposure to mechanical forces': 'Injuries',
+        'Thyroid cancer': 'Cancers',
+        'Inflammatory bowel disease': 'Other noncommunicable diseases',
+        'Mesothelioma': 'Cancers',
+        'Meningitis': 'Сommunicable diseases',
+        'Appendicitis': 'Other noncommunicable diseases',
+        'Encephalitis': 'Communicable diseases',
+        'Gastritis and duodenitis': 'Other noncommunicable diseases',
+        'Epilepsy': 'Other noncommunicable diseases',
+        'Rheumatoid arthritis': 'Other noncommunicable diseases',
+        'Testicular cancer': 'Cancers',
+        'Protein-energy malnutrition': 'Other noncommunicable diseases',
+        'Multiple sclerosis': 'Other noncommunicable diseases',
+        'Diarrhoeal diseases': 'Communicable diseases',
+        'Echinococcosis': 'Communicable diseases',
+        'Upper respiratory infections': 'Communicable diseases',
+        'Collective violence and legal intervention': 'Injuries',
+        'Acute hepatitis B': 'Communicable diseases',
+        'Syphilis': 'Communicable diseases',
+        'Rabies': 'Communicable diseases',
+        'Cysticercosis': 'Communicable diseases',
+        'Acute hepatitis E': 'Communicable diseases',
+        'Tetanus': 'Communicable diseases',
+        'Osteoarthritis': 'Other noncommunicable diseases',
+        'Malaria': 'Communicable diseases',
+        'Gout': 'Other noncommunicable diseases',
+        'Back and neck pain': 'Other noncommunicable diseases',
+        'Acute hepatitis A': 'Communicable diseases',
+        'Acute hepatitis C': 'Communicable diseases',
+        'Measles': 'Communicable diseases',
+        'Genital herpes': 'Communicable diseases',
+        'Whooping cough': 'Other noncommunicable diseases',
+        'Diphtheria': 'Communicable diseases',
+        'African trypanosomiasis': 'Communicable diseases',
+        'Congenital anomalies': 'Other noncommunicable diseases',
+        'Oral conditions': '',
+        'Sudden infant death syndrome': 'Other noncommunicable diseases',
+        'Benign prostatic hyperplasia': '',
+        'Chagas disease': '',
+        'Chlamydia': '',
+        'Gonorrhoea': '',
+        'Trichomoniasis': '',
+        'Dengue': '',
+        'Trachoma': '',
+        'Yellow fever': '',
+        'Natural disasters': '',
+        'Infertility': 'Other noncommunicable diseases',
+        'Gynecological diseases': '',
+        'Migraine': 'Other noncommunicable diseases',
+        'Non-migraine headache': 'Other noncommunicable diseases',
+        'Glaucoma': 'Other noncommunicable diseases',
+        'Cataracts': 'Other noncommunicable diseases',
+        'Uncorrected refractive errors': 'Other noncommunicable diseases',
+        'Macular degeneration': 'Other noncommunicable diseases',
+        'Other vision loss': 'Other noncommunicable diseases',
+        'Other hearing loss': 'Other noncommunicable diseases',
+        'Iodine deficiency': 'Other noncommunicable diseases',
+        'Vitamin A deficiency': 'Other noncommunicable diseases',
+        'Iron-deficiency anaemia': 'Other noncommunicable diseases',
+        'Breast cancer': 'Cancers',
+        'Cervix uteri cancer': 'Cancers',
+        'Corpus uteri cancer': 'Cancers',
+        'Ovary cancer': 'Cancers',
+        'Anxiety disorders': 'Other noncommunicable diseases',
+        'Eating disorders': 'Other noncommunicable diseases',
+        'Autism and Asperger syndrome': 'Other noncommunicable diseases',
+        'Childhood behavioural disorders': 'Other noncommunicable diseases',
+        'Idiopathic intellectual disability': 'Other noncommunicable diseases',
+        'Thalassaemias': 'Other noncommunicable diseases',
+        'Sickle cell disorders and trait': 'Other noncommunicable diseases',
+        'Depressive disorders': 'Other noncommunicable diseases',
+        'Bipolar disorder': 'Other noncommunicable diseases',
+        'Schizophrenia': 'Other noncommunicable diseases',
+        'Schistosomiasis': '',
+        'Leishmaniasis': '',
+        'Lymphatic filariasis': '',
+        'Onchocerciasis': '',
+        'Ascariasis': '',
+        'Trichuriasis': '',
+        'Hookworm disease': '',
+        'Food-bourne trematodes': '',
+        'Leprosy': '',
+        'Otitis media': '',
+        'Maternal conditions': 'Maternal causes',
+        'Neonatal conditions': 'Other noncommunicable diseases',
+      };
+
       const circle_radius = 2;
       const number_of_weeks_in_a_row = 52;
       const number_of_years = 101;
@@ -160,6 +318,8 @@
       var antistroke = "black";
       var antistroke_width = 1;
       const color_base = "snow";
+
+      var stacked_coo;
 
       var data_dx = {};
       var data_mx = {};
@@ -449,7 +609,7 @@
         return content;
       }
 
-      function coordinates_to_points(coordinates) {
+      function coordinates_to_svg_pair_points(coordinates) {
         let vertical_offset = calendar_weeks_numbers_height + circle_radius;
         if (is_mobile)  // idk why on mobiles is calculated differently
           vertical_offset -= 10;
@@ -464,23 +624,15 @@
         return points;
       }
 
-      function make_coordinates(mdx, array, age, position, scale_y) {
-        const total = array.reduce((a, b) => a + b, 0);
-        let max = get_peak_value(data_all[mdx]).value;
-        if (max < 100)
-          max = 100;
-
-        let coordinates_dotss = {};
-        let coordinates_dotss_before_age = {};
-        let coordinates_dotss_after_age = {};
-        let coordinates_integral_before_age = {};
-        let coordinates_integral_after_age = {};
-        let coordinates_integral = {};
-        let integral = 0;
+      function make_coordinates(max, array, age, position, scale_y) {
+        let coordinates_dots = {};
+        let coordinates_dots_before_age = {};
+        let coordinates_dots_after_age = {};
 
         if (!scale_y)
           scale_y = 1;
         
+        //console.log(array)
         for (let year = 0; year < number_of_years; year++) {
           const value = array[year];
           let value_mapped_on_weeks;
@@ -489,39 +641,32 @@
           else
             value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row * scale_y;
 
-          coordinates_dotss[year + 1] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
-          integral += (value / total) * number_of_weeks_in_a_row;
-          coordinates_integral[year + 1] = integral;
-
-          if (year <= age) {
-            coordinates_dotss_before_age[year + 1] = value_mapped_on_weeks;
-            coordinates_integral_before_age[year + 1] = integral;
-          }
-          if (year >= age) {
-            coordinates_dotss_after_age[year + 1] = value_mapped_on_weeks;
-            coordinates_integral_after_age[year + 1] = integral;
-          }
+          coordinates_dots[year + 1] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
+          if (year <= age)
+            coordinates_dots_before_age[year + 1] = value_mapped_on_weeks;
+          if (year >= age)
+            coordinates_dots_after_age[year + 1] = value_mapped_on_weeks;
         }
         
         return {
-          //'dotss': coordinates_dotss,
-          'dotss_before_age': coordinates_dotss_before_age,
-          'dotss_after_age': coordinates_dotss_after_age,
-          //'integral': coordinates_integral,
-          'integral_before_age': coordinates_integral_before_age,
-          'integral_after_age': coordinates_integral_after_age,
+          'dots': coordinates_dots,
+          'dots_before_age': coordinates_dots_before_age,
+          'dots_after_age': coordinates_dots_after_age,
         };
       }
 
-      function draw_polyline(coordinates, stroke, stroke_width, stroke_dasharray) {
-        let content = `<polyline fill="none" stroke="${stroke}" stroke-width="${stroke_width}" stroke-linejoin="round" stroke-dasharray="${stroke_dasharray}" points="`;
-        content += coordinates_to_points(coordinates);
+      function draw_polyline(coordinates, stroke, stroke_width, stroke_dasharray, fill) {
+        if (!fill)
+          fill = 'none';
+
+        let content = `<polyline fill="${fill}" stroke="${stroke}" stroke-width="${stroke_width}" stroke-linejoin="round" stroke-dasharray="${stroke_dasharray}" points="`;
+        content += coordinates_to_svg_pair_points(coordinates);
         content += '"/>';
 
         return content;
       }
 
-      function draw_line(mdx, data, stroke, age, stroke_dasharray) {
+      function draw_line(mdx_type, data, stroke, age, stroke_dasharray) {
         let content = '';
 
         //const antistroke = "black"
@@ -529,15 +674,28 @@
         //const antistroke_width = stroke_width * 1.5;
         let position = "left";
         let scale_y = 0.7;
-        if (mdx == "mx") {
+        if (mdx_type == "mx") {
           position = "right";
           scale_y = 1;
         }
-        const coordinates = make_coordinates(mdx, data, age, position, scale_y);
+        let max = get_peak_value(data_all[mdx_type]).value;
+        if (max < 100)
+          max = 100;
+        const coordinates = make_coordinates(max, data, age, position, scale_y);
 
-        content += draw_polyline(coordinates.dotss_before_age, antistroke, antistroke_width, stroke_dasharray);
-        content += draw_polyline(coordinates.dotss_after_age, stroke, stroke_width, stroke_dasharray);
+        content += draw_polyline(coordinates.dots_before_age, antistroke, antistroke_width, stroke_dasharray);
+        content += draw_polyline(coordinates.dots_after_age, stroke, stroke_width, stroke_dasharray);
 
+        return content;
+      }
+      function draw_stacked_line(data, stroke, age, stroke_dasharray) {
+        let content = '';
+        const stroke_width = 0.5;
+        const coordinates = make_coordinates(100, data, age, "left", 1.0);
+        let fill = 'none';
+        if (stroke == 'blue')
+          fill = stroke;
+        content += draw_polyline(coordinates.dots, stroke, stroke_width, stroke_dasharray, fill);
         return content;
       }
 
@@ -580,7 +738,7 @@
       }
 
       function draw_datasource() {
-        return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="5" font-weight="normal">Data source: mortality.org</text>';
+        return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="5" font-weight="normal">Data source: <a xlink:href= "https://mortality.org" xlink:title="HMD website" xlink:show="new">mortality.org</a></text>';
       }
 
       function draw_special_age_label(data) {
@@ -602,6 +760,8 @@
 
       async function draw_calendar(user_values) {
         data_all = {'mx': [], 'dx': []}; // reset
+
+        await who_get();
 
         const date = user_values['birthday'];
         const country_code = user_values['country_code'];
@@ -780,6 +940,7 @@
           }
         }
 
+/*
         if (have_data_for_charts) {
           antistroke = "black"
           content += draw_line("mx", data_to_draw_mx_birthday, "black", age);
@@ -804,6 +965,15 @@
         content += draw_datasource();
         content += labels;
         content += labels_special_years;
+*/
+        let colors = ["blue", "red", "green", "maroon", "black", "pink", "orange", "brown", "black"]
+        for (let j = 0; j < who_causes_groups.length; j++) {
+          let cause = get_data_for_something(stacked_coo, who_causes_groups[j]);
+          console.log(cause)
+          content += draw_stacked_line(cause, colors[j], age, '1 0');
+        }
+
+        //content += draw_stacked_line(injuries, "blue", 36, '1 0');
         content += '</svg>';
 
         document.getElementById("calendar").innerHTML = content;
@@ -817,6 +987,9 @@
           return;
 
         const splitted_params = params.split(',');
+        if (splitted_params.length != 5)
+          return;
+
         let sex_to_compare = splitted_params[4];
         if (!sex_to_compare)
           sex_to_compare = splitted_params[3]
@@ -852,7 +1025,118 @@
         document.getElementById('country_code_latest').value = browser_country;
       }
 
+      function transform_who_ranges_to_coordinates(who_ranges) {
+        let coordinates = {};
+        for (let i = 0; i < number_of_years; i++) {
+          const who_age = who_map_age_to_groups[i];
+          coordinates[i + 1] = who_ranges[who_age];
+        }
+        return coordinates;
+      }
+
+      function transform_coordinates_to_stacked_coordinates(coordinates, order) {
+        let stacked_coordinates = {};
+        for (let i = 1; i <= number_of_years; i++) {
+          if (coordinates[i] == undefined)
+            break;
+
+          stacked_coordinates[i] = {};
+          for (let j = 0; j < order.length; j++) {
+            if (coordinates[i][order[j]] == undefined) {
+              if (j == 0)
+                stacked_coordinates[i][order[j]] = 0;
+              else
+                stacked_coordinates[i][order[j]] = +(stacked_coordinates[i][order[j - 1]]).toFixed(1);
+            }
+            else {
+              if (j == 0)
+                stacked_coordinates[i][order[j]] = +(coordinates[i][order[j]][1]).toFixed(1);
+              else
+                stacked_coordinates[i][order[j]] = +(coordinates[i][order[j]][1] + stacked_coordinates[i][order[j - 1]]).toFixed(1);
+            }
+          }
+        }
+        //console.log(stacked_coordinates)
+        return stacked_coordinates;
+      }
+
+      function get_data_for_something(stacked_coordinates, something) {
+        let data = [];
+        for (let i = 1; i <= number_of_years; i++) {
+          if (!stacked_coordinates[i])
+            break;
+          data.push(stacked_coordinates[i][something]);
+        }
+        return data;
+      }
+
+      function who_get() {        
+        const who_url = `https://frontdoor-l4uikgap6gz3m.azurefd.net/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DEATHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DEATHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DEATHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq 'RUS' and DIM_SEX_CODE eq 'FMLE' and DIM_YEAR_CODE eq '2019'`;
+
+        return fetch(who_url)
+          .then((response) => response.text())
+          .then((data) => {
+            const data_values = JSON.parse(data).value;
+            
+            let population_total = {};
+            let deaths_total = {};
+            for (let i = 0; i < data_values.length; i++) {
+              const record = data_values[i];
+              const deaths = record.VAL_DEATHS_COUNT_NUMERIC;
+              if (deaths == 0)
+                continue;
+              
+              const age = record.DIM_AGEGROUP_CODE.replace('YEARS', '');
+              if (deaths_total[age])
+                deaths_total[age] += deaths;
+              else
+                deaths_total[age] = deaths;
+
+              if (!population_total[age])
+                population_total[age] = record.ATTR_POPULATION_NUMERIC;
+            }
+
+            let d = [];
+            let e = {};
+            for (let i = 0; i < data_values.length; i++) {
+              const record = data_values[i];
+              const age = record.DIM_AGEGROUP_CODE.replace('YEARS', '');
+              const deaths = record.VAL_DEATHS_COUNT_NUMERIC;
+              const percentile = deaths * 100 / deaths_total[age]; // %
+              const chance_to_die = deaths * 100 / population_total[age]; // %
+              const cause = record.DIM_GHECAUSE_TITLE;
+              
+              if (percentile < 0.1)
+                continue;
+              //d.push([cause, deaths, +percentile.toFixed(1), +chance_to_die.toFixed(3)]); // https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
+              const group = who_map_causes_to_groups[cause];
+              if (group) {
+                if (e[age]) {
+                  if (e[age][group]) {
+                    e[age][group][0] += deaths;
+                    e[age][group][1] = e[age][group][0] * 100 / deaths_total[age];
+                  }
+                  else
+                    e[age][group] = [deaths, deaths * 100 / deaths_total[age]];
+                }
+                else
+                  e[age] = {[group]: [deaths, deaths * 100 / deaths_total[age]]};
+              }
+              else {
+                console.log(cause);
+              }
+            }
+            //console.log(population_total, deaths_total, d);
+            let coo = transform_who_ranges_to_coordinates(e);
+            stacked_coo = transform_coordinates_to_stacked_coordinates(coo, who_causes_groups);
+            //console.log(injuries)
+            //console.log(stacked_coo);
+          }
+        );
+      }
+
       window.onload = function() {
+        who_get();
         guess_the_country();
         let user_values = get_parameters_from_url();
         if (!user_values)
