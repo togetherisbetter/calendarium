@@ -1006,6 +1006,8 @@
         document.getElementById('controls').style.display = 'none';
         document.getElementById('faq').style.display = 'none';
         document.getElementById('qrcode').style.display = '';
+        document.getElementById('svg_canvas').style.height = '996px';
+        document.getElementsByClassName('container')[0].classList.remove("container");
         
         const svg_canvas = document.getElementById('svg_canvas');
         svg_canvas.style.marginTop = '2.5%';
@@ -1153,7 +1155,7 @@
     <div id="loading">
       <p>📅 Loading Calendarium...</p>
     </div>
-    <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 83.9%; left: 64.7%; border-radius: 0px; display: none;"></div>
+    <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 84.7%; left: 64.6%; border-radius: 0px; display: none;"></div>
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-6 offset-lg-0 col-md-12 col-sm-12" style="height: 100%;">
