@@ -596,7 +596,8 @@
             content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="15" y="' + cy2 + '">'
 
             const birthday_year = birthday_date.getFullYear();
-            if (birthday_date.getMonth() == 0 && birthday_date.getDate() <= 7)  // in case of birthday during 1st week of January don't write 2004/05, but 2004
+            if ((birthday_date.getMonth() == 0 && birthday_date.getDate() <= 9) || 
+                (birthday_date.getMonth() == 11 && birthday_date.getDate() > 25))  // in case of birthday during 1st week of January don't write 2004/05, but 2004
               content += birthday_year + year;
             else {
               const year_from = (birthday_year + year).toString();
@@ -1323,16 +1324,16 @@
             <h1>FAQ:</h1>
             <p>
                 <b>Q:</b> Where is a legend?<br>
-                <b>A:</b> It's in the left top corner.
+                <b>A:</b> It's in the left top corner of a calendar.
             </p>
             <p class="has_list">
                 <b>Q:</b> What does <b>PL2000F</b> mean in a legend?<br>
                 <b>A:</b> <b>PL</b> means "Poland", <b>2000</b> means "data year", <b>F</b> means "Female".
                 Colors mean: 
                 <ul>
-                  <li><b>Bold black</b> means "data for birthday year", </li>
-                  <li><b style="color: gray;">Bold gray</b> means "last data-available year for the origin country and sex",</li>
-                  <li><span style="color: gray;">Thin gray</span> means "data for compare-to country and/or sex".</li>
+                  <li><b>Bold black</b> means "data for a birthday year", </li>
+                  <li><b style="color: gray;">Bold gray</b> means "last data-available year for the origin country and sex at birth",</li>
+                  <li><span style="color: gray;">Thin gray</span> (appears if compare-to country and/or sex are different) means "data for a compare-to country and/or sex".</li>
                 </ul>
             </p>
             <p>
@@ -1341,23 +1342,23 @@
             </p>
             <p>
                 <b>Q:</b> What do these charts show?<br>
-                <b>A:</b> Charts on the left ("Deaths by age") show how many people (of particular sex and country) have died on a specified year. Charts on the right ("Chance to die at age") show how many people of each age (among all the people of that age and sex in that country) have died on a specified year.
+                <b>A:</b> Charts on the left ("Deaths by age") show how many people (of a particular sex in a particular country) have died on a specified year. Charts on the right ("Chance to die at age") show how many people of each age (among all the people of that age and sex in that particular country) have died on a specified year.
             </p>
             <p class="has_list">
                 <b>Q:</b> Why do we have some "random year" chart as well?<br>
-                <b>A:</b> This is not "random year", but "latest data-available year" for specified country and sex:
+                <b>A:</b> This is not a "random year" chart, but "latest data-available year" chart for a specified country and sex:
                 <ul>
                   <li>Solid <b>black bold</b> line (and <b>black bold</b> digits) show data for a specified "birthday year".</li>
-                  <li>Solid <b>gray bold</b> line (and <b>gray bold</b> digits) show the latest available data for specified country and sex. It is displayed (1) to let you to compare the trends of your birthday year with the latest data-available year, and (2) to show you how things go right now according to latest available data since you tend to stick with it more than with charts made for your "birthday year".</li>
+                  <li>Solid <b style="color: gray;">gray bold</b> line (and <b style="color: gray;">gray bold</b> digits) show the latest available data for a specified country and sex pair. It is displayed (1) to let you to compare the trends of your birthday year with the latest data-available year, and (2) to show you how the things go right now according to the latest available data since you tend to stick with it more than with charts for your "birthday year".</li>
                 </ul>
             </p>
             <p>
                 <b>Q:</b> What are gray dashed charts (and gray thin digits)?<br>
-                <b>A:</b> These are charts built for latest available data year for a "target country and sex" (country you've lived in during last 10+ years or plan to relocate to). In the top left corner legend is updated as well.
+                <b>A:</b> These are charts built for the latest data-available year for a "target country and sex" (country you've lived in during last 10+ years or plan to relocate to). In the top left corner legend is updated as well.
             </p>
             <p>
                 <b>Q:</b> What is the purpose of this calendar?<br>
-                <b>A:</b> The purpose of this calendar is to help me (and other people) (1) to visualise their life in terms of volumes and spaces rather than in abstract digits, (2) to provide latest available scientific information about fair life expectancies for different countries, years and sexes, (3) to be informed on life expectancy change if you decide to relocate.
+                <b>A:</b> The purpose of this calendar is to help me (and other people) (1) to visualise their life in terms of volumes and spaces rather than in abstract numbers, (2) to provide latest available scientific information about fair life expectancies for different countries, years and sexes, (3) to be informed on life expectancy change if you decide to relocate.
             </p>
             <p>
                 <b>Q:</b> Where does this data come from?<br>
