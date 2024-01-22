@@ -692,7 +692,7 @@
       }
 
       function draw_polyline(coordinates, stroke, stroke_width, stroke_dasharray) {
-        let content = `<polyline fill="${fill}" stroke="${stroke}" stroke-width="${stroke_width}" stroke-linejoin="round" stroke-dasharray="${stroke_dasharray}" points="`;
+        let content = `<polyline fill="none" stroke="${stroke}" stroke-width="${stroke_width}" stroke-linejoin="round" stroke-dasharray="${stroke_dasharray}" points="`;
         content += coordinates_to_svg_pair_points(coordinates);
         content += '"/>';
 
@@ -869,6 +869,17 @@
         content += draw_weeks_numbers();
         content += draw_years_numbers(birthday_date);
 
+//console.log(stacked_coo)
+        let colors = ["#0193d6", "#892e2f", "#86bee7", "#ffe094", "#023f88", "#f5887d", "#fcc513", "#5e82a0", "black"]
+        for (let j = who_causes_groups.length; j >= 0 ; j--) {
+          let cause = get_data_for_something(stacked_coo, who_causes_groups[j]);
+          //console.log(who_causes_groups[j], cause)
+          content += draw_stacked_line(cause, colors[j]);
+        }
+
+/**/
+
+
         const week_new_year = calculate_new_year_week(birthday_date);
 
         const age = get_age(birthday_date);
@@ -984,7 +995,6 @@
           }
         }
 
-/*
         if (have_data_for_charts) {
           antistroke = "black"
           content += draw_line("mx", data_to_draw_mx_birthday, "black", age);
@@ -1009,14 +1019,8 @@
         content += draw_datasource();
         content += labels;
         content += labels_special_years;
-*/
-        //console.log(stacked_coo)
-        let colors = ["#0193d6", "#892e2f", "#86bee7", "#ffe094", "#023f88", "#f5887d", "#fcc513", "#5e82a0", "black"]
-        for (let j = who_causes_groups.length; j >= 0 ; j--) {
-          let cause = get_data_for_something(stacked_coo, who_causes_groups[j]);
-          //console.log(who_causes_groups[j], cause)
-          content += draw_stacked_line(cause, colors[j]);
-        }
+/**/
+        
         content += '</svg>';
 
         document.getElementById("calendar").innerHTML = content;
@@ -1116,7 +1120,7 @@
       }
 
       function who_get() {        
-        const who_url = `https://frontdoor-l4uikgap6gz3m.azurefd.net/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DEATHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DEATHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DEATHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq 'RUS' and DIM_SEX_CODE eq 'FMLE' and DIM_YEAR_CODE eq '2019'`;
+        const who_url = `https://frontdoor-l4uikgap6gz3m.azurefd.net/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DEATHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DEATHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DEATHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq 'RUS' and DIM_SEX_CODE eq 'MLE' and DIM_YEAR_CODE eq '2019'`;
 
         return fetch(who_url)
           .then((response) => response.text())
