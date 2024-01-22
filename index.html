@@ -164,6 +164,8 @@
       };
       const who_sex_groups = ['MLE', 'FMLE'];
       const who_causes_groups = ['Injuries', 'Chronic respiratory diseases', 'Cardiovascular diseases', 'Diabetes', 'Cancers', 'Other noncommunicable diseases', 'Maternal causes', 'Communicable diseases', 'Dimentias'];
+      const who_charts_colors = ["#0193d6", "#892e2f", "#86bee7", "#ffe094", "#023f88", "#f5887d", "#fcc513", "#5e82a0", "black"];
+
       const who_map_causes_to_groups = {
         'Ischaemic heart disease': 'Cardiovascular diseases',
         'Stroke': 'Cardiovascular diseases',
@@ -318,9 +320,9 @@
       var antistroke = "black";
       var antistroke_width = 1;
       const color_base = "snow";
-      const years = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90];
+      const years = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90,];
 
-      var stacked_coo;
+      var who_stacked_coordinates;
 
       var data_dx = {};
       var data_mx = {};
@@ -627,11 +629,11 @@
       }
 
       function stacked_coordinates_to_svg_pair_points(coordinates) {
-        let vertical_offset = calendar_weeks_numbers_height + circle_radius;
+        let vertical_offset = calendar_weeks_numbers_height + 0;
         if (is_mobile)  // idk why on mobiles is calculated differently
           vertical_offset -= 10;
 
-        const first_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 3;
+        const first_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 1;
         const first_dot_y = calendar_height - 1 * calendar_step_vertical - vertical_offset + 5;
         let points = `${first_dot_x},${first_dot_y} `;
         for (let key in coordinates) {
@@ -640,7 +642,7 @@
           const horizontal = (value - 1) * calendar_step_horizontal + calendar_years_numbers_width + 10;
           points += horizontal + ',' + vertical + ' ';
         }
-        const last_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 3;
+        const last_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 1;
         const last_dot_y = calendar_height - 90 * calendar_step_vertical - vertical_offset + 5;
         points += `${last_dot_x},${last_dot_y} `;
         //console.log(coordinates, points)
@@ -701,11 +703,8 @@
         return content;
       }
 
-      function draw_stacked_polyline(coordinates, stroke, stroke_width, stroke_dasharray, fill) {
-        if (!fill)
-          fill = 'none';
-
-        let content = `<polyline fill="${fill}" stroke="${stroke}" stroke-width="${stroke_width}" stroke-linejoin="round" stroke-dasharray="${stroke_dasharray}" points="`;
+      function draw_stacked_polyline(coordinates, stroke) {
+        let content = `<polyline opacity="1" fill="${stroke}" stroke-linejoin="round" points="`;
         content += stacked_coordinates_to_svg_pair_points(coordinates);
         content += '"/>';
 
@@ -741,7 +740,7 @@
         let fill = 'none';
         //if (stroke == 'blue')
         //  fill = stroke;
-        content += draw_stacked_polyline(coordinates.dots, stroke, stroke_width, stroke_dasharray, stroke);
+        content += draw_stacked_polyline(coordinates.dots, stroke, stroke_width, stroke_dasharray);
         return content;
       }
 
@@ -870,17 +869,14 @@
 
         content += draw_weeks_numbers();
         content += draw_years_numbers(birthday_date);
-
-//console.log(stacked_coo)
-        let colors = ["#0193d6", "#892e2f", "#86bee7", "#ffe094", "#023f88", "#f5887d", "#fcc513", "#5e82a0", "black"]
+/*
+        //console.log(who_stacked_coordinates)
+        
         for (let j = who_causes_groups.length - 1; j >= 0 ; j--) {
-          let cause = get_data_for_something(stacked_coo, who_causes_groups[j]);
-          //console.log(who_causes_groups[j], cause)
-          content += draw_stacked_line(cause, colors[j]);
+          let cause = get_data_for_something(who_stacked_coordinates, who_causes_groups[j]);
+          content += draw_stacked_line(cause, who_charts_colors[j]);
         }
-
-/**/
-
+*/
 
         const week_new_year = calculate_new_year_week(birthday_date);
 
@@ -997,6 +993,16 @@
           }
         }
 
+/**/
+        //console.log(who_stacked_coordinates)
+        
+        for (let j = who_causes_groups.length - 1; j >= 0 ; j--) {
+          let cause = get_data_for_something(who_stacked_coordinates, who_causes_groups[j]);
+          content += draw_stacked_line(cause, who_charts_colors[j]);
+        }
+/**/
+
+
         if (have_data_for_charts) {
           antistroke = "black"
           content += draw_line("mx", data_to_draw_mx_birthday, "black", age);
@@ -1021,7 +1027,6 @@
         content += draw_datasource();
         content += labels;
         content += labels_special_years;
-/**/
         
         content += '</svg>';
 
@@ -1076,7 +1081,7 @@
         document.getElementById('country_code_latest').value = browser_country;
       }
 
-      function transform_who_ranges_to_coordinates(who_ranges) {
+      function transform_who_ages_causes_to_coordinates(who_ranges) {
         let coordinates = {};
         for (let i = 0; i < number_of_years; i++) {
           const who_age = who_map_age_to_groups[i];
@@ -1097,13 +1102,13 @@
               if (j == 0)
                 stacked_coordinates[i][order[j]] = 0;
               else
-                stacked_coordinates[i][order[j]] = +(stacked_coordinates[i][order[j - 1]]).toFixed(1);
+                stacked_coordinates[i][order[j]] = +(stacked_coordinates[i][order[j - 1]]);
             }
             else {
               if (j == 0)
-                stacked_coordinates[i][order[j]] = +(coordinates[years[i]][order[j]][1]).toFixed(1);
+                stacked_coordinates[i][order[j]] = +(coordinates[years[i]][order[j]][1]);
               else
-                stacked_coordinates[i][order[j]] = +(coordinates[years[i]][order[j]][1] + stacked_coordinates[i][order[j - 1]]).toFixed(1);
+                stacked_coordinates[i][order[j]] = +(coordinates[years[i]][order[j]][1] + stacked_coordinates[i][order[j - 1]]);
             }
           }
         }
@@ -1121,7 +1126,7 @@
         return data;
       }
 
-      function who_get() {        
+      function who_get() {
         const who_url = `https://frontdoor-l4uikgap6gz3m.azurefd.net/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DEATHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DEATHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DEATHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq 'RUS' and DIM_SEX_CODE eq 'MLE' and DIM_YEAR_CODE eq '2019'`;
 
         return fetch(who_url)
@@ -1147,8 +1152,7 @@
                 population_total[age] = record.ATTR_POPULATION_NUMERIC;
             }
 
-            let d = [];
-            let e = {};
+            let who_ages_causes = {};
             for (let i = 0; i < data_values.length; i++) {
               const record = data_values[i];
               const age = record.DIM_AGEGROUP_CODE.replace('YEARS', '');
@@ -1158,37 +1162,34 @@
               const cause = record.DIM_GHECAUSE_TITLE;
               
               if (percentile < 0.01)
-                continue;
-              //d.push([cause, deaths, +percentile.toFixed(1), +chance_to_die.toFixed(3)]); // https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
+                ;///continue;
+
               const group = who_map_causes_to_groups[cause];
               if (group) {
-                if (e[age]) {
-                  if (e[age][group]) {
-                    e[age][group][0] += deaths;
-                    e[age][group][1] = e[age][group][0] * 100 / deaths_total[age];
+                if (who_ages_causes[age]) {
+                  if (who_ages_causes[age][group]) {
+                    who_ages_causes[age][group][0] += deaths;
+                    who_ages_causes[age][group][1] = who_ages_causes[age][group][0] * 100 / deaths_total[age];
                   }
                   else
-                    e[age][group] = [deaths, deaths * 100 / deaths_total[age]];
+                    who_ages_causes[age][group] = [deaths, deaths * 100 / deaths_total[age]];
                 }
                 else
-                  e[age] = {[group]: [deaths, deaths * 100 / deaths_total[age]]};
+                  who_ages_causes[age] = {[group]: [deaths, deaths * 100 / deaths_total[age]]};
               }
-              else {
+              else
                 console.log(cause);
-              }
             }
             //console.log(population_total, deaths_total, d);
-            let coo = transform_who_ranges_to_coordinates(e);
-            //console.log(coo)
-            stacked_coo = transform_coordinates_to_stacked_coordinates(coo, who_causes_groups);
+            let coordinates = transform_who_ages_causes_to_coordinates(who_ages_causes);
+            who_stacked_coordinates = transform_coordinates_to_stacked_coordinates(coordinates, who_causes_groups);
             //console.log(injuries)
-            //console.log(stacked_coo);
+            //console.log(who_stacked_coordinates);
           }
         );
       }
 
       window.onload = function() {
-        //who_get();
         guess_the_country();
         let user_values = get_parameters_from_url();
         if (!user_values)
