@@ -295,7 +295,7 @@
         'Leprosy': '',
         'Otitis media': '',
         'Maternal conditions': 'Maternal causes',
-        'Neonatal conditions': 'Other noncommunicable diseases',
+        'Neonatal conditions': 'Communicable diseases',
       };
 
       const circle_radius = 2;
@@ -318,6 +318,7 @@
       var antistroke = "black";
       var antistroke_width = 1;
       const color_base = "snow";
+      const years = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90];
 
       var stacked_coo;
 
@@ -624,6 +625,26 @@
         return points;
       }
 
+      function stacked_coordinates_to_svg_pair_points(coordinates) {
+        let vertical_offset = calendar_weeks_numbers_height + circle_radius;
+        if (is_mobile)  // idk why on mobiles is calculated differently
+          vertical_offset -= 10;
+
+        const first_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 3;
+        const first_dot_y = calendar_height - 1 * calendar_step_vertical - vertical_offset + 5;
+        let points = `${first_dot_x},${first_dot_y} `;
+        for (let key in coordinates) {
+          const value = coordinates[key];
+          const vertical = calendar_height - (key - 1) * calendar_step_vertical - vertical_offset;
+          const horizontal = (value - 1) * calendar_step_horizontal + calendar_years_numbers_width + 10;
+          points += horizontal + ',' + vertical + ' ';
+        }
+        const last_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 3;
+        const last_dot_y = calendar_height - 90 * calendar_step_vertical - vertical_offset + 5;
+        points += `${last_dot_x},${last_dot_y} `;
+        return points;
+      }
+
       function make_coordinates(max, array, age, position, scale_y) {
         let coordinates_dots = {};
         let coordinates_dots_before_age = {};
@@ -655,12 +676,35 @@
         };
       }
 
-      function draw_polyline(coordinates, stroke, stroke_width, stroke_dasharray, fill) {
+      function make_stacked_coordinates(max, array) {
+        let coordinates_dots = {};
+        
+        for (let i = 0; i < years.length; i++) {
+          const year = years[i];
+          const value = array[i];
+          let value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row;
+
+          coordinates_dots[year] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
+        }
+        
+        //console.log(coordinates_dots)
+        return {'dots': coordinates_dots};
+      }
+
+      function draw_polyline(coordinates, stroke, stroke_width, stroke_dasharray) {
+        let content = `<polyline fill="${fill}" stroke="${stroke}" stroke-width="${stroke_width}" stroke-linejoin="round" stroke-dasharray="${stroke_dasharray}" points="`;
+        content += coordinates_to_svg_pair_points(coordinates);
+        content += '"/>';
+
+        return content;
+      }
+
+      function draw_stacked_polyline(coordinates, stroke, stroke_width, stroke_dasharray, fill) {
         if (!fill)
           fill = 'none';
 
         let content = `<polyline fill="${fill}" stroke="${stroke}" stroke-width="${stroke_width}" stroke-linejoin="round" stroke-dasharray="${stroke_dasharray}" points="`;
-        content += coordinates_to_svg_pair_points(coordinates);
+        content += stacked_coordinates_to_svg_pair_points(coordinates);
         content += '"/>';
 
         return content;
@@ -691,11 +735,11 @@
       function draw_stacked_line(data, stroke, age, stroke_dasharray) {
         let content = '';
         const stroke_width = 0.5;
-        const coordinates = make_coordinates(100, data, age, "left", 1.0);
+        const coordinates = make_stacked_coordinates(100, data);
         let fill = 'none';
-        if (stroke == 'blue')
-          fill = stroke;
-        content += draw_polyline(coordinates.dots, stroke, stroke_width, stroke_dasharray, fill);
+        //if (stroke == 'blue')
+        //  fill = stroke;
+        content += draw_stacked_polyline(coordinates.dots, stroke, stroke_width, stroke_dasharray, stroke);
         return content;
       }
 
@@ -966,14 +1010,13 @@
         content += labels;
         content += labels_special_years;
 */
-        let colors = ["blue", "red", "green", "maroon", "black", "pink", "orange", "brown", "black"]
-        for (let j = 0; j < who_causes_groups.length; j++) {
+        //console.log(stacked_coo)
+        let colors = ["#0193d6", "#892e2f", "#86bee7", "#ffe094", "#023f88", "#f5887d", "#fcc513", "#5e82a0", "black"]
+        for (let j = who_causes_groups.length; j >= 0 ; j--) {
           let cause = get_data_for_something(stacked_coo, who_causes_groups[j]);
-          console.log(cause)
-          content += draw_stacked_line(cause, colors[j], age, '1 0');
+          //console.log(who_causes_groups[j], cause)
+          content += draw_stacked_line(cause, colors[j]);
         }
-
-        //content += draw_stacked_line(injuries, "blue", 36, '1 0');
         content += '</svg>';
 
         document.getElementById("calendar").innerHTML = content;
@@ -1038,13 +1081,13 @@
 
       function transform_coordinates_to_stacked_coordinates(coordinates, order) {
         let stacked_coordinates = {};
-        for (let i = 1; i <= number_of_years; i++) {
-          if (coordinates[i] == undefined)
+        for (let i = 0; i < years.length; i++) {
+          if (coordinates[years[i]] == undefined)
             break;
 
           stacked_coordinates[i] = {};
           for (let j = 0; j < order.length; j++) {
-            if (coordinates[i][order[j]] == undefined) {
+            if (coordinates[years[i]][order[j]] == undefined) {
               if (j == 0)
                 stacked_coordinates[i][order[j]] = 0;
               else
@@ -1052,9 +1095,9 @@
             }
             else {
               if (j == 0)
-                stacked_coordinates[i][order[j]] = +(coordinates[i][order[j]][1]).toFixed(1);
+                stacked_coordinates[i][order[j]] = +(coordinates[years[i]][order[j]][1]).toFixed(1);
               else
-                stacked_coordinates[i][order[j]] = +(coordinates[i][order[j]][1] + stacked_coordinates[i][order[j - 1]]).toFixed(1);
+                stacked_coordinates[i][order[j]] = +(coordinates[years[i]][order[j]][1] + stacked_coordinates[i][order[j - 1]]).toFixed(1);
             }
           }
         }
@@ -1064,7 +1107,7 @@
 
       function get_data_for_something(stacked_coordinates, something) {
         let data = [];
-        for (let i = 1; i <= number_of_years; i++) {
+        for (let i = 0; i < number_of_years; i++) {
           if (!stacked_coordinates[i])
             break;
           data.push(stacked_coordinates[i][something]);
@@ -1108,7 +1151,7 @@
               const chance_to_die = deaths * 100 / population_total[age]; // %
               const cause = record.DIM_GHECAUSE_TITLE;
               
-              if (percentile < 0.1)
+              if (percentile < 0.01)
                 continue;
               //d.push([cause, deaths, +percentile.toFixed(1), +chance_to_die.toFixed(3)]); // https://stackoverflow.com/questions/11832914/how-to-round-to-at-most-2-decimal-places-if-necessary
               const group = who_map_causes_to_groups[cause];
@@ -1130,6 +1173,7 @@
             }
             //console.log(population_total, deaths_total, d);
             let coo = transform_who_ranges_to_coordinates(e);
+            //console.log(coo)
             stacked_coo = transform_coordinates_to_stacked_coordinates(coo, who_causes_groups);
             //console.log(injuries)
             //console.log(stacked_coo);
@@ -1138,7 +1182,7 @@
       }
 
       window.onload = function() {
-        who_get();
+        //who_get();
         guess_the_country();
         let user_values = get_parameters_from_url();
         if (!user_values)
