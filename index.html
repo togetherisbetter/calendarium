@@ -435,7 +435,8 @@
             content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="15" y="' + cy2 + '">'
 
             const birthday_year = birthday_date.getFullYear();
-            if (birthday_date.getMonth() == 0 && birthday_date.getDate() <= 7)  // in case of birthday during 1st week of January don't write 2004/05, but 2004
+            if ((birthday_date.getMonth() == 0 && birthday_date.getDate() <= 9) || 
+                (birthday_date.getMonth() == 11 && birthday_date.getDate() > 25))  // in case of birthday during 1st week of January don't write 2004/05, but 2004
               content += birthday_year + year;
             else {
               const year_from = (birthday_year + year).toString();
