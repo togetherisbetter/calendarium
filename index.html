@@ -643,6 +643,7 @@
         const last_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 3;
         const last_dot_y = calendar_height - 90 * calendar_step_vertical - vertical_offset + 5;
         points += `${last_dot_x},${last_dot_y} `;
+        //console.log(coordinates, points)
         return points;
       }
 
@@ -872,7 +873,7 @@
 
 //console.log(stacked_coo)
         let colors = ["#0193d6", "#892e2f", "#86bee7", "#ffe094", "#023f88", "#f5887d", "#fcc513", "#5e82a0", "black"]
-        for (let j = who_causes_groups.length; j >= 0 ; j--) {
+        for (let j = who_causes_groups.length - 1; j >= 0 ; j--) {
           let cause = get_data_for_something(stacked_coo, who_causes_groups[j]);
           //console.log(who_causes_groups[j], cause)
           content += draw_stacked_line(cause, colors[j]);
