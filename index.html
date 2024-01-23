@@ -682,11 +682,14 @@
 
       function make_stacked_coordinates(max, array) {
         let coordinates_dots = {};
-        
+        let max2 = get_peak_value(data_all["dx"]).value;
         for (let i = 0; i < years.length; i++) {
           const year = years[i];
           const value = array[i];
-          let value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row;
+          let val = data_dx.ru.m[2014][year - 1];
+          let coeff = val * 0.72 / max2;
+          let value_mapped_on_weeks = coeff * (value / max) * number_of_weeks_in_a_row;
+          //let value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row;
 
           coordinates_dots[year] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
         }
@@ -869,14 +872,14 @@
 
         content += draw_weeks_numbers();
         content += draw_years_numbers(birthday_date);
-/*
+/**/
         //console.log(who_stacked_coordinates)
         
         for (let j = who_causes_groups.length - 1; j >= 0 ; j--) {
           let cause = get_data_for_something(who_stacked_coordinates, who_causes_groups[j]);
           content += draw_stacked_line(cause, who_charts_colors[j]);
         }
-*/
+/**/
 
         const week_new_year = calculate_new_year_week(birthday_date);
 
@@ -993,14 +996,14 @@
           }
         }
 
-/**/
+/**
         //console.log(who_stacked_coordinates)
         
         for (let j = who_causes_groups.length - 1; j >= 0 ; j--) {
           let cause = get_data_for_something(who_stacked_coordinates, who_causes_groups[j]);
           content += draw_stacked_line(cause, who_charts_colors[j]);
         }
-/**/
+**/
 
 
         if (have_data_for_charts) {
