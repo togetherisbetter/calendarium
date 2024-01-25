@@ -838,14 +838,24 @@
       }
 
       function prepare_for_print() {
+        const svg_canvas = document.getElementById('svg_canvas');
+        const qrcode_image = document.getElementById('qrcode');
+
+        qrcode_image.style.display = '';
+        svg_canvas.style.height = '996px';
+        svg_canvas.style.marginTop = '2.5%';
+        svg_canvas.style.marginLeft = '35px';
+
+        const url_params = get_parameters_from_url();
+        if (url_params.country_code == url_params.country_code_latest) {
+          svg_canvas.style.marginLeft = '45px';
+          qrcode_image.style.left = '65.8%';
+        }
+
+        document.getElementsByClassName('container')[0].classList.remove("container");
         document.getElementById('controls').style.display = 'none';
         document.getElementById('faq').style.display = 'none';
-        document.getElementById('qrcode').style.display = '';
-        document.getElementById('svg_canvas').style.height = '996px';
-        document.getElementsByClassName('container')[0].classList.remove("container");
-        
-        const svg_canvas = document.getElementById('svg_canvas');
-        svg_canvas.style.marginTop = '2.5%';
+
         print();
       }
 
