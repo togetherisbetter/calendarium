@@ -597,7 +597,7 @@
         const innerHeight = window.innerHeight - margins_svg_canvas;
         const innerWidth = window.innerWidth - margins_svg_canvas;
         const ratio_current_screen = innerHeight / (innerWidth - margins_svg_canvas);
-        document.getElementById('log').innerHTML = ratio_current_screen > ratio_current_svg_canvas
+        document.getElementById('log').innerHTML = `${ratio_current_screen > ratio_current_svg_canvas}, ${innerHeight}, ${innerWidth}`;
         if (ratio_current_screen > ratio_current_svg_canvas)
           return (((innerWidth * ratio_current_svg_canvas) * 100) / innerHeight) + '%';
         else  // optimize by height
