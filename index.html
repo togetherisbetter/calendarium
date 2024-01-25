@@ -596,11 +596,11 @@
         const margins_svg_canvas = svg_margin * 2;
         const innerHeight = window.innerHeight - margins_svg_canvas;
         const innerWidth = window.innerWidth - margins_svg_canvas;
-        const ratio_current_screen = innerHeight / (innerWidth - margins_svg_canvas);
-        document.getElementById('log').innerHTML = `${ratio_current_screen > ratio_current_svg_canvas}, ${innerHeight}, ${innerWidth}`;
-        if (ratio_current_screen > ratio_current_svg_canvas)
+        //const ratio_current_screen = innerHeight / (innerWidth - margins_svg_canvas);
+        //document.getElementById('log').innerHTML = `${ratio_current_screen > ratio_current_svg_canvas}, ${innerHeight}, ${innerWidth}`;
+        if (innerHeight > innerWidth)  // if portrait, optimize by width in aspect ratio
           return (((innerWidth * ratio_current_svg_canvas) * 100) / innerHeight) + '%';
-        else  // optimize by height
+        else  // otherwise optimize by screen height, but 1.5 to zoom
           return innerHeight * 1.5 - 30 + 'px';
       }
 
