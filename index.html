@@ -597,6 +597,7 @@
         const innerHeight = window.innerHeight - margins_svg_canvas;
         const innerWidth = window.innerWidth - margins_svg_canvas;
         const ratio_current_screen = innerHeight / (innerWidth - margins_svg_canvas);
+        document.getElementById('log').innerHTML = ratio_current_screen > ratio_current_svg_canvas
         if (ratio_current_screen > ratio_current_svg_canvas)
           return (((innerWidth * ratio_current_svg_canvas) * 100) / innerHeight) + '%';
         else  // optimize by height
@@ -881,7 +882,7 @@
     <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 84.7%; left: 64.6%; border-radius: 0px; display: none;"></div>
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-7 offset-lg-0 col-md-12 col-sm-12" style="height-: 100%;">
+        <div class="col-lg-7 offset-lg-0 col-md-12 col-sm-12" style="">
           <div id="calendar"></div>
         </div>
       
