@@ -1209,16 +1209,41 @@
         );
       }
 
-      window.onload = function() {
-        guess_the_country();
-        let user_values = get_parameters_from_url();
-        if (!user_values)
-          user_values = get_user_selected_parameters();
-        else
-          set_user_selected_parameters(user_values);
+      const data_skins = {
+        undefined: [draw_calendar, ],
+        //'empty': [circles, ],
+        //'lifetime': [circles, fill_lifetime_circles, ],
+        //'mortality': [circles, draw_mortality_lines, ],
+        //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
+        //'causes': [draw_causes_lines, circles, ],
+        //'causes+lifetime': [draw_causes_lines, circles, fill_lifetime_circles, ],
+        //'causes+lifetime+mortality': [draw_causes_lines, circles, fill_lifetime_circles, draw_mortality_lines, ],
+        //'causes+fit+mortality': [draw_causes_lines_fit_mortality, circles, fill_lifetime_circles, draw_mortality_lines, ],
+        //'causes+fit+lifetime': [draw_causes_lines_fit_mortality, circles, fill_lifetime_circles, ],
+      };
 
-        draw_calendar(user_values);
+      async function init_calendar(user_values) {
+        const data_skin = user_values['data_skin'];
+        const what_to_draw = data_skins[data_skin];
+        let svg_image_calendar = '';
+        for (let layer = 0; layer < data_skins[data_skin].length; layer++)
+          svg_image_calendar += await what_to_draw[layer](user_values);
+
+        //document.getElementById("calendar").innerHTML = '<h1>TTT</h1>';
+      }
+
+      window.onload = function() {
+        let user_values = get_parameters_from_url();
+        if (user_values)
+          set_user_selected_parameters(user_values);
+        else {
+          guess_the_country();  // select country values based on locale if applicable
+          user_values = get_user_selected_parameters();
+        }
+
         qrcode = init_qrcode(user_values, 66);
+        //draw_calendar(user_values);
+        init_calendar(user_values);
       };
     </script>
   </head>
