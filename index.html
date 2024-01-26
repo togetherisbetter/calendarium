@@ -86,10 +86,14 @@
         position: absolute;
         transform: translate(-50%, -50%);
       }
-      label {
+      /*label {
         margin: 10px 0 2px 2px;
         color: gray;
-        font-size: 1.2em;
+        font-size: 1em;
+      }*/
+      .form-floating>label {
+        color: gray;
+        padding: 0.75rem;
       }
       #calendar {
         margin: 10px;
@@ -305,17 +309,13 @@
 
       const circle_radius = 2;
       const number_of_weeks_in_a_row = 52;
-      const number_of_years = 101;
+      let number_of_years = 101;
       const calendar_step_horizontal = 5;
       const calendar_step_vertical = 5;
       const calendar_weeks_numbers_height = 5;
       const calendar_years_numbers_width = 12;
       const calendar_le_at_birth_median_peak_width = 12;
       const calendar_new_year_label_height = 5;
-      const calendar_height = number_of_years * calendar_step_vertical + calendar_weeks_numbers_height + calendar_new_year_label_height + 5;
-      //if (is_mobile)
-      //  calendar_height += 100;
-      const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6 + 10 + 16;
       const calendar_qrcode_url_domain = "https://calendarium.me";
       const calendar_id = Math.random().toString(36).slice(2);  // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
       const svg_margin = 5;
@@ -324,6 +324,7 @@
       var antistroke_width = 1;
       const color_base = "snow";
       const years = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90,];
+      const available_controls = ['sex', 'birthday', 'country_code', 'country_code_latest', 'sex_to_compare'];
 
       var who_stacked_coordinates;
 
@@ -331,6 +332,15 @@
       var data_mx = {};
       var data_all = {'dx': [], 'mx': []};
       var last_year_in_dataset = 0;
+
+      let calendar_top_offset = calendar_weeks_numbers_height + calendar_new_year_label_height + 5;
+
+      function get_calendar_height() {
+        return number_of_years * calendar_step_vertical + calendar_top_offset;
+      }
+      function get_calendar_width() {
+        return number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6 + 10 + 16;
+      }
 
       function enrich_data_mdx_dict(data_mdx, mdx_data, country_code, sex, target_year) {
         let data_country = data_mdx[country_code];
@@ -499,7 +509,7 @@
 
       function draw_label_new_year(week_new_year) {
         const cx = week_new_year * calendar_step_horizontal + calendar_years_numbers_width + circle_radius + 1;
-        const cy = calendar_height - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height - 1;
+        const cy = get_calendar_height() - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height - 1;
         return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="' + cy + '">New Year</text>';
       }
 
@@ -536,7 +546,7 @@
 
       function draw_label_deaths() {
         const cx = calendar_years_numbers_width + calendar_step_horizontal;
-        let cy = calendar_height - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height + 0;
+        let cy = get_calendar_height() - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height + 0;
         if (is_mobile)
           cy += 10;
 
@@ -552,7 +562,7 @@
 
       function draw_label_chances() {
         const cx2 = number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + 4;
-        let cy = calendar_height - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height + 1;
+        let cy = get_calendar_height() - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height + 1;
         if (is_mobile)
           cy += 10;
         const cx = cx2 - 29 - 5;
@@ -571,7 +581,7 @@
           if (week % 4 == 0) { // add a marker for every 4-th week
             let x_offset = (week + 1) * calendar_step_horizontal + calendar_years_numbers_width;
             let cx = x_offset - circle_radius;
-            let cy = calendar_height;
+            let cy = get_calendar_height();
             if (is_mobile)
               cy += 0;
             content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="' + cy +'" font-weight="bold">';
@@ -592,11 +602,7 @@
             if (is_mobile)  // idk why on mobiles is calculated differently
               y_offset -= 1;
 
-            const cy = calendar_height - y_offset //+ circle_radius;
-            content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="15" y="' + cy + '" font-weight="bold">'
-            content += year;
-            content += '</text>';
-          
+            const cy = get_calendar_height() - y_offset //+ circle_radius;
             const cy2 = cy - calendar_step_vertical;
             content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="15" y="' + cy2 + '">'
 
@@ -616,6 +622,25 @@
         return content;
       }
 
+      function draw_ages_numbers() {
+        let content = '';
+
+        for (let year = 1; year <= number_of_years; year++) {
+          if (year % 5 == 0) { // add age marker for every 5-th year
+            let y_offset = year * calendar_step_vertical + 1;
+            if (is_mobile)  // idk why on mobiles is calculated differently
+              y_offset -= 1;
+
+            const cy = get_calendar_height() - y_offset //+ circle_radius;
+            content += '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="15" y="' + cy + '" font-weight="bold">'
+            content += year;
+            content += '</text>';
+          }
+        }
+
+        return content;
+      }
+
       function coordinates_to_svg_pair_points(coordinates) {
         let vertical_offset = calendar_weeks_numbers_height + circle_radius;
         if (is_mobile)  // idk why on mobiles is calculated differently
@@ -624,7 +649,7 @@
         let points = '';
         for (let key in coordinates) {
           const value = coordinates[key];
-          const vertical = calendar_height - (key - 1) * calendar_step_vertical - vertical_offset;
+          const vertical = get_calendar_height() - (key - 1) * calendar_step_vertical - vertical_offset;
           const horizontal = (value - 1) * calendar_step_horizontal + calendar_years_numbers_width + 10;
           points += horizontal + ',' + vertical + ' ';
         }
@@ -637,16 +662,16 @@
           vertical_offset -= 10;
 
         const first_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 1;
-        const first_dot_y = calendar_height - 1 * calendar_step_vertical - vertical_offset + 5;
+        const first_dot_y = get_calendar_height() - 1 * calendar_step_vertical - vertical_offset + 5;
         let points = `${first_dot_x},${first_dot_y} `;
         for (let key in coordinates) {
           const value = coordinates[key];
-          const vertical = calendar_height - (key - 1) * calendar_step_vertical - vertical_offset;
+          const vertical = get_calendar_height() - (key - 1) * calendar_step_vertical - vertical_offset;
           const horizontal = (value - 1) * calendar_step_horizontal + calendar_years_numbers_width + 10;
           points += horizontal + ',' + vertical + ' ';
         }
         const last_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 1;
-        const last_dot_y = calendar_height - 90 * calendar_step_vertical - vertical_offset + 5;
+        const last_dot_y = get_calendar_height() - 90 * calendar_step_vertical - vertical_offset + 5;
         points += `${last_dot_x},${last_dot_y} `;
         //console.log(coordinates, points)
         return points;
@@ -867,7 +892,7 @@
         ];
 
         const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, birthday_date);
-        let ch = calendar_height + 1;
+        let ch = get_calendar_height() + 1;
         if (is_mobile)
           ch += calendar_weeks_numbers_height + calendar_new_year_label_height; // idk why
         const svg_height = calculate_svg_height();
@@ -875,9 +900,10 @@
         if (is_mobile) // on mobile safari sucks, on desktop safari not
           svg_width = `calc(100% - ${svg_margin * 2}px);`;
 
-        let content = `<svg id="svg_canvas" height="${svg_height}" viewBox="0 0 ${calendar_width} ${ch}" xmlns="http://www.w3.org/2000/svg" style="margin: ${svg_margin}px; margin-top: 10px; width: ${svg_width};">`;
+        let content = `<svg id="svg_canvas" height="${svg_height}" viewBox="0 0 ${get_calendar_width()} ${ch}" xmlns="http://www.w3.org/2000/svg" style="margin: ${svg_margin}px; margin-top: 10px; width: ${svg_width};">`;
 
         content += draw_weeks_numbers();
+        content += draw_ages_numbers();
         content += draw_years_numbers(birthday_date);
 /**/
         //console.log(who_stacked_coordinates)
@@ -898,7 +924,7 @@
         let labels = '';
         let labels_special_years = '';
         for (let year = 1; year <= number_of_years; year++) {
-          let y_offset = calendar_height - year * calendar_step_vertical;
+          let y_offset = get_calendar_height() - year * calendar_step_vertical;
           if (is_mobile)
             y_offset += 10;
           
@@ -1040,8 +1066,83 @@
         
         content += '</svg>';
 
-        document.getElementById("calendar").innerHTML = content;
-        switch_off_loading();
+        return content;
+      }
+
+      async function draw_circles(user_values) {
+        data_all = {'mx': [], 'dx': []}; // reset
+
+        const date = user_values['birthday'];
+        const country_code = user_values['country_code'];
+        const country_code_latest = user_values['country_code_latest'];
+        const sex = user_values['sex'];
+        const sex_to_compare = user_values['sex_to_compare'];
+
+        const birthday_date = new Date(date);
+        let birthday_year = birthday_date.getFullYear();
+
+        let fill_ranges = [ // init
+          {"fill": "white"},
+          //{"fill": "skyblue", "to": new Date(), "stroke_width": "0.2"},
+        ];
+
+        const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, birthday_date);
+        let ch = get_calendar_height() + 1;
+        if (is_mobile)
+          ch += calendar_weeks_numbers_height + calendar_new_year_label_height; // idk why
+        const svg_height = calculate_svg_height();
+        let svg_width = 'auto;';
+        if (is_mobile) // on mobile safari sucks, on desktop safari not
+          svg_width = `calc(100% - ${svg_margin * 2}px);`;
+
+        let content = `<svg id="svg_canvas" height="${svg_height}" viewBox="0 0 ${get_calendar_width()} ${ch}" xmlns="http://www.w3.org/2000/svg" style="margin: ${svg_margin}px; margin-top: 10px; width: ${svg_width};">`;
+
+        content += draw_weeks_numbers();
+        content += draw_ages_numbers();
+
+        let total_weeks = 1;
+        let labels = '';
+        let labels_special_years = '';
+        for (let year = 1; year <= number_of_years; year++) {
+          let y_offset = get_calendar_height() - year * calendar_step_vertical;
+          if (is_mobile)
+            y_offset += 10;
+          
+          let cy = y_offset - circle_radius;
+          for (let week = 1; week <= number_of_weeks_in_a_row; week++) {
+            let cx = (week + 1) * calendar_step_horizontal + calendar_years_numbers_width - circle_radius;
+            //content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + circle_radius + '" ';
+            const rect_width = 3.5;
+            const cx3 = cx - rect_width / 2;
+            const cy3 = cy - rect_width / 2;
+            antistroke = "black";
+            antistroke_width = 0.5;
+            content += `<rect x="${cx3}" y="${cy3}" width="${rect_width}" height="${rect_width}" rx="20"`;
+            
+            let circle_color = "";
+            let stroke = "black";
+            let stroke_width = "0.07";
+            let blink = false;
+            for (let i in fill_ranges_transformed) {
+              const range = fill_ranges_transformed[i];
+              if (range["from_week"] <= total_weeks && range["to_week"] >= total_weeks) {
+                circle_color = range["fill"];
+                if (range["stroke"])
+                  stroke = range["stroke"];
+                if (range["stroke_width"])
+                  stroke_width = range["stroke_width"];
+              }
+            }
+
+            content += 'fill="' + circle_color + '" ';
+            content += 'stroke="' + stroke + '" stroke-width="' + stroke_width + '"/>';
+            total_weeks++;
+          }
+        }
+
+        content += '</svg>';
+
+        return content;
       }
 
       function get_parameters_from_url() {
@@ -1210,7 +1311,7 @@
       }
 
       const data_skins = {
-        undefined: [draw_calendar, ],
+        undefined: [draw_circles, ],
         //'empty': [circles, ],
         //'lifetime': [circles, fill_lifetime_circles, ],
         //'mortality': [circles, draw_mortality_lines, ],
@@ -1222,14 +1323,46 @@
         //'causes+fit+lifetime': [draw_causes_lines_fit_mortality, circles, fill_lifetime_circles, ],
       };
 
+      function adjust_calendar_offsets_for_data_skin(data_skin) {
+        if (data_skin == undefined) {
+          calendar_top_offset = 5;
+          number_of_years = 90;
+        }
+      }
+      function adjust_calendar_controls_offset() {
+        document.getElementById('wrapper_data_skin').style.marginTop = '25px';
+      }
+
+      function hide_all_calendar_controls() {
+        available_controls.forEach((element_id => {
+          document.getElementById('wrapper_' + element_id).style.display = 'none';
+        }));
+      }
+
+      function adjust_calendar_controls_for_data_skin(data_skin) {
+        hide_all_calendar_controls();
+        const enable_controls = [];
+        if (data_skin == undefined) {
+          ;
+        }
+        enable_controls.forEach((element_id => {
+          document.getElementById('wrapper_' + element_id).style.display = '';
+        }));
+      }
+
       async function init_calendar(user_values) {
         const data_skin = user_values['data_skin'];
+        adjust_calendar_offsets_for_data_skin(data_skin);
+        adjust_calendar_controls_for_data_skin(data_skin);
+        adjust_calendar_controls_offset();
+
         const what_to_draw = data_skins[data_skin];
         let svg_image_calendar = '';
-        for (let layer = 0; layer < data_skins[data_skin].length; layer++)
+        for (let layer = 0; layer < what_to_draw.length; layer++)
           svg_image_calendar += await what_to_draw[layer](user_values);
 
-        //document.getElementById("calendar").innerHTML = '<h1>TTT</h1>';
+        document.getElementById("calendar").innerHTML = svg_image_calendar;
+        switch_off_loading();
       }
 
       window.onload = function() {
@@ -1260,108 +1393,126 @@
       
         <div class="col-lg-3 col-md-8 col-sm-10 col-11">
           <div id="controls" style="color: black; font-size: 0.7em; display: none; margin-top: 10px;">
-            <label>Sex at birth:</label>
-            <select id="sex" onchange="change_sex();" class="form-control form-select form-select-sm">
-              <option value="m">Male</option>
-              <option value="f">Female</option>
-            </select>
+            <div id="wrapper_data_skin" class="form-floating">
+              <label for="data_skin">Data-skin:</label>
+              <select id="data_skin" onchange="change_data_skin();" class="form-control form-select form-select-sm">
+                <option value="empty">Empty</option>
+                <!--option value="f">Female</option-->
+              </select>
+            </div>
 
-            <label>Date of birth:</label>
-            <input id="birthday" type="date" value="1990-01-01" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
+            <div id="wrapper_sex">
+              <label>Sex at birth:</label>
+              <select id="sex" onchange="change_sex();" class="form-control form-select form-select-sm">
+                <option value="m">Male</option>
+                <option value="f">Female</option>
+              </select>
+            </div>
 
-            <label>Country of birth & childhood:</label>
-            <select id="country_code" onchange="change_country_of_birth();" class="form-control form-select form-select-sm">
-              <option value="at">Austria (1947-2019)</option>
-              <option value="au">Australia (1921-2020)</option>
-              <option value="by">Belarus (1959-2018)</option>
-              <option value="be">Belgium (1841-2022)</option>
-              <option value="bg">Bulgaria (1947-2021)</option>
-              <option value="ca">Canada (1921-2021)</option>
-              <option value="cl">Chile (1992-2020)</option>
-              <option value="hr">Croatia (2001-2020)</option>
-              <option value="cz">Czechia (1950-2021)</option>
-              <option value="fi">Finland (1878-2022)</option>
-              <option value="fr">France (1816-2021)</option>
-              <option value="de">Germany (1990-2020)</option>
-              <option value="gr">Greece (1981-2019)</option>
-              <option value="hk">Hong Kong (1986-2020)</option>
-              <option value="hu">Hungary (1950-2020)</option>
-              <option value="is">Iceland (1838-2021)</option>
-              <option value="ie">Ireland (1950-2020)</option>
-              <option value="il">Israel (1983-2016)</option>
-              <option value="it">Italy (1872-2020)</option>
-              <option value="jp">Japan (1947-2021)</option>
-              <option value="lv">Latvia (1959-2019)</option>
-              <option value="lt">Lithuania (1959-2020)</option>
-              <option value="lu">Luxembourg (1960-2022)</option>
-              <option value="nl">Netherlands (1850-2021)</option>
-              <option value="nz">New Zealand (1948-2021)</option>
-              <option value="no">Norway (1846-2022)</option>
-              <option value="pl">Poland (1958-2019)</option>
-              <option value="pt">Portugal (1940-2022)</option>
-              <option value="kr">Republic of Korea (2003-2020)</option>
-              <option value="ru">Russia (1959-2014)</option>
-              <option value="sk">Slovakia (1950-2019)</option>
-              <option value="si">Slovenia (1983-2019)</option>
-              <option value="es">Spain (1908-2021)</option>
-              <option value="se">Sweden (1751-2022)</option>
-              <option value="ch">Switzerland (1876-2022)</option>
-              <option value="tw">Taiwan (1970-2021)</option>
-              <option value="ua">Ukraine (1959-2013)</option>
-              <option value="uk">United Kingdom (1922-2021)</option>
-              <option value="us">United States (1933-2021)</option>        
-            </select>
-            <span class="clarify_field">(in brackets are data-available years)</span><br>
+            <div id="wrapper_birthday">
+              <label>Date of birth:</label>
+              <input id="birthday" type="date" value="1990-01-01" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
+            </div>
 
-            <label>Country mostly lived in during last years:</label>
-            <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
-              <option value="at">Austria</option>
-              <option value="au">Australia</option>
-              <option value="by">Belarus</option>
-              <option value="be">Belgium</option>
-              <option value="bg">Bulgaria</option>
-              <option value="ca">Canada</option>
-              <option value="cl">Chile</option>
-              <option value="hr">Croatia</option>
-              <option value="cz">Czechia</option>
-              <option value="fi">Finland</option>
-              <option value="fr">France</option>
-              <option value="de">Germany</option>
-              <option value="gr">Greece</option>
-              <option value="hk">Hong Kong</option>
-              <option value="hu">Hungary</option>
-              <option value="is">Iceland</option>
-              <option value="ie">Ireland</option>
-              <option value="il">Israel</option>
-              <option value="it">Italy</option>
-              <option value="jp">Japan</option>
-              <option value="lv">Latvia</option>
-              <option value="lt">Lithuania</option>
-              <option value="lu">Luxembourg</option>
-              <option value="nl">Netherlands</option>
-              <option value="nz">New Zealand</option>
-              <option value="no">Norway</option>
-              <option value="pl">Poland</option>
-              <option value="pt">Portugal</option>
-              <option value="kr">Republic of Korea</option>
-              <option value="ru">Russia</option>
-              <option value="sk">Slovakia</option>
-              <option value="si">Slovenia</option>
-              <option value="es">Spain</option>
-              <option value="se">Sweden</option>
-              <option value="ch">Switzerland</option>
-              <option value="tw">Taiwan</option>
-              <option value="ua">Ukraine</option>
-              <option value="uk">United Kingdom</option>
-              <option value="us">United States</option>       
-            </select>
-            <span class="clarify_field">(or a country you plan to relocate for a living)</span><br>
+            <div id="wrapper_country_code">
+              <label>Country of birth & childhood:</label>
+              <select id="country_code" onchange="change_country_of_birth();" class="form-control form-select form-select-sm">
+                <option value="at">Austria (1947-2019)</option>
+                <option value="au">Australia (1921-2020)</option>
+                <option value="by">Belarus (1959-2018)</option>
+                <option value="be">Belgium (1841-2022)</option>
+                <option value="bg">Bulgaria (1947-2021)</option>
+                <option value="ca">Canada (1921-2021)</option>
+                <option value="cl">Chile (1992-2020)</option>
+                <option value="hr">Croatia (2001-2020)</option>
+                <option value="cz">Czechia (1950-2021)</option>
+                <option value="fi">Finland (1878-2022)</option>
+                <option value="fr">France (1816-2021)</option>
+                <option value="de">Germany (1990-2020)</option>
+                <option value="gr">Greece (1981-2019)</option>
+                <option value="hk">Hong Kong (1986-2020)</option>
+                <option value="hu">Hungary (1950-2020)</option>
+                <option value="is">Iceland (1838-2021)</option>
+                <option value="ie">Ireland (1950-2020)</option>
+                <option value="il">Israel (1983-2016)</option>
+                <option value="it">Italy (1872-2020)</option>
+                <option value="jp">Japan (1947-2021)</option>
+                <option value="lv">Latvia (1959-2019)</option>
+                <option value="lt">Lithuania (1959-2020)</option>
+                <option value="lu">Luxembourg (1960-2022)</option>
+                <option value="nl">Netherlands (1850-2021)</option>
+                <option value="nz">New Zealand (1948-2021)</option>
+                <option value="no">Norway (1846-2022)</option>
+                <option value="pl">Poland (1958-2019)</option>
+                <option value="pt">Portugal (1940-2022)</option>
+                <option value="kr">Republic of Korea (2003-2020)</option>
+                <option value="ru">Russia (1959-2014)</option>
+                <option value="sk">Slovakia (1950-2019)</option>
+                <option value="si">Slovenia (1983-2019)</option>
+                <option value="es">Spain (1908-2021)</option>
+                <option value="se">Sweden (1751-2022)</option>
+                <option value="ch">Switzerland (1876-2022)</option>
+                <option value="tw">Taiwan (1970-2021)</option>
+                <option value="ua">Ukraine (1959-2013)</option>
+                <option value="uk">United Kingdom (1922-2021)</option>
+                <option value="us">United States (1933-2021)</option>        
+              </select>
+              <span class="clarify_field">(in brackets are data-available years)</span><br>
+            </div>
 
-            <label>Sex at birth to compare with:</label>
-            <select id="sex_to_compare" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
-              <option value="m">Male</option>
-              <option value="f">Female</option>
-            </select>
+            <div id="wrapper_country_code_latest">
+              <label>Country mostly lived in during last years:</label>
+              <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
+                <option value="at">Austria</option>
+                <option value="au">Australia</option>
+                <option value="by">Belarus</option>
+                <option value="be">Belgium</option>
+                <option value="bg">Bulgaria</option>
+                <option value="ca">Canada</option>
+                <option value="cl">Chile</option>
+                <option value="hr">Croatia</option>
+                <option value="cz">Czechia</option>
+                <option value="fi">Finland</option>
+                <option value="fr">France</option>
+                <option value="de">Germany</option>
+                <option value="gr">Greece</option>
+                <option value="hk">Hong Kong</option>
+                <option value="hu">Hungary</option>
+                <option value="is">Iceland</option>
+                <option value="ie">Ireland</option>
+                <option value="il">Israel</option>
+                <option value="it">Italy</option>
+                <option value="jp">Japan</option>
+                <option value="lv">Latvia</option>
+                <option value="lt">Lithuania</option>
+                <option value="lu">Luxembourg</option>
+                <option value="nl">Netherlands</option>
+                <option value="nz">New Zealand</option>
+                <option value="no">Norway</option>
+                <option value="pl">Poland</option>
+                <option value="pt">Portugal</option>
+                <option value="kr">Republic of Korea</option>
+                <option value="ru">Russia</option>
+                <option value="sk">Slovakia</option>
+                <option value="si">Slovenia</option>
+                <option value="es">Spain</option>
+                <option value="se">Sweden</option>
+                <option value="ch">Switzerland</option>
+                <option value="tw">Taiwan</option>
+                <option value="ua">Ukraine</option>
+                <option value="uk">United Kingdom</option>
+                <option value="us">United States</option>       
+              </select>
+              <span class="clarify_field">(or a country you plan to relocate for a living)</span><br>
+            </div>
+
+            <div id="wrapper_sex_to_compare">
+              <label>Sex at birth to compare with:</label>
+              <select id="sex_to_compare" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
+                <option value="m">Male</option>
+                <option value="f">Female</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
