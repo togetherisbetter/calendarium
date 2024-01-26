@@ -530,7 +530,10 @@
         return week_new_year;
       }
 
-      function draw_label_new_year(week_new_year) {
+      function draw_label_new_year(user_values) {
+        const date = user_values['birthday'];
+        const birthday_date = new Date(date);
+        const week_new_year = calculate_new_year_week(birthday_date);
         const cx = week_new_year * calendar_step_horizontal + calendar_years_numbers_width + circle_radius + 1;
         let cy = get_calendar_height() - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height - 1;
         if (is_mobile)
@@ -618,7 +621,10 @@
         return content;
       }
 
-      function draw_years_numbers(birthday_date) {
+      function draw_years_numbers(user_values) {
+        const date = user_values['birthday'];
+        const birthday_date = new Date(date);
+
         let content = '';
 
         for (let year = 1; year <= number_of_years; year++) {
@@ -839,13 +845,10 @@
       }
 
       function draw_datasources() {
-        let y = 5;
-        if (is_mobile) { // idk why it works so ugly with links, so removed links for iOS 14
-          return `<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="${y}" font-weight="normal">Data sources: HMD, WHO</text>`;
-        }
-        else {
-          return `<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="${y}" font-weight="normal">Data sources: <a xlink:href="https://mortality.org" xlink:title="HMD website" xlink:show="new">HMD</a>, <a xlink:href="https://www.who.int/data/gho/data/themes/mortality-and-global-health-estimates/ghe-leading-causes-of-death" xlink:title="WHO GHO website" xlink:show="new">WHO</a></text>`;
-        }
+        if (is_mobile) // idk why it works so ugly with links, so removed links for iOS 14
+          return `<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="5" font-weight="normal">Data sources: HMD, WHO</text>`;
+        else
+          return `<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="5" font-weight="normal">Data sources: <a xlink:href="https://mortality.org" xlink:title="HMD website" xlink:show="new">HMD</a>, <a xlink:href="https://www.who.int/data/gho/data/themes/mortality-and-global-health-estimates/ghe-leading-causes-of-death" xlink:title="WHO GHO website" xlink:show="new">WHO</a></text>`;
       }
 
       function draw_special_age_label(data) {
@@ -923,6 +926,7 @@
         ];
 
         const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, birthday_date);
+/*
         let ch = get_calendar_height() + 1;
         if (is_mobile)
           ch += calendar_weeks_numbers_height + calendar_new_year_label_height; // idk why
@@ -932,10 +936,11 @@
           svg_width = `calc(100% - ${svg_margin * 2}px);`;
 
         let content = `<svg id="svg_canvas" height="${svg_height}" viewBox="0 0 ${get_calendar_width()} ${ch}" xmlns="http://www.w3.org/2000/svg" style="margin: ${svg_margin}px; margin-top: 10px; width: ${svg_width};">`;
-
+*/
+        let content = '';
         content += draw_weeks_numbers();
         content += draw_ages_numbers();
-        content += draw_years_numbers(birthday_date);
+        content += draw_years_numbers(user_values);
 /*
         //console.log(who_stacked_coordinates)
         
@@ -1086,7 +1091,7 @@
           content += draw_line("dx", data_to_draw_dx_another_country, "gray", age, "4 2");
         }
 
-        content += draw_label_new_year(week_new_year);
+        content += draw_label_new_year(user_values);
         content += draw_label_chances();
         content += draw_label_deaths();
 
@@ -1095,22 +1100,16 @@
         content += labels;
         content += labels_special_years;
         
-        content += '</svg>';
+        //content += '</svg>';
 
         return content;
       }
 
       async function draw_circles(user_values) {
-        data_all = {'mx': [], 'dx': []}; // reset
+        let content = '';
 
         const date = user_values['birthday'];
-        const country_code = user_values['country_code'];
-        const country_code_latest = user_values['country_code_latest'];
-        const sex = user_values['sex'];
-        const sex_to_compare = user_values['sex_to_compare'];
-
         const birthday_date = new Date(date);
-        let birthday_year = birthday_date.getFullYear();
 
         let fill_ranges = [ // init
           {"fill": "white"},
@@ -1118,22 +1117,8 @@
         ];
 
         const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, birthday_date);
-        let ch = get_calendar_height() + 1;
-        if (is_mobile)
-          ch += calendar_weeks_numbers_height + calendar_new_year_label_height; // idk why
-        const svg_height = calculate_svg_height();
-        let svg_width = 'auto;';
-        if (is_mobile) // on mobile safari sucks, on desktop safari not
-          svg_width = `calc(100% - ${svg_margin * 2}px);`;
-
-        let content = `<svg id="svg_canvas" height="${svg_height}" viewBox="0 0 ${get_calendar_width()} ${ch}" xmlns="http://www.w3.org/2000/svg" style="margin: ${svg_margin}px; margin-top: 10px; width: ${svg_width};">`;
-
-        content += draw_weeks_numbers();
-        content += draw_ages_numbers();
 
         let total_weeks = 1;
-        let labels = '';
-        let labels_special_years = '';
         for (let year = 1; year <= number_of_years; year++) {
           let y_offset = get_calendar_height() - year * calendar_step_vertical;
           if (is_mobile)
@@ -1142,18 +1127,14 @@
           let cy = y_offset - circle_radius;
           for (let week = 1; week <= number_of_weeks_in_a_row; week++) {
             let cx = (week + 1) * calendar_step_horizontal + calendar_years_numbers_width - circle_radius;
-            //content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + circle_radius + '" ';
             const rect_width = 3.5;
             const cx3 = cx - rect_width / 2;
             const cy3 = cy - rect_width / 2;
-            antistroke = "black";
-            antistroke_width = 0.5;
             content += `<rect x="${cx3}" y="${cy3}" width="${rect_width}" height="${rect_width}" rx="20"`;
             
             let circle_color = "";
             let stroke = "black";
             let stroke_width = "0.07";
-            let blink = false;
             for (let i in fill_ranges_transformed) {
               const range = fill_ranges_transformed[i];
               if (range["from_week"] <= total_weeks && range["to_week"] >= total_weeks) {
@@ -1170,8 +1151,6 @@
             total_weeks++;
           }
         }
-
-        content += '</svg>';
 
         return content;
       }
@@ -1345,10 +1324,106 @@
         );
       }
 
+      function fill_lifetime_circles(user_values) {
+        let content = '';
+
+        const date = user_values['birthday'];
+        const birthday_date = new Date(date);
+
+        let fill_ranges = [ // init
+          {"fill": "skyblue", "to": new Date(), "stroke_width": "0.2"},
+        ];
+
+        const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, birthday_date);
+
+        let total_weeks = 1;
+        for (let year = 1; year <= number_of_years; year++) {
+          let y_offset = get_calendar_height() - year * calendar_step_vertical;
+          if (is_mobile)
+            y_offset += 10;
+          
+          let cy = y_offset - circle_radius;
+          for (let week = 1; week <= number_of_weeks_in_a_row; week++) {
+            let cx = (week + 1) * calendar_step_horizontal + calendar_years_numbers_width - circle_radius;
+            const rect_width = 3.5;
+            const cx3 = cx - rect_width / 2;
+            const cy3 = cy - rect_width / 2;
+            
+            let circle_color = "";
+            let stroke = "black";
+            let stroke_width = "0.07";
+            for (let i in fill_ranges_transformed) {
+              const range = fill_ranges_transformed[i];
+              if (range["from_week"] <= total_weeks && range["to_week"] >= total_weeks) {
+                content += `<rect x="${cx3}" y="${cy3}" width="${rect_width}" height="${rect_width}" rx="20"`;
+
+                circle_color = range["fill"];
+                if (range["stroke"])
+                  stroke = range["stroke"];
+                if (range["stroke_width"])
+                  stroke_width = range["stroke_width"];
+
+                content += 'fill="' + circle_color + '" ';
+                content += 'stroke="' + stroke + '" stroke-width="' + stroke_width + '"/>';
+              }
+            }
+            total_weeks++;
+          }
+        }
+
+        return content;
+      }
+
+      function draw_new_year_dots(user_values) {
+        let content = '';
+        const date = user_values['birthday'];
+        const birthday_date = new Date(date);
+        let birthday_year = birthday_date.getFullYear();
+
+        const new_year_dot_color_above_the_age = "black";
+        const new_year_dot_color_below_the_age = "black";
+
+        const week_new_year = calculate_new_year_week(birthday_date);
+
+        const age = get_age(birthday_date);
+        let total_weeks = 1;
+        for (let year = 1; year <= number_of_years; year++) {
+          let y_offset = get_calendar_height() - year * calendar_step_vertical;
+          if (is_mobile)
+            y_offset += 10;
+          
+          let cy = y_offset - circle_radius;
+          for (let week = 1; week <= number_of_weeks_in_a_row; week++) {
+            let cx = (week + 1) * calendar_step_horizontal + calendar_years_numbers_width - circle_radius;
+            //content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + circle_radius + '" ';
+            const rect_width = 3.5;
+            const cx3 = cx - rect_width / 2;
+            const cy3 = cy - rect_width / 2;
+
+            if (week == week_new_year) {  // dot for a new year week
+              let dot_color = new_year_dot_color_above_the_age;
+              if (year <= age) {
+                dot_color = new_year_dot_color_below_the_age;
+              }
+              if (year == age + 1) {
+                if (week_new_year < calculate_weeks_between(birthday_date, new Date()) % number_of_weeks_in_a_row) {
+                  dot_color = new_year_dot_color_below_the_age;
+                }
+              }
+
+              content += `<circle cx="${cx}" cy="${cy}" r="0.2" fill="${dot_color}" stroke="${dot_color}" stroke-width="0.2"/>`;
+            }
+
+            total_weeks++;
+          }
+        }
+        return content;  
+      }
+
       const data_skins = {
-        'empty': [draw_circles, ],
+        'empty': [draw_weeks_numbers, draw_ages_numbers, draw_circles, ],
         'everything': [draw_calendar, ],
-        //'lifetime': [circles, fill_lifetime_circles, ],
+        'lifetime': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_label_new_year, draw_new_year_dots],
         //'mortality': [circles, draw_mortality_lines, ],
         //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
         //'causes': [draw_causes_lines, circles, ],
@@ -1368,6 +1443,11 @@
           calendar_top_offset = 15;
           number_of_years = 101;
           calendar_width_offset = 60;
+        }
+        else if (data_skin == 'lifetime') {
+          calendar_top_offset = 10;
+          number_of_years = 91;
+          calendar_width_offset = 20;
         }
       }
       function adjust_calendar_controls_offset() {
@@ -1389,6 +1469,9 @@
         else if (data_skin == 'everything') {
           enable_controls = available_controls;
         }
+        else if (data_skin == 'lifetime') {
+          enable_controls.push('birthday')
+        }
         enable_controls.forEach((element_id => {
           document.getElementById('wrapper_' + element_id).style.display = '';
         }));
@@ -1399,17 +1482,35 @@
         init_calendar(user_values);
       }
 
+      function start_svg_image_calendar() {
+        let ch = get_calendar_height() + 1;
+        if (is_mobile)
+          ch += calendar_weeks_numbers_height + calendar_new_year_label_height; // idk why
+        const svg_height = calculate_svg_height();
+        let svg_width = 'auto';
+        if (is_mobile) // on mobile safari sucks, on desktop safari not
+          svg_width = `calc(100% - ${svg_margin * 2}px);`;
+
+        return `<svg id="svg_canvas" height="${svg_height}" viewBox="0 0 ${get_calendar_width()} ${ch}" xmlns="http://www.w3.org/2000/svg" style="margin: ${svg_margin}px; margin-top: 10px; width: ${svg_width};">`;
+      }
+
+      function finish_svg_image_calendar() {
+        return '</svg>';
+      }
+
       async function init_calendar(user_values) {
         const data_skin = user_values['data_skin'];
         adjust_calendar_offsets_for_data_skin(data_skin);
         adjust_calendar_controls_for_data_skin(data_skin);
         adjust_calendar_controls_offset();
 
+        let svg_image_calendar = start_svg_image_calendar();
+
         const what_to_draw = data_skins[data_skin];
-        let svg_image_calendar = '';
-        //console.log(user_values, what_to_draw)
         for (let layer = 0; layer < what_to_draw.length; layer++)
           svg_image_calendar += await what_to_draw[layer](user_values);
+
+        svg_image_calendar += finish_svg_image_calendar();
 
         document.getElementById("calendar").innerHTML = svg_image_calendar;
         switch_off_loading();
@@ -1447,6 +1548,7 @@
               <label for="data_skin">Data-skin:</label>
               <select id="data_skin" onchange="change_data_skin();" class="form-control form-select form-select-sm">
                 <option value="empty">Empty</option>
+                <option value="lifetime">Lifetime</option>
                 <option value="everything" selected>Everything</option>
               </select>
             </div>
