@@ -831,8 +831,8 @@
         return content;
       }
 
-      function draw_datasource() {
-        return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="5" font-weight="normal">Data sources: <a xlink:href= "https://mortality.org" xlink:title="HMD website" xlink:show="new">HMD</a>, <a xlink:href= "https://www.who.int/data/gho/data/themes/mortality-and-global-health-estimates/ghe-leading-causes-of-death" xlink:title="WHO GHO website" xlink:show="new">WHO</a></text>';
+      function draw_datasources() {
+        return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="5" font-weight="normal">Data sources: <a xlink:href="https://mortality.org" xlink:title="HMD website" xlink:show="new">HMD</a>, <a xlink:href="https://www.who.int/data/gho/data/themes/mortality-and-global-health-estimates/ghe-leading-causes-of-death" xlink:title="WHO GHO website" xlink:show="new">WHO</a></text>';
       }
 
       function draw_special_age_label(data) {
@@ -1078,7 +1078,7 @@
         content += draw_label_deaths();
 
         content += draw_legend(label_chart_first, label_chart_second, label_chart_third);
-        content += draw_datasource();
+        content += draw_datasources();
         content += labels;
         content += labels_special_years;
         
