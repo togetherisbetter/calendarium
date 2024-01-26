@@ -117,6 +117,20 @@
         color: gray;
         padding-left: 3px;
       }
+      input[type="date"]::-webkit-inner-spin-button,
+      input[type="date"]::-webkit-calendar-picker-indicator {
+        margin-top: -16px;
+      }
+      .controls_wrapper {
+        margin-bottom: 7px;
+      }
+      #data_skin {
+        background-color: bisque-;
+        background-color: gainsboro-;
+        background-color: khaki-;
+        background-color: linen-;
+        background-color: moccasin;
+      }
     </style>
 
     <!-- https://github.com/davidshimjs/qrcodejs -->
@@ -334,12 +348,13 @@
       var last_year_in_dataset = 0;
 
       let calendar_top_offset = calendar_weeks_numbers_height + calendar_new_year_label_height + 5;
+      let calendar_width_offset = calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6 + 10 + 16;
 
       function get_calendar_height() {
         return number_of_years * calendar_step_vertical + calendar_top_offset;
       }
       function get_calendar_width() {
-        return number_of_weeks_in_a_row * calendar_step_horizontal + calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6 + 10 + 16;
+        return number_of_weeks_in_a_row * calendar_step_horizontal + calendar_width_offset;
       }
 
       function enrich_data_mdx_dict(data_mdx, mdx_data, country_code, sex, target_year) {
@@ -445,6 +460,7 @@
       }
 
       function get_user_selected_parameters() {
+        const data_skin = document.getElementById('data_skin').value;
         const sex = document.getElementById('sex').value;
         const birthday = document.getElementById('birthday').value;
         const country_code = document.getElementById('country_code').value;
@@ -452,10 +468,11 @@
         const sex_to_compare = document.getElementById('sex_to_compare').value;
         if (!sex_to_compare)
           sex_to_compare = sex;
-        return {'birthday': birthday, 'country_code': country_code, 'country_code_latest': country_code_latest, 'sex': sex, 'sex_to_compare': sex_to_compare};
+        return {'data_skin': data_skin, 'birthday': birthday, 'country_code': country_code, 'country_code_latest': country_code_latest, 'sex': sex, 'sex_to_compare': sex_to_compare};
       }
 
       function set_user_selected_parameters(user_values) {
+        document.getElementById('data_skin').value = user_values.data_skin;
         document.getElementById('birthday').value = user_values.birthday;
         document.getElementById('country_code').value = user_values.country_code;
         document.getElementById('country_code_latest').value = user_values.country_code_latest;
@@ -473,8 +490,9 @@
         if (window.location.protocol != 'file:') {  // doesn't work for local files
           window.history.replaceState(null, null, generate_url(user_values));
         }
+        //console.log(user_values)
 
-        draw_calendar(user_values);
+        init_calendar(user_values);
         update_qrcode_url(user_values);
       }
 
@@ -837,7 +855,7 @@
       async function draw_calendar(user_values) {
         data_all = {'mx': [], 'dx': []}; // reset
 
-        await who_get();
+        //await who_get();
 
         const date = user_values['birthday'];
         const country_code = user_values['country_code'];
@@ -905,14 +923,14 @@
         content += draw_weeks_numbers();
         content += draw_ages_numbers();
         content += draw_years_numbers(birthday_date);
-/**/
+/*
         //console.log(who_stacked_coordinates)
         
         for (let j = who_causes_groups.length - 1; j >= 0 ; j--) {
           let cause = get_data_for_something(who_stacked_coordinates, who_causes_groups[j]);
           content += draw_stacked_line(cause, who_charts_colors[j]);
         }
-/**/
+*/
 
         const week_new_year = calculate_new_year_week(birthday_date);
 
@@ -1152,13 +1170,17 @@
           return;
 
         const splitted_params = params.split(',');
-        if (splitted_params.length != 5)
+        if (splitted_params.length < 5)
           return;
+
+        let data_skin = splitted_params[5];
+        if (!data_skin)
+          data_skin = 'everything'
 
         let sex_to_compare = splitted_params[4];
         if (!sex_to_compare)
           sex_to_compare = splitted_params[3]
-        return {'birthday': splitted_params[0], 'country_code': splitted_params[1], 'country_code_latest': splitted_params[2], 'sex': splitted_params[3], 'sex_to_compare': sex_to_compare};
+        return {'birthday': splitted_params[0], 'country_code': splitted_params[1], 'country_code_latest': splitted_params[2], 'sex': splitted_params[3], 'sex_to_compare': sex_to_compare, 'data_skin': data_skin};
       }
 
       function switch_off_loading() {
@@ -1311,8 +1333,8 @@
       }
 
       const data_skins = {
-        undefined: [draw_circles, ],
-        //'empty': [circles, ],
+        'empty': [draw_circles, ],
+        'everything': [draw_calendar, ],
         //'lifetime': [circles, fill_lifetime_circles, ],
         //'mortality': [circles, draw_mortality_lines, ],
         //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
@@ -1324,9 +1346,15 @@
       };
 
       function adjust_calendar_offsets_for_data_skin(data_skin) {
-        if (data_skin == undefined) {
+        if (data_skin == 'empty') {
           calendar_top_offset = 5;
           number_of_years = 90;
+          calendar_width_offset = 20;
+        }
+        else if (data_skin == 'everything') {
+          calendar_top_offset = 15;
+          number_of_years = 101;
+          calendar_width_offset = 60;
         }
       }
       function adjust_calendar_controls_offset() {
@@ -1341,13 +1369,21 @@
 
       function adjust_calendar_controls_for_data_skin(data_skin) {
         hide_all_calendar_controls();
-        const enable_controls = [];
-        if (data_skin == undefined) {
+        let enable_controls = [];
+        if (data_skin == 'empty') {
           ;
+        }
+        else if (data_skin == 'everything') {
+          enable_controls = available_controls;
         }
         enable_controls.forEach((element_id => {
           document.getElementById('wrapper_' + element_id).style.display = '';
         }));
+      }
+
+      function change_data_skin() {
+        const user_values = get_user_selected_parameters();
+        init_calendar(user_values);
       }
 
       async function init_calendar(user_values) {
@@ -1358,6 +1394,7 @@
 
         const what_to_draw = data_skins[data_skin];
         let svg_image_calendar = '';
+        //console.log(user_values, what_to_draw)
         for (let layer = 0; layer < what_to_draw.length; layer++)
           svg_image_calendar += await what_to_draw[layer](user_values);
 
@@ -1393,15 +1430,15 @@
       
         <div class="col-lg-3 col-md-8 col-sm-10 col-11">
           <div id="controls" style="color: black; font-size: 0.7em; display: none; margin-top: 10px;">
-            <div id="wrapper_data_skin" class="form-floating">
+            <div id="wrapper_data_skin" class="form-floating controls_wrapper">
               <label for="data_skin">Data-skin:</label>
               <select id="data_skin" onchange="change_data_skin();" class="form-control form-select form-select-sm">
                 <option value="empty">Empty</option>
-                <!--option value="f">Female</option-->
+                <option value="everything" selected>Everything</option>
               </select>
             </div>
 
-            <div id="wrapper_sex">
+            <div id="wrapper_sex" class="form-floating controls_wrapper">
               <label>Sex at birth:</label>
               <select id="sex" onchange="change_sex();" class="form-control form-select form-select-sm">
                 <option value="m">Male</option>
@@ -1409,12 +1446,12 @@
               </select>
             </div>
 
-            <div id="wrapper_birthday">
+            <div id="wrapper_birthday" class="form-floating controls_wrapper">
               <label>Date of birth:</label>
-              <input id="birthday" type="date" value="1990-01-01" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
+              <input id="birthday" type="date" value="1990-01-01" onchange="redraw_calendar();" class="form-control form-select- form-select-sm">
             </div>
 
-            <div id="wrapper_country_code">
+            <div id="wrapper_country_code" class="form-floating controls_wrapper">
               <label>Country of birth & childhood:</label>
               <select id="country_code" onchange="change_country_of_birth();" class="form-control form-select form-select-sm">
                 <option value="at">Austria (1947-2019)</option>
@@ -1457,10 +1494,10 @@
                 <option value="uk">United Kingdom (1922-2021)</option>
                 <option value="us">United States (1933-2021)</option>        
               </select>
-              <span class="clarify_field">(in brackets are data-available years)</span><br>
+              <span class="clarify_field">in brackets: data-available years</span><br>
             </div>
 
-            <div id="wrapper_country_code_latest">
+            <div id="wrapper_country_code_latest" class="form-floating controls_wrapper">
               <label>Country mostly lived in during last years:</label>
               <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
                 <option value="at">Austria</option>
@@ -1503,10 +1540,10 @@
                 <option value="uk">United Kingdom</option>
                 <option value="us">United States</option>       
               </select>
-              <span class="clarify_field">(or a country you plan to relocate for a living)</span><br>
+              <span class="clarify_field">or a country you plan to relocate for a living</span><br>
             </div>
 
-            <div id="wrapper_sex_to_compare">
+            <div id="wrapper_sex_to_compare" class="form-floating controls_wrapper">
               <label>Sex at birth to compare with:</label>
               <select id="sex_to_compare" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
                 <option value="m">Male</option>
