@@ -527,7 +527,7 @@
 
       function draw_label_new_year(week_new_year) {
         const cx = week_new_year * calendar_step_horizontal + calendar_years_numbers_width + circle_radius + 1;
-        const cy = get_calendar_height() - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height - 1;
+        let cy = get_calendar_height() - number_of_years * calendar_step_vertical - calendar_weeks_numbers_height - 1;
         if (is_mobile)
           cy += 1;
         return '<text font-size="3" fill="black" font-family="Verdana" text-anchor="middle" alignment-baseline="baseline" x="' + cx + '" y="' + cy + '">New Year</text>';
@@ -837,7 +837,7 @@
         let y = 5;
         let content = `<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="${y}" font-weight="normal">Data sources: HMD, WHO</text>`;
         if (is_mobile)
-          y = 5;
+          y += 5;
         content += `<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="${y}" font-weight="normal"><a xlink:href="https://mortality.org" xlink:title="HMD website" xlink:show="new">HMD</a>, <a xlink:href="https://www.who.int/data/gho/data/themes/mortality-and-global-health-estimates/ghe-leading-causes-of-death" xlink:title="WHO GHO website" xlink:show="new">WHO</a></text>`;
         return content;
       }
