@@ -131,6 +131,11 @@
         background-color: linen-;
         background-color: moccasin;
       }
+      .xl {
+        height: calc(4.6rem + calc(var(--bs-border-width) * 2)) !important;
+        padding: 0.725rem !important;
+        padding-top: 2.8rem !important;
+      }
     </style>
 
     <!-- https://github.com/davidshimjs/qrcodejs -->
@@ -835,11 +840,12 @@
 
       function draw_datasources() {
         let y = 5;
-        let content = `<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="${y}" font-weight="normal">Data sources: HMD, WHO</text>`;
-        if (is_mobile)
-          y += 5;
-        content += `<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="${y}" font-weight="normal"><a xlink:href="https://mortality.org" xlink:title="HMD website" xlink:show="new">HMD</a>, <a xlink:href="https://www.who.int/data/gho/data/themes/mortality-and-global-health-estimates/ghe-leading-causes-of-death" xlink:title="WHO GHO website" xlink:show="new">WHO</a></text>`;
-        return content;
+        if (is_mobile) { // idk why it works so ugly with links, so removed links for iOS 14
+          return `<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="${y}" font-weight="normal">Data sources: HMD, WHO</text>`;
+        }
+        else {
+          return `<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="${y}" font-weight="normal">Data sources: <a xlink:href="https://mortality.org" xlink:title="HMD website" xlink:show="new">HMD</a>, <a xlink:href="https://www.who.int/data/gho/data/themes/mortality-and-global-health-estimates/ghe-leading-causes-of-death" xlink:title="WHO GHO website" xlink:show="new">WHO</a></text>`;
+        }
       }
 
       function draw_special_age_label(data) {
@@ -1459,7 +1465,7 @@
             </div>
 
             <div id="wrapper_country_code" class="form-floating controls_wrapper">
-              <label>Country of birth & childhood:</label>
+              <label>Motherland (with data-available years):</label>
               <select id="country_code" onchange="change_country_of_birth();" class="form-control form-select form-select-sm">
                 <option value="at">Austria (1947-2019)</option>
                 <option value="au">Australia (1921-2020)</option>
@@ -1501,12 +1507,11 @@
                 <option value="uk">United Kingdom (1922-2021)</option>
                 <option value="us">United States (1933-2021)</option>        
               </select>
-              <span class="clarify_field">in brackets: data-available years</span><br>
             </div>
 
             <div id="wrapper_country_code_latest" class="form-floating controls_wrapper">
-              <label>Country mostly lived in during last years:</label>
-              <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
+              <label>Country mostly lived in during last years<br> or plan to relocate for a living:</label>
+              <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm xl">
                 <option value="at">Austria</option>
                 <option value="au">Australia</option>
                 <option value="by">Belarus</option>
@@ -1547,7 +1552,6 @@
                 <option value="uk">United Kingdom</option>
                 <option value="us">United States</option>       
               </select>
-              <span class="clarify_field">or a country you plan to relocate for a living</span><br>
             </div>
 
             <div id="wrapper_sex_to_compare" class="form-floating controls_wrapper">
