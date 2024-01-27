@@ -1244,10 +1244,95 @@
         content += draw_label_deaths();
 
         content += draw_legend(label_chart_first);
-        content += draw_datasources();
+        //content += draw_datasources();
         content += labels;
         content += labels_special_years;
 
+        return content;
+      }
+
+      async function draw_mortality_for_latest_year_user_values(user_values) {
+        data_all = {'mx': [], 'dx': []}; // reset
+
+        const date = user_values['birthday'];
+        const country_code = user_values['country_code'];
+        const sex = user_values['sex'];
+        
+        const birthday_date = new Date(date);
+        let birthday_year = birthday_date.getFullYear();
+
+        let label_chart_first = `${country_code}${birthday_year}${sex}`.toUpperCase();
+
+        await get_mortality_data(country_code, sex);
+        // birthday_year = last_year_in_dataset
+        const last_year_in_dataset_1 = last_year_in_dataset;
+        const data_to_draw_mx_latest = data_mx[country_code][sex][last_year_in_dataset_1];
+        const data_to_draw_dx_latest = data_dx[country_code][sex][last_year_in_dataset_1];
+        const label_chart_second = `${country_code}${last_year_in_dataset_1}${sex}`.toUpperCase();
+        
+        const percentiles_to_draw = [50, 80, 90];
+        const year_percentiles_dx_latest = get_percentiles(data_to_draw_dx_latest, percentiles_to_draw);
+
+        const age = get_age(birthday_date);
+        const special_ages = [1, 2, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, age + 1, number_of_years];  // to draw integral values for these years
+
+        let total_weeks = 1;
+        //let percentiles_labels = {};
+        let labels = '';
+        let labels_special_years = '';
+        for (let year = 1; year <= number_of_years; year++) {
+          let y_offset = get_calendar_height() - year * calendar_step_vertical;
+          if (is_mobile)
+            y_offset += 10;
+          
+          let cy = y_offset - circle_radius;
+
+          const cx2 = 19;
+          const cx4 = cx2 + 10;
+          let cy2 = cy + 1;
+          if (is_mobile)
+            cy2 = cy2 - 10 + 1;
+
+          for (let i = 0; i < percentiles_to_draw.length; i++) {
+            let percentile = percentiles_to_draw[i];
+            const cx5 = cx2 - 2;
+            let cy5 = cy2 - 3;
+            if (is_mobile)
+              cy5 = cy5 + 10 - 1;
+
+            if (year == year_percentiles_dx_latest[percentile]) {
+              labels += draw_label({'rect': {'x': cx5, 'y': cy5, 'width': 10}, 'text': {'x': cx2, 'y': cy2, 'text': percentile + '%', 'fill': 'gray', 'weight': 'bold'}});
+            }
+          }
+
+          // drawing labels for special ages
+          if (special_ages.includes(year)) {
+            let cy2 = cy + 1;
+            if (is_mobile)
+              cy2 = cy2 - 10 + 1;
+            let cx2 = calendar_step_horizontal * number_of_weeks_in_a_row + calendar_years_numbers_width + 10 - circle_radius;
+
+            cx2 += 11;
+            if (data_mx[country_code][sex][birthday_year][year - 1] > 10)
+                cx2 += 2;
+
+            labels_special_years += draw_special_age_label({'color': 'gray', 'x': cx2, 'y': cy2, 'weight': 'bold', 'text': data_mx[country_code][sex][last_year_in_dataset_1][year - 1].toFixed(1) + '%'});
+          }
+        }
+
+        antistroke = "gray"
+        const latest = "gray"
+        content += draw_line("mx", data_to_draw_mx_latest, latest, age);
+        content += draw_line("dx", data_to_draw_dx_latest, latest, age);
+
+        content += draw_label_chances();
+        content += draw_label_deaths();
+
+        content += draw_legend(label_chart_first, label_chart_second);
+        //content += draw_datasources();
+        content += labels;
+        content += labels_special_years;
+        
         return content;
       }
 
@@ -1520,7 +1605,8 @@
         'clean': [draw_weeks_numbers, draw_ages_numbers, draw_circles, ],
         'everything': [draw_calendar, ],
         'lifetime': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_label_new_year, draw_new_year_dots],
-        'mortality_original': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values],
+        'mortality_original': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_datasources],
+        'mortality_latest_vs_original': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_datasources],
         //'mortality': [circles, draw_mortality_lines, ],
         //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
         //'causes': [draw_causes_lines, circles, ],
@@ -1547,9 +1633,19 @@
           calendar_width_offset = 20;
         }
         else if (data_skin == 'mortality_original') {
-          calendar_top_offset = 10;
-          number_of_years = 91;
-          calendar_width_offset = 20;
+          calendar_top_offset = 15;
+          number_of_years = 110;
+          calendar_width_offset = 35;
+        }
+        else if (data_skin == 'mortality_latest_vs_original') {
+          calendar_top_offset = 15;
+          number_of_years = 110;
+          calendar_width_offset = 48;
+        }
+        else if (data_skin == 'mortality_compare') {
+          calendar_top_offset = 15;
+          number_of_years = 110;
+          calendar_width_offset = 60;
         }
       }
       function adjust_calendar_controls_offset() {
@@ -1574,8 +1670,11 @@
         else if (data_skin == 'lifetime') {
           enable_controls.push('birthday')
         }
-        else if (data_skin == 'mortality_original') {
+        else if (['mortality_original', 'mortality_latest_vs_original'].includes(data_skin)) {
           enable_controls = ['sex', 'birthday', 'country_code'];
+        }
+        else if (data_skin == 'mortality_compare') {
+          enable_controls = ['sex', 'birthday', 'country_code', 'country_code_latest', 'sex_to_compare'];
         }
         enable_controls.forEach((element_id => {
           document.getElementById('wrapper_' + element_id).style.display = '';
@@ -1654,8 +1753,8 @@
                 <option value="clean">Clean</option>
                 <option value="lifetime">Lifetime</option>
                 <option value="mortality_original">Mortality (original)</option>
-                <!--option value="mortality_latest_vs_original">Mortality (latest vs. original)</option>
-                <option value="mortality_compare">Mortality (compare)</option-->
+                <option value="mortality_latest_vs_original">Mortality (latest vs. original)</option>
+                <!--option value="mortality_compare">Mortality (compare)</option-->
                 <option value="everything" selected>Everything</option>
               </select>
             </div>
