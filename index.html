@@ -352,7 +352,8 @@
       var data_mx = {};
       var data_all = {'dx': [], 'mx': []};
       var last_year_in_dataset = 0;
-      var last_year_in_dataset_1_fix_me = 0;
+      var last_year_in_dataset_1 = 0;
+      var last_year_in_dataset_2 = 0;
 
       let calendar_top_offset = calendar_weeks_numbers_height + calendar_new_year_label_height + 5;
       let calendar_width_offset = calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6 + 10 + 16;
@@ -1288,10 +1289,10 @@
         const birthday_date = new Date(date);
         let birthday_year = birthday_date.getFullYear();
 
-        await get_mortality_data(country_code, sex);
+        //await get_mortality_data(country_code, sex);
         // birthday_year = last_year_in_dataset
-        const last_year_in_dataset_1 = last_year_in_dataset;
-        last_year_in_dataset_1_fix_me = last_year_in_dataset_1;
+        //const last_year_in_dataset_1 = last_year_in_dataset;
+        //last_year_in_dataset_1_fix_me = last_year_in_dataset_1;
         const data_to_draw_mx_latest = data_mx[country_code][sex][last_year_in_dataset_1];
         const data_to_draw_dx_latest = data_dx[country_code][sex][last_year_in_dataset_1];
         const label_chart_second = `${country_code}${last_year_in_dataset_1}${sex}`.toUpperCase();
@@ -1372,9 +1373,9 @@
         const birthday_date = new Date(date);
         let birthday_year = birthday_date.getFullYear();
 
-        if (country_code_latest != country_code || sex != sex_to_compare)
-          await get_mortality_data(country_code_latest, sex_to_compare); // to fix last year will be calculated automatically because not set
-        const last_year_in_dataset_2 = last_year_in_dataset;
+        //if (country_code_latest != country_code || sex != sex_to_compare)
+        //  await get_mortality_data(country_code_latest, sex_to_compare); // to fix last year will be calculated automatically because not set
+        //const last_year_in_dataset_2 = last_year_in_dataset;
         const data_to_draw_mx_another_country = data_mx[country_code_latest][sex_to_compare][last_year_in_dataset_2];
         const data_to_draw_dx_another_country = data_dx[country_code_latest][sex_to_compare][last_year_in_dataset_2];
         const label_chart_third = `${country_code_latest}${last_year_in_dataset_2}${sex_to_compare}`.toUpperCase();
@@ -1432,7 +1433,7 @@
 
             if (country_code != country_code_latest || sex != sex_to_compare) {
               cx2 += 11;
-              if (data_mx[country_code][sex][last_year_in_dataset_1_fix_me][year - 1] > 10)
+              if (data_mx[country_code][sex][last_year_in_dataset_1][year - 1] > 10)
                 cx2 += 2;
               labels_special_years += draw_special_age_label({'color': 'gray', 'x': cx2, 'y': cy2, 'weight': 'normal', 'text': data_mx[country_code_latest][sex_to_compare][last_year_in_dataset_2][year - 1].toFixed(1) + '%'});
             }
@@ -1735,7 +1736,7 @@
         'lifetime': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_label_new_year, draw_new_year_dots],
         'mortality_birth_year': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
         'mortality_birth_vs_latest_year': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
-        'mortality_compare': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
+        'mortality_compare': [draw_ages_numbers, draw_circles, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
         //'mortality': [circles, draw_mortality_lines, ],
         //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
         //'causes': [draw_causes_lines, circles, ],
@@ -1830,8 +1831,30 @@
         return '</svg>';
       }
 
+      async function warm_cache(user_values) {
+        const date = user_values['birthday'];
+        const country_code = user_values['country_code'];
+        const country_code_latest = user_values['country_code_latest'];
+        const sex = user_values['sex'];
+        const sex_to_compare = user_values['sex_to_compare'];
+
+        const birthday_date = new Date(date);
+        let birthday_year = birthday_date.getFullYear();
+        
+        if (country_code_latest != country_code || sex != sex_to_compare) {
+          await get_mortality_data(country_code_latest, sex_to_compare); // to fix last year will be calculated 
+          last_year_in_dataset_2 = last_year_in_dataset;
+        }
+        await get_mortality_data(country_code, sex);
+        last_year_in_dataset_1 = last_year_in_dataset;
+
+        await get_mortality_data(country_code, sex, birthday_year);
+        last_year_in_dataset = last_year_in_dataset;
+      }
+
       async function init_calendar(user_values) {
         data_all = {'mx': [], 'dx': []}; // reset
+        await warm_cache(user_values);
 
         const data_skin = user_values['data_skin'];
         adjust_calendar_offsets_for_data_skin(data_skin);
