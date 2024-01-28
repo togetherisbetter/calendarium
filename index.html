@@ -105,6 +105,7 @@
       }
       .container {
         padding: 0;
+        margin-bottom: 10%;
       }
       .row {
         margin-left: 0;
@@ -897,11 +898,11 @@
         if (innerHeight > innerWidth)  // if portrait, optimize by width in aspect ratio
           return (((innerWidth * ratio_current_svg_canvas) * 100) / innerHeight) + '%';
         else  // otherwise optimize by screen height, but 1.5 to zoom
-          return innerHeight * 1.5 - 30 + 'px';
+          return innerHeight * 1.6 - 30 + 'px';
       }
 
       async function draw_calendar(user_values) {
-        data_all = {'mx': [], 'dx': []}; // reset
+        //data_all = {'mx': [], 'dx': []}; // reset
 
         //await who_get();
 
@@ -1188,7 +1189,7 @@
       }
 
       async function draw_mortality_for_user_values(user_values) {
-        data_all = {'mx': [], 'dx': []}; // reset
+        //data_all = {'mx': [], 'dx': []}; // reset
 
         const date = user_values['birthday'];
         const country_code = user_values['country_code'];
@@ -1278,7 +1279,7 @@
       }
 
       async function draw_mortality_for_latest_year_user_values(user_values) {
-        data_all = {'mx': [], 'dx': []}; // reset
+        //data_all = {'mx': [], 'dx': []}; // reset
 
         const date = user_values['birthday'];
         const country_code = user_values['country_code'];
@@ -1360,7 +1361,7 @@
       }
 
       async function draw_mortality_to_compare_user_values(user_values) {
-        data_all = {'mx': [], 'dx': []}; // reset
+        //data_all = {'mx': [], 'dx': []}; // reset
 
         const date = user_values['birthday'];
         const country_code = user_values['country_code'];
@@ -1464,8 +1465,8 @@
           return;
 
         let data_skin = splitted_params[5];
-        if (!data_skin)
-          data_skin = 'everything'
+        if (!data_skin || !Object.keys(data_skins).includes(data_skin))
+          data_skin = 'clean'
 
         let sex_to_compare = splitted_params[4];
         if (!sex_to_compare)
@@ -1476,7 +1477,7 @@
       function switch_off_loading() {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('controls').style.display = '';
-        document.getElementById('faq').style.display = '';
+        //document.getElementById('faq').style.display = '';
       }
 
       function prepare_for_print() {
@@ -1496,7 +1497,7 @@
 
         document.getElementsByClassName('container')[0].classList.remove("container");
         document.getElementById('controls').style.display = 'none';
-        document.getElementById('faq').style.display = 'none';
+        //document.getElementById('faq').style.display = 'none';
 
         print();
       }
@@ -1718,12 +1719,21 @@
         return content;  
       }
 
+      const explanation_texts = {
+        'clean': `<p>This is an empty canvas for a 90 years long Life&nbsp;Calendar.</p><p>Each circle represents 1 week of life. Each line of circles represents 1 year of life (since we have 52 weeks in each year then we have 52 circles in each line). Calendar starts from the circle at the bottom left corner.</p><p>You can download this calendar as optimized for printing PDF file, print it colored in A3/A2 size and then manually fill circle by circle, line by line from the bottom to the top till your current agnd week circle and put it on a wall in a frame.</p><p>Printed version also has a QR-code that leads to this online calendar &mdash; so you could visit it (with it's all latest available data-skins) right from the wall at any time.</p>`,
+        'lifetime': `<p>This is a 91 years long Life Calendar which is already pre-filled for a specified birthday.</p><p>Each circle represents 1 week of life. Each line of circles represents 1 year of life (since we have 52 weeks in each year then we have 52 circles in each line). Circles with a dot inside represent a New Year week. Calendar starts from the circle at the bottom left corner (first week of life for a specified birthday).</p><p>You can download this calendar as optimized for printing PDF file, print it in A3/A2 size and put it on a wall in a frame.</p><p>Printed version also has a QR-code that leads to this online calendar &mdash; so you could visit it (with it's all latest available data-skins) right from the wall at any time.</p>`,
+        'mortality_birth_year': `<p>This is a 101 years long Life Calendar with 2 mortality charts built on it for a specified country, sex at birth and year of birth. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.</p><p>Each circle represents 1 week of life. Each line of circles represents 1 year of life (since we have 52 weeks in each year then we have 52 circles in each line). Calendar starts from the circle at the bottom left corner.</p><p>Black bold solid line chart on the left side is "Deaths at age". Black bold solid line chart on the right side is "Chance to die at age". Black bold digits on the left side are 50-th, 80-th and 90-th percentiles for "Deaths at age" chart. Black bold digits on the right side are values for "Chance to die at age" chart.</p><p>Left chart shows how many people of different ages have died for specified country, sex and year. Right chart shows how many among all the people of that age and sex in that country have died in specified year (i.e. "what was a chance to die at that age for that sex in that country on that year").</p><p>Legend for the charts (and digits) is in the top left corner.</p><p>You can download this calendar as optimized for printing PDF file, print it in A3/A2 size and put it on a wall in a frame.</p><p>Printed version also has a QR-code that leads to this online calendar &mdash; so you could visit it (with it's all latest available data-skins) right from the wall at any time.</p>`,
+        'mortality_birth_vs_latest_year': `<p>This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth, year of birth and latest data-available year for that country. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.</p><p>Each circle represents 1 week of life. Each line of circles represents 1 year of life (since we have 52 weeks in each year then we have 52 circles in each line). Calendar starts from the circle at the bottom left corner.</p><p>Black and gray bold solid lines charts on the left side are "Deaths at age". Black and gray bold solid lines charts on the right side are "Chance to die at age". Black and gray bold digits on the left side are 50-th, 80-th and 90-th percentiles for "Deaths at age" chart. Black and gray bold digits on the right side are values for "Chance to die at age" chart. Black bold is data for year of birth, gray bold is data for latest data-available year.</p><p>Left charts show how many people of different ages have died for specified country, sex and years. Right charts show how many among all the people of that age and sex in that country have died in specified years (i.e. "what was a chance to die at that age for that sex in that country on those years").</p><p>Legend for the charts (and digits) is in the top left corner.</p><p>You can download this calendar as optimized for printing PDF file, print it in A3/A2 size and put it on a wall in a frame.</p><p>Printed version also has a QR-code that leads to this online calendar &mdash; so you could visit it (with it's all latest available data-skins) right from the wall at any time.</p>`,
+        'mortality_compare-': `<p>This is a 101 years long Life Calendar with 6 mortality charts built on it for a specified country, year of birth and sex at birth and "compared to" sex and country. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.</p><p>Each circle represents 1 week of life. Each line of circles represents 1 year of life (since we have 52 weeks in each year then we have 52 circles in each line). Calendar starts from the circle at the bottom left corner.</p><p>Black and gray bold solid lines charts on the left side are "Deaths at age". Black and gray bold solid lines charts on the right side are "Chance to die at age". Black and gray bold digits on the left side are 50-th, 80-th and 90-th percentiles for "Deaths at age" chart. Black and gray bold digits on the right side are values for "Chance to die at age" chart. Black bold is data for year of birth, gray bold is data for latest data-available year.</p><p>Left charts show how many people of different ages have died for specified country, sex and years. Right charts show how many among all the people of that age and sex in that country have died in specified years (i.e. "what was a chance to die at that age for that sex in that country on those years").</p><p>Legend for the charts (and digits) is in the top left corner.</p>`,
+        'everything': undefined,
+      }
+
       const data_skins = {
         'clean': [draw_weeks_numbers, draw_ages_numbers, draw_circles, ],
         'everything': [draw_calendar, ],
         'lifetime': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_label_new_year, draw_new_year_dots],
-        'mortality_original': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
-        'mortality_latest_vs_original': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
+        'mortality_birth_year': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
+        'mortality_birth_vs_latest_year': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
         'mortality_compare': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
         //'mortality': [circles, draw_mortality_lines, ],
         //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
@@ -1750,24 +1760,24 @@
           number_of_years = 91;
           calendar_width_offset = 20;
         }
-        else if (data_skin == 'mortality_original') {
+        else if (data_skin == 'mortality_birth_year') {
           calendar_top_offset = 15;
-          number_of_years = 110;
+          number_of_years = 101;
           calendar_width_offset = 35;
         }
-        else if (data_skin == 'mortality_latest_vs_original') {
+        else if (data_skin == 'mortality_birth_vs_latest_year') {
           calendar_top_offset = 15;
-          number_of_years = 110;
+          number_of_years = 101;
           calendar_width_offset = 48;
         }
         else if (data_skin == 'mortality_compare') {
           calendar_top_offset = 15;
-          number_of_years = 110;
+          number_of_years = 101;
           calendar_width_offset = 60;
         }
       }
       function adjust_calendar_controls_offset() {
-        document.getElementById('wrapper_data_skin').style.marginTop = '25px';
+        document.getElementById('controls').style.marginTop = '25px';
       }
 
       function hide_all_calendar_controls() {
@@ -1788,7 +1798,7 @@
         else if (data_skin == 'lifetime') {
           enable_controls.push('birthday')
         }
-        else if (['mortality_original', 'mortality_latest_vs_original'].includes(data_skin)) {
+        else if (['mortality_birth_year', 'mortality_birth_vs_latest_year'].includes(data_skin)) {
           enable_controls = ['sex', 'birthday', 'country_code'];
         }
         else if (data_skin == 'mortality_compare') {
@@ -1820,6 +1830,8 @@
       }
 
       async function init_calendar(user_values) {
+        data_all = {'mx': [], 'dx': []}; // reset
+
         const data_skin = user_values['data_skin'];
         adjust_calendar_offsets_for_data_skin(data_skin);
         adjust_calendar_controls_for_data_skin(data_skin);
@@ -1834,6 +1846,13 @@
         svg_image_calendar += finish_svg_image_calendar();
 
         document.getElementById("calendar").innerHTML = svg_image_calendar;
+        if (explanation_texts[data_skin]) {
+          document.getElementById("explanation_text").innerHTML = explanation_texts[data_skin];
+          document.getElementById("explanation_section").style.display = '';
+        }
+        else {
+          document.getElementById("explanation_section").style.display = 'none';
+        }
         switch_off_loading();
       }
 
@@ -1865,13 +1884,14 @@
       
         <div class="col-lg-3 col-md-8 col-sm-10 col-11">
           <div id="controls" style="color: black; font-size: 0.7em; display: none; margin-top: 10px;">
+            <h4>Configure</h4>
             <div id="wrapper_data_skin" class="form-floating controls_wrapper">
               <label for="data_skin">Data-skin:</label>
               <select id="data_skin" onchange="change_data_skin();" class="form-control form-select form-select-sm">
                 <option value="clean">Clean</option>
                 <option value="lifetime">Fill Lifetime</option>
-                <option value="mortality_original">Mortality for the birth year</option>
-                <option value="mortality_latest_vs_original">Mortality for the birth vs. latest years</option>
+                <option value="mortality_birth_year">Mortality for the birth year</option>
+                <option value="mortality_birth_vs_latest_year">Mortality for the birth vs. latest year</option>
                 <option value="mortality_compare">Compare mortality for countries & sexes</option>
                 <option value="everything" selected>Everything together</option>
               </select>
@@ -1987,10 +2007,20 @@
                 <option value="f">Female</option>
               </select>
             </div>
+
+            <div id="explanation_section" style="margin-top: 25px; display: none;">
+              <h4>What is displayed</h4>
+              <div id="explanation_text"></div>
+              <!--h4>Download</h4>
+              <div id="download_as_pdf" style="margin-bottom: 25px;">
+                <p>You can download this calendar as optimized for printing PDF file, print it in A3/A2 size and put it on a wall in a frame.</p><p>Printed version also has a QR-code that leads to this online calendar &mdash; so you could visit it (with it's all latest available data-skins) right from the wall at any time.</p>
+                <button class="btn btn-primary disabled">Download as PDF</button>
+              </div-->
+            </div>
           </div>
         </div>
       </div>
-      <div class="row justify-content-center">
+      <!--div class="row justify-content-center">
         <div class="col-lg-5 col-md-8 col-sm-10 col-11">
           <div id="faq" style="display: none;">
             <h1>FAQ:</h1>
@@ -2054,7 +2084,7 @@
             </p>
           </div>
         </div>
-      </div>          
+      </div-->          
     </div>
 
     <p id="log"></p>
