@@ -354,6 +354,7 @@
       var last_year_in_dataset = 0;
       var last_year_in_dataset_1 = 0;
       var last_year_in_dataset_2 = 0;
+      var number_of_mortality_charts_drawn = 0;
 
       let calendar_top_offset = calendar_weeks_numbers_height + calendar_new_year_label_height + 5;
       let calendar_width_offset = calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6 + 10 + 16;
@@ -579,6 +580,7 @@
       }
 
       function draw_legend2(text, position) {
+        console.log('to be optimized: position in essence is responsible only for color');
         const cx = 18;
         let cy = 0;
         if (is_mobile)
@@ -595,11 +597,11 @@
           content += `<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${cx2}" y="${cy4}" font-weight="bold">${text}</text>`;
         
         //cx2 = cx2 - cx - 1.5;
-        const cx5 = cx2 + 19;
+        const cx5 = cx2 + 19 * (number_of_mortality_charts_drawn);
         if (position == 2)
             content += `<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${cx5}" y="${cy4}" font-weight="bold">${text}</text>`;
         
-        const cx6 = cx5 + 19;
+        const cx6 = cx5 + 19 * (number_of_mortality_charts_drawn - 1);
         if (position == 3)
           content += `<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${cx6}" y="${cy4}" font-weight="bold-">${text}</text>`;
 
@@ -1276,6 +1278,7 @@
         content += labels;
         content += labels_special_years;
 
+        number_of_mortality_charts_drawn++;
         return content;
       }
 
@@ -1339,9 +1342,9 @@
               cy2 = cy2 - 10 + 1;
             let cx2 = calendar_step_horizontal * number_of_weeks_in_a_row + calendar_years_numbers_width + 10 - circle_radius;
 
-            cx2 += 11;
+            cx2 += 11 * number_of_mortality_charts_drawn;
             if (data_mx[country_code][sex][birthday_year][year - 1] > 10)
-                cx2 += 2;
+                cx2 += 2 * number_of_mortality_charts_drawn;
 
             labels_special_years += draw_special_age_label({'color': 'gray', 'x': cx2, 'y': cy2, 'weight': 'bold', 'text': data_mx[country_code][sex][last_year_in_dataset_1][year - 1].toFixed(1) + '%'});
           }
@@ -1358,6 +1361,7 @@
         content += labels;
         content += labels_special_years;
         
+        number_of_mortality_charts_drawn++;
         return content;
       }
 
@@ -1425,16 +1429,18 @@
               cy2 = cy2 - 10 + 1;
             let cx2 = calendar_step_horizontal * number_of_weeks_in_a_row + calendar_years_numbers_width + 10 - circle_radius;
 
+            /*
             if (1) {
               cx2 += 11;
               if (data_mx[country_code][sex][birthday_year][year - 1] > 10)
                 cx2 += 2;
             }
+            */
 
             if (country_code != country_code_latest || sex != sex_to_compare) {
-              cx2 += 11;
+              cx2 += 11 * number_of_mortality_charts_drawn;
               if (data_mx[country_code][sex][last_year_in_dataset_1][year - 1] > 10)
-                cx2 += 2;
+                cx2 += 2 * number_of_mortality_charts_drawn;
               labels_special_years += draw_special_age_label({'color': 'gray', 'x': cx2, 'y': cy2, 'weight': 'normal', 'text': data_mx[country_code_latest][sex_to_compare][last_year_in_dataset_2][year - 1].toFixed(1) + '%'});
             }
           }
@@ -1452,6 +1458,7 @@
         content += labels;
         content += labels_special_years;
 
+        number_of_mortality_charts_drawn++;
         return content;
       }
 
@@ -1854,6 +1861,8 @@
 
       async function init_calendar(user_values) {
         data_all = {'mx': [], 'dx': []}; // reset
+        number_of_mortality_charts_drawn = 0;
+
         await warm_cache(user_values);
 
         const data_skin = user_values['data_skin'];
