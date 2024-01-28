@@ -1352,6 +1352,7 @@
 
         antistroke = "gray"
         const latest = "gray"
+        antistroke_width = 0.5;
         content += draw_line("mx", data_to_draw_mx_latest, latest, age);
         content += draw_line("dx", data_to_draw_dx_latest, latest, age);
 
@@ -1440,7 +1441,7 @@
 
         antistroke = "gray"
         const latest = "gray"
-
+        antistroke_width = 0.5;
         if (country_code_latest != country_code || sex != sex_to_compare) {
           content += draw_line("mx", data_to_draw_mx_another_country, "gray", age, "4 2");
           content += draw_line("dx", data_to_draw_dx_another_country, "gray", age, "4 2");
