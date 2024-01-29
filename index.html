@@ -1466,8 +1466,8 @@
           return;
 
         let data_skin = splitted_params[5];
-        if (!data_skin || !Object.keys(data_skins).includes(data_skin))
-          data_skin = 'clean'
+        if (!Object.keys(data_skins).includes(data_skin))
+          data_skin = 'mortality_birth_vs_latest_year'
 
         let sex_to_compare = splitted_params[4];
         if (!sex_to_compare)
@@ -2051,10 +2051,10 @@
             </div>
 
             <div id="explanation_section" style="margin-top: 25px; display: none;">
-              <h4>Value of this data-skin</h4>
-              <div id="value_text"></div>
               <h4>What is displayed</h4>
               <div id="explanation_text"></div>
+              <h4>Value of this data-skin</h4>
+              <div id="value_text"></div>
               <!--h4>Download</h4>
               <div id="download_as_pdf" style="margin-bottom: 25px;">
                 <p>You can download this calendar as optimized for printing PDF file, print it in A3/A2 size and put it on a wall in a frame.</p><p>Printed version also has a QR-code that leads to this online calendar &mdash; so you could visit it (with it's all latest available data-skins) right from the wall at any time.</p>
