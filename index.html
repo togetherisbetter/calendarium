@@ -1730,7 +1730,7 @@
         'everything': undefined,
       }
 
-      const benefits_texts = {
+      const values_texts = {
         'clean': `<p>Allows you to print a clean calendar and fill it by yourself manually.</p>`,
         'lifetime': `<p>Shows you how many weeks have passed since your birthday. Allows you to print already pre-filled calendar instead of clean one.</p>`,
         'mortality_birth_year': `<p>Shows you mortality situation in your motherland for your sex at a year you were born. Explanatory data-skin.</p>`,
@@ -1888,12 +1888,12 @@
         else {
           document.getElementById("explanation_section").style.display = 'none';
         }
-        if (benefits_texts[data_skin]) {
-          document.getElementById("benefit_text").innerHTML = benefits_texts[data_skin];
+        if (values_texts[data_skin]) {
+          document.getElementById("value_text").innerHTML = values_texts[data_skin];
           document.getElementById("explanation_section").style.display = '';
         }
         else {
-          document.getElementById("benefit_text").innerHTML = '<p>TBD</p>';
+          document.getElementById("value_text").innerHTML = '<p>TBD</p>';
         }
         switch_off_loading();
       }
@@ -2051,8 +2051,8 @@
             </div>
 
             <div id="explanation_section" style="margin-top: 25px; display: none;">
-              <h4>Benefits of this data-skin</h4>
-              <div id="benefit_text"></div>
+              <h4>Value of this data-skin</h4>
+              <div id="value_text"></div>
               <h4>What is displayed</h4>
               <div id="explanation_text"></div>
               <!--h4>Download</h4>
