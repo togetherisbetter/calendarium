@@ -170,7 +170,47 @@
         return iOS_version <= 15; // for iOS 15 svg offset incorrectly calculated
       }
       const is_mobile = is_bad_mobile();//is_iOS();//window.mobileCheck();
-      const supported_countries = ['at', 'au', 'by', 'be', 'bg', 'ca', 'cl', 'hr', 'cz', 'fi', 'fr', 'de', 'gr', 'hk', 'hu', 'is', 'ie', 'il', 'it', 'jp', 'lv', 'lt', 'lu', 'nl', 'nz', 'no', 'pl', 'pt', 'kr', 'ru', 'sk', 'si', 'es', 'se', 'ch', 'tw', 'ua', 'uk', 'us'];
+      const supported_countries = {
+        'at': {'country_name': 'Austria', 'data_years_from': '1947', 'data_years_to': '2019'},
+        'au': {'country_name': 'Australia', 'data_years_from': '1921', 'data_years_to': '2020'},
+        'by': {'country_name': 'Belarus', 'data_years_from': '1959', 'data_years_to': '2018'},
+        'be': {'country_name': 'Belgium', 'data_years_from': '1841', 'data_years_to': '2022'},
+        'bg': {'country_name': 'Bulgaria', 'data_years_from': '1947', 'data_years_to': '2021'},
+        'ca': {'country_name': 'Canada', 'data_years_from': '1921', 'data_years_to': '2021'},
+        'cl': {'country_name': 'Chile', 'data_years_from': '1992', 'data_years_to': '2020'},
+        'hr': {'country_name': 'Croatia', 'data_years_from': '2001', 'data_years_to': '2020'},
+        'cz': {'country_name': 'Czechia', 'data_years_from': '1950', 'data_years_to': '2021'},
+        'fi': {'country_name': 'Finland', 'data_years_from': '1878', 'data_years_to': '2022'},
+        'fr': {'country_name': 'France', 'data_years_from': '1816', 'data_years_to': '2021'},
+        'de': {'country_name': 'Germany', 'data_years_from': '1990', 'data_years_to': '2020'},
+        'gr': {'country_name': 'Greece', 'data_years_from': '1981', 'data_years_to': '2019'},
+        'hk': {'country_name': 'Hong Kong', 'data_years_from': '1986', 'data_years_to': '2020'},
+        'hu': {'country_name': 'Hungary', 'data_years_from': '1950', 'data_years_to': '2020'},
+        'is': {'country_name': 'Iceland', 'data_years_from': '1838', 'data_years_to': '2021'},
+        'ie': {'country_name': 'Ireland', 'data_years_from': '1950', 'data_years_to': '2020'},
+        'il': {'country_name': 'Israel', 'data_years_from': '1983', 'data_years_to': '2016'},
+        'it': {'country_name': 'Italy', 'data_years_from': '1872', 'data_years_to': '2020'},
+        'jp': {'country_name': 'Japan', 'data_years_from': '1947', 'data_years_to': '2021'},
+        'lv': {'country_name': 'Latvia', 'data_years_from': '1959', 'data_years_to': '2019'},
+        'lt': {'country_name': 'Lithuania', 'data_years_from': '1959', 'data_years_to': '2020'},
+        'lu': {'country_name': 'Luxembourg', 'data_years_from': '1960', 'data_years_to': '2022'},
+        'nl': {'country_name': 'Netherlands', 'data_years_from': '1850', 'data_years_to': '2021'},
+        'nz': {'country_name': 'New Zealand', 'data_years_from': '1948', 'data_years_to': '2021'},
+        'no': {'country_name': 'Norway', 'data_years_from': '1846', 'data_years_to': '2022'},
+        'pl': {'country_name': 'Poland', 'data_years_from': '1958', 'data_years_to': '2019'},
+        'pt': {'country_name': 'Portugal', 'data_years_from': '1940', 'data_years_to': '2022'},
+        'kr': {'country_name': 'Republic of Korea', 'data_years_from': '2003', 'data_years_to': '2020'},
+        'ru': {'country_name': 'Russia', 'data_years_from': '1959', 'data_years_to': '2014'},
+        'sk': {'country_name': 'Slovakia', 'data_years_from': '1950', 'data_years_to': '2019'},
+        'si': {'country_name': 'Slovenia', 'data_years_from': '1983', 'data_years_to': '2019'},
+        'es': {'country_name': 'Spain', 'data_years_from': '1908', 'data_years_to': '2021'},
+        'se': {'country_name': 'Sweden', 'data_years_from': '1751', 'data_years_to': '2022'},
+        'ch': {'country_name': 'Switzerland', 'data_years_from': '1876', 'data_years_to': '2022'},
+        'tw': {'country_name': 'Taiwan', 'data_years_from': '1970', 'data_years_to': '2021'},
+        'ua': {'country_name': 'Ukraine', 'data_years_from': '1959', 'data_years_to': '2013'},
+        'uk': {'country_name': 'United Kingdom', 'data_years_from': '1922', 'data_years_to': '2021'},
+        'us': {'country_name': 'United States ', 'data_years_from': '1933', 'data_years_to': '2021'},
+      };
 
       const who_age_groups = ['0-1', '1-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', '65-69', '70-74', '75-79', '80-84', '85PLUS'];
       const who_map_age_to_groups = {
@@ -368,6 +408,10 @@
 
       let calendar_top_offset = calendar_weeks_numbers_height + calendar_new_year_label_height + 5;
       let calendar_width_offset = calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6 + 10 + 16;
+
+      function get_year_from_date(date) {
+        return new Date(date).getFullYear();
+      }
 
       function get_calendar_height() {
         return number_of_years * calendar_step_vertical + calendar_top_offset;
@@ -1524,7 +1568,7 @@
           return;
 
         const browser_country = browser_language.toLowerCase().split('-')[1];
-        if (!supported_countries.includes(browser_country))
+        if (!Object.keys(supported_countries).includes(browser_country))
           return;
 
         document.getElementById('country_code').value = browser_country;
@@ -1738,25 +1782,49 @@
       function compose_legend(user_values) {
         let legend = '<ul>';
 
+        let sex = 'males';
+        if (user_values.sex == 'f')
+          sex = 'females';
+
+        let sex_to_compare = 'males';
+        if (user_values.sex_to_compare == 'f')
+          sex_to_compare = 'females';
+
+        const year_of_birth = get_year_from_date(user_values.birthday);
+        const country_name = supported_countries[user_values.country_code].country_name;
+        const country_name_compare = supported_countries[user_values.country_code_latest].country_name;
+
+        let countries_names = country_name;
+        if (country_name != country_name_compare)
+          countries_names += ' and ' + country_name_compare;
+
+        let years = '' + year_of_birth + ' and ' + last_year_in_dataset_1;
+        if (last_year_in_dataset_1 != last_year_in_dataset_2)
+          years = last_year_in_dataset_1 + ', ' + last_year_in_dataset_2;
+
         const data_skin = user_values['data_skin'];
         if (true)
-          legend += '<li><b>Ring</b> &mdash; each ring is a week of life;</li><li><b>Line of rings</b> &mdash; each line of rings (52 rings) is 1 year (52 weeks) of life;</li>';
+          legend += `<li><b>Each ring</b> &mdash; is a week;</li><li><b>Each line of rings</b> &mdash; is 1 year (52 weeks);</li>`;
         if (['lifetime', 'everything', ].includes(data_skin))
-          legend += '<li><b>Colored circles</b> &mdash; each colored circle is a passed week of life;</li>';
+          legend += `<li><b>Each filled circle</b> &mdash; is a passed week of life;</li>`;
         if (['lifetime', 'everything', ].includes(data_skin))
-          legend += '<li><b>Rings and circles with a dot inside</b> &mdash; represent a New Year week;</li>';
+          legend += `<li><b>Dot inside ring / circle</b> &mdash; a New Year week;</li>`;
         if (['mortality_birth_year'].includes(data_skin))
-          legend += '<li><b>Line on the left</b> &mdash; number of "Deaths at age" distribution for a specified country, sex at birth and year;</li><li><b>Line on the right</b> &mdash; "Chance to die at age" distribution for a specified country, sex at birth and year;</li><li><b>50%, 80%, 90% on the left</b> &mdash; are integrals for "Deaths at age" charts (how many died by this age);</li><li><b>Top left corner</b> &mdash; smart legend: <b>RU1987M</b> means Russia, data for 1987 birth year, males.</li>';
+          legend += `<li><b>Line on the left</b> &mdash; number of "Deaths at age" distribution for ${country_name}, ${sex} in ${year_of_birth};</li><li><b>Line on the right</b> &mdash; "Chance to die at age" distribution for ${country_name}, ${sex} in ${year_of_birth};</li>`;
         if (['mortality_birth_vs_latest_year', 'mortality_compare', 'everything', ].includes(data_skin))
-          legend += '<li><b>Lines on the left</b> &mdash; number of "Deaths at age" distributions for specified country, sex at birth and year;</li><li><b>Lines on the right</b> &mdash; "Chance to die at age" distributions for specified country, sex at birth and year;</li>';
+          legend += `<li><b>Lines on the left</b> &mdash; are "Deaths at age" distributions for specified country, sex at birth and year;</li><li><b>Lines on the right</b> &mdash; are "Chance to die at age" distributions for specified country, sex at birth and year;</li>`;
         if (['mortality_birth_vs_latest_year', 'everything', ].includes(data_skin))
-          legend += '<li><b>Black bold (solid) lines and digits</b> &mdash; data for the year of birth;</li>';
+          legend += `<li><b>Black bold (solid) lines and digits</b> &mdash; data for the year of birth;</li>`;
         if (['mortality_birth_vs_latest_year', 'mortality_compare', 'everything', ].includes(data_skin))
-          legend += '<li><b>Gray bold (solid) lines and digits</b> &mdash; data for the latest data-available year;</li>';
+          legend += `<li><b>Gray bold (solid) lines and digits</b> &mdash; data for the latest data-available year;</li>`;
         if (['mortality_compare', 'everything', ].includes(data_skin))
-          legend += '<li><b>Gray thin (dashed) lines and digits</b> is for "compare to" sex at birth and country;</li>';
+          legend += `<li><b>Gray thin (dashed) lines and digits</b> is for "compare to" sex at birth and country;</li>`;
+        if (['mortality_birth_year', ].includes(data_skin))
+          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts (how many ${sex} of all died ${sex} in ${country_name} in ${year_of_birth} have died by this age);</li>`;
         if (['mortality_birth_vs_latest_year', 'mortality_compare', 'everything', ].includes(data_skin))
-          legend += '<li><b>50%, 80%, 90% on the left</b> &mdash; are integrals for "Deaths at age" charts;</li><li><b>Top left corner</b> &mdash; smart legend: <b>RU1987M</b> means Russia, data for 1987 year, males;</li>';
+          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts (how many ${sex} of all died ${sex} in ${countries_names} in ${years} have died by this age);</li>`;
+        if (['mortality_birth_year', 'mortality_birth_vs_latest_year', 'mortality_compare', 'everything', ].includes(data_skin))
+          legend += `<li><b>${user_values.country_code.toUpperCase()}${year_of_birth}${user_values.sex.toUpperCase()}</b> in the top left corner &mdash; is a "smart legend" that means: ${country_name}, ${sex}, data for ${year_of_birth} year;</li>`;
 
         legend += '</ul>';
         document.getElementById("legend_text").innerHTML = legend;
