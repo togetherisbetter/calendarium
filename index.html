@@ -351,6 +351,10 @@
       const color_base = "snow";
       const years = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90,];
       const available_controls = ['sex', 'birthday', 'country_code', 'country_code_latest', 'sex_to_compare'];
+      const data_skin_default = 'mortality_birth_vs_latest_year';
+      const url_params_items = ['birthday', 'country_code', 'country_code_latest', 'sex', 'sex_to_compare', 'data_skin'];
+      const available_sexes = ['m', 'f'];
+      const sex_default = available_sexes[0];
 
       var who_stacked_coordinates;
 
@@ -475,24 +479,19 @@
       }
 
       function get_user_selected_parameters() {
-        const data_skin = document.getElementById('data_skin').value;
-        const sex = document.getElementById('sex').value;
-        const birthday = document.getElementById('birthday').value;
-        const country_code = document.getElementById('country_code').value;
-        const country_code_latest = document.getElementById('country_code_latest').value;
-        const sex_to_compare = document.getElementById('sex_to_compare').value;
-        if (!sex_to_compare)
-          sex_to_compare = sex;
-        return {'data_skin': data_skin, 'birthday': birthday, 'country_code': country_code, 'country_code_latest': country_code_latest, 'sex': sex, 'sex_to_compare': sex_to_compare};
+        let result = {};
+        url_params_items.forEach((item) => {
+          result[item] = document.getElementById(item).value;
+        });
+        return result;
       }
 
       function set_user_selected_parameters(user_values) {
-        document.getElementById('data_skin').value = user_values.data_skin;
-        document.getElementById('birthday').value = user_values.birthday;
-        document.getElementById('country_code').value = user_values.country_code;
-        document.getElementById('country_code_latest').value = user_values.country_code_latest;
-        document.getElementById('sex').value = user_values.sex;
-        document.getElementById('sex_to_compare').value = user_values.sex_to_compare;
+        url_params_items.forEach((item) => {
+          if (!user_values[item])
+            return;
+          document.getElementById(item).value = user_values[item];
+        });
       }
 
       function update_qrcode_url(user_values) {
@@ -1465,21 +1464,29 @@
       function get_parameters_from_url() {
         const current_url = new URL(window.location.href);
         const params = current_url.searchParams.get("p");
+        let result = {'data_skin': data_skin_default};
         if (!params)
-          return;
+          return result;
 
         const splitted_params = params.split(',');
-        if (splitted_params.length < 5)
-          return;
+        for (let i = 0; i < url_params_items.length; i++) {
+          if (!splitted_params[i])
+            break;
+
+          const parameter = url_params_items[i];
+          result[parameter] = splitted_params[i];
+        }
 
         let data_skin = splitted_params[5];
         if (!Object.keys(data_skins).includes(data_skin))
-          data_skin = 'mortality_birth_vs_latest_year'
+          result.data_skin = data_skin_default;
 
-        let sex_to_compare = splitted_params[4];
-        if (!sex_to_compare)
-          sex_to_compare = splitted_params[3]
-        return {'birthday': splitted_params[0], 'country_code': splitted_params[1], 'country_code_latest': splitted_params[2], 'sex': splitted_params[3], 'sex_to_compare': sex_to_compare, 'data_skin': data_skin};
+        if (!available_sexes.includes(result.sex))
+          result.sex = sex_default;
+        if (!available_sexes.includes(result.sex_to_compare))
+          result.sex_to_compare = result.sex;
+
+        return result;
       }
 
       function switch_off_loading() {
@@ -1751,8 +1758,6 @@
         if (['mortality_birth_vs_latest_year', 'mortality_compare'].includes(data_skin))
           legend += '<li><b>50%, 80%, 90% on the left</b> &mdash; are integrals for "Deaths at age" charts;</li><li><b>Top left corner</b> &mdash; smart legend: <b>RU1987M</b> means Russia, data for 1987 year, males;</li>';
 
-
-// <p>Left charts show how many people of different ages have died for specified country, sex and years. Right charts show how many among all the people of that age and sex in that country have died in specified years (i.e. "what was a chance to die at that age for that sex in that country on those years").</p><p>Legend for the charts (and digits) is in the top left corner
         legend += '</ul>';
         document.getElementById("legend_text").innerHTML = legend;
       }
@@ -1763,7 +1768,7 @@
         'mortality_birth_year': `<p>This is a 101 years long Life Calendar with 2 mortality charts built on it for a specified country, sex at birth and year of birth. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.</p>`,
         'mortality_birth_vs_latest_year': `<p>This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth, year of birth and latest data-available year for that country. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.</p>`,
         'mortality_compare': `<p>This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth and "compare to" country and sex at birth both for the latest data-available years. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.</p>`,
-        'everything': undefined,
+        'everything': '1',
       }
 
       const values_texts = {
@@ -1772,16 +1777,16 @@
         'mortality_birth_year': `<p>Shows you mortality situation in your motherland for your sex at a year you were born. Explanatory data-skin.</p>`,
         'mortality_birth_vs_latest_year': `<p>Shows you how mortality situation have changed in your motherland between your year of birth and latest data-available year. Explanatory data-skin.</p>`,
         'mortality_compare': `<p>Allows you to compare different countries and sexes &mdash; so you can see the difference in life expectancies in any combination: men with women in one country, women with women or men with men in different countries.</p>`,
-        'everything': undefined,
+        'everything': '2',
       }
 
       const data_skins = {
         'clean': [draw_weeks_numbers, draw_ages_numbers, draw_circles, ],
-        'everything': [draw_calendar, ],
         'lifetime': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_label_new_year, draw_new_year_dots],
         'mortality_birth_year': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
         'mortality_birth_vs_latest_year': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
         'mortality_compare': [draw_ages_numbers, draw_circles, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
+        'everything': [draw_calendar, ],
         //'mortality': [circles, draw_mortality_lines, ],
         //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
         //'causes': [draw_causes_lines, circles, ],
@@ -1917,36 +1922,22 @@
         svg_image_calendar += finish_svg_image_calendar();
 
         document.getElementById("calendar").innerHTML = svg_image_calendar;
-        if (explanation_texts[data_skin]) {
-          document.getElementById("explanation_text").innerHTML = explanation_texts[data_skin];
-          document.getElementById("explanation_section").style.display = '';
-        }
-        else {
-          document.getElementById("explanation_section").style.display = 'none';
-        }
-        if (values_texts[data_skin]) {
-          document.getElementById("value_text").innerHTML = values_texts[data_skin];
-          document.getElementById("explanation_section").style.display = '';
-        }
-        else {
-          document.getElementById("value_text").innerHTML = '<p>TBD</p>';
-        }
-        
+        document.getElementById("explanation_text").innerHTML = explanation_texts[data_skin];
+        document.getElementById("value_text").innerHTML = values_texts[data_skin];
+
         compose_legend(user_values);
         switch_off_loading();
       }
 
       window.onload = function() {
-        let user_values = get_parameters_from_url();
-        if (user_values)
-          set_user_selected_parameters(user_values);
-        else {
-          guess_the_country();  // select country values based on locale if applicable
-          user_values = get_user_selected_parameters();
-        }
+        let user_values = get_parameters_from_url(); // get what's possible from url (including incomplete url)
+        set_user_selected_parameters(user_values); // set what's possible in html
 
+        if (!user_values.country_code) // set country value based on locale if not set and applicable
+          guess_the_country();
+        
+        user_values = get_user_selected_parameters(); // read from html as usual
         qrcode = init_qrcode(user_values, 66);
-        //draw_calendar(user_values);
         init_calendar(user_values);
       };
     </script>
@@ -1971,7 +1962,7 @@
                 <option value="clean">Clean</option>
                 <option value="lifetime">Fill Lifetime</option>
                 <option value="mortality_birth_year">Mortality for a birth year</option>
-                <option value="mortality_birth_vs_latest_year">Mortality for a birth vs. latest years</option>
+                <option value="mortality_birth_vs_latest_year" selected>Mortality for a birth vs. latest years</option>
                 <option value="mortality_compare">Compare mortality for countries & sexes</option>
                 <option value="everything">Everything together</option>
               </select>
@@ -2030,7 +2021,7 @@
             <div id="wrapper_sex" class="form-floating controls_wrapper">
               <label>Sex at birth:</label>
               <select id="sex" onchange="change_sex();" class="form-control form-select form-select-sm">
-                <option value="m">Male</option>
+                <option value="m" selected>Male</option>
                 <option value="f">Female</option>
               </select>
             </div>
@@ -2083,18 +2074,21 @@
             <div id="wrapper_sex_to_compare" class="form-floating controls_wrapper">
               <label>Sex at birth to compare with:</label>
               <select id="sex_to_compare" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
-                <option value="m">Male</option>
+                <option value="m" selected>Male</option>
                 <option value="f">Female</option>
               </select>
             </div>
 
-            <div id="explanation_section" style="margin-top: 25px; display: none;">
+            <div id="explanation_section" style="margin-top: 25px;">
               <h4>Legend</h4>
               <div id="legend_text"></div>
+              
               <h4>What is this</h4>
               <div id="explanation_text"></div>
+              
               <h4>Value of this data-skin</h4>
               <div id="value_text"></div>
+
               <h4>Download</h4>
               <div id="download_as_pdf" style="margin-bottom: 25px;">
                 <p>Download this calendar as an optimized for printing PDF file to print it in A4/A3/A2/A1 size.</p><p>Printed version also has a <b>QR-code</b> that leads to this website &mdash; so you can visit an online version of the calendar with it's all available data right from the wall at any time.</p>
