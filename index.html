@@ -74,8 +74,13 @@
       p, ul {
         font-size: 0.875rem;
       }
+      /*
       ul {
         padding: 0 2em;
+      }
+      */
+      ul {
+        padding-left: 1.5em;
       }
       p.has_list {
         margin-bottom: 0.5rem;
@@ -342,6 +347,7 @@
       var qrcode;
       var antistroke = "black";
       var antistroke_width = 1;
+      var stroke_width = 0.5;
       const color_base = "snow";
       const years = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90,];
       const available_controls = ['sex', 'birthday', 'country_code', 'country_code_latest', 'sex_to_compare'];
@@ -813,7 +819,7 @@
         let content = '';
 
         //const antistroke = "black"
-        let stroke_width = 0.5;
+        //let stroke_width = 0.5;
         //const antistroke_width = stroke_width * 1.5;
         let position = "left";
         let scale_y = 0.7;
@@ -1441,7 +1447,8 @@
 
         antistroke = "gray"
         const latest = "gray"
-        antistroke_width = 0.5;
+        stroke_width = 0.4;
+        antistroke_width = 0.4;
         if (country_code_latest != country_code || sex != sex_to_compare) {
           content += draw_line("mx", data_to_draw_mx_another_country, "gray", age, "4 2");
           content += draw_line("dx", data_to_draw_dx_another_country, "gray", age, "4 2");
@@ -1721,21 +1728,50 @@
         return content;  
       }
 
+      function compose_legend(user_values) {
+        let legend = '<ul>';
+
+        const data_skin = user_values['data_skin'];
+        if (true)
+          legend += '<li><b>Ring</b> &mdash; each ring is a week of life;</li><li><b>Line of rings</b> &mdash; each line of rings (52 rings) is 1 year (52 weeks) of life;</li>';
+        if (['lifetime', 'everything'].includes(data_skin))
+          legend += '<li><b>Colored circles</b> &mdash; each colored circle is a passed week of life;</li>';
+        if (['lifetime', 'everything', ].includes(data_skin))
+          legend += '<li><b>Rings and circles with a dot inside</b> &mdash; represent a New Year week;</li>';
+        if (['mortality_birth_year'].includes(data_skin))
+          legend += '<li><b>Line on the left</b> &mdash; number of "Deaths at age" distribution for a specified country, sex at birth and year;</li><li><b>Line on the right</b> &mdash; "Chance to die at age" distribution for a specified country, sex at birth and year;</li><li><b>50%, 80%, 90% on the left</b> &mdash; are integrals for "Deaths at age" charts (how many died by this age);</li><li><b>Top left corner</b> &mdash; smart legend: <b>RU1987M</b> means Russia, data for 1987 birth year, males.</li>';
+        if (['mortality_birth_vs_latest_year', 'mortality_compare'].includes(data_skin))
+          legend += '<li><b>Lines on the left</b> &mdash; number of "Deaths at age" distributions for specified country, sex at birth and year;</li><li><b>Lines on the right</b> &mdash; "Chance to die at age" distributions for specified country, sex at birth and year;</li>';
+        if (['mortality_birth_vs_latest_year', ].includes(data_skin))
+          legend += '<li><b>Black bold (solid) lines and digits</b> &mdash; data for the year of birth;</li>';
+        if (['mortality_birth_vs_latest_year', 'mortality_compare'].includes(data_skin))
+          legend += '<li><b>Gray bold (solid) lines and digits</b> &mdash; data for the latest data-available year;</li>';
+        if (['mortality_compare'].includes(data_skin))
+          legend += '<li><b>Gray thin (dashed) lines and digits</b> is for "compare to" sex at birth and country;</li>';
+        if (['mortality_birth_vs_latest_year', 'mortality_compare'].includes(data_skin))
+          legend += '<li><b>50%, 80%, 90% on the left</b> &mdash; are integrals for "Deaths at age" charts;</li><li><b>Top left corner</b> &mdash; smart legend: <b>RU1987M</b> means Russia, data for 1987 year, males;</li>';
+
+
+// <p>Left charts show how many people of different ages have died for specified country, sex and years. Right charts show how many among all the people of that age and sex in that country have died in specified years (i.e. "what was a chance to die at that age for that sex in that country on those years").</p><p>Legend for the charts (and digits) is in the top left corner
+        legend += '</ul>';
+        document.getElementById("legend_text").innerHTML = legend;
+      }
+
       const explanation_texts = {
-        'clean': `<p>This is an empty canvas for a 90 years long Life&nbsp;Calendar.</p><p>Each circle represents 1 week of life. Each line of circles represents 1 year of life (since we have 52 weeks in each year then we have 52 circles in each line). Calendar starts from the circle at the bottom left corner.</p>`,
-        'lifetime': `<p>This is a 91 years long Life Calendar which is already pre-filled for a specified birthday.</p><p>Each circle represents 1 week of life. Each line of circles represents 1 year of life (since we have 52 weeks in each year then we have 52 circles in each line). Circles with a dot inside represent a New Year week. Calendar starts from the circle at the bottom left corner (first week of life for a specified birthday).</p>`,
-        'mortality_birth_year': `<p>This is a 101 years long Life Calendar with 2 mortality charts built on it for a specified country, sex at birth and year of birth. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.</p><p>Each circle represents 1 week of life. Each line of circles represents 1 year of life (since we have 52 weeks in each year then we have 52 circles in each line). Calendar starts from the circle at the bottom left corner.</p><p>Black bold solid line chart on the left side is "Deaths at age". Black bold solid line chart on the right side is "Chance to die at age". Black bold digits on the left side are 50-th, 80-th and 90-th percentiles for "Deaths at age" chart. Black bold digits on the right side are values for "Chance to die at age" chart.</p><p>Left chart shows how many people of different ages have died for specified country, sex and year. Right chart shows how many among all the people of that age and sex in that country have died in specified year (i.e. "what was a chance to die at that age for that sex in that country on that year").</p><p>Legend for the charts (and digits) is in the top left corner.</p>`,
-        'mortality_birth_vs_latest_year': `<p>This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth, year of birth and latest data-available year for that country. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.</p><p>Each circle represents 1 week of life. Each line of circles represents 1 year of life (since we have 52 weeks in each year then we have 52 circles in each line). Calendar starts from the circle at the bottom left corner.</p><p>Black and gray bold solid lines charts on the left side are "Deaths at age". Black and gray bold solid lines charts on the right side are "Chance to die at age". Black and gray bold digits on the left side are 50-th, 80-th and 90-th percentiles for "Deaths at age" chart. Black and gray bold digits on the right side are values for "Chance to die at age" chart. Black bold is data for year of birth, gray bold is data for latest data-available year.</p><p>Left charts show how many people of different ages have died for specified country, sex and years. Right charts show how many among all the people of that age and sex in that country have died in specified years (i.e. "what was a chance to die at that age for that sex in that country on those years").</p><p>Legend for the charts (and digits) is in the top left corner.</p>`,
-        'mortality_compare': `<p>This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth and latest data-available year and "compared to" sex at birth and country. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.</p><p>Each circle represents 1 week of life. Each line of circles represents 1 year of life (since we have 52 weeks in each year then we have 52 circles in each line). Calendar starts from the circle at the bottom left corner.</p><p>Gray line charts on the left side are "Deaths at age". Gray lines charts on the right side are "Chance to die at age". Gray digits on the left side are 50-th, 80-th and 90-th percentiles for "Deaths at age" chart. Gray digits on the right side are values for "Chance to die at age" chart. Gray bold is data for for latest data-available year, gray thin (dashed) is for "compare to" sex at birth and country.</p><p>Left charts show how many people of different ages have died for specified country, sex and years. Right charts show how many among all the people of that age and sex in that country have died in specified years (i.e. "what was a chance to die at that age for that sex in that country on those years").</p><p>Legend for the charts (and digits) is in the top left corner.</p>`,
+        'clean': `<p>This is a clean canvas for a 101 years long Life&nbsp;Calendar made for printing and manual filling. It starts from a ring at the bottom left corner, from the first week of your life.</p>`,
+        'lifetime': `<p>This is a 101 years long Life Calendar which is already pre-filled for a specified birthday. It starts from the circle at the bottom left corner, from the first week of life for a specified date of birth.</p>`,
+        'mortality_birth_year': `<p>This is a 101 years long Life Calendar with 2 mortality charts built on it for a specified country, sex at birth and year of birth. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.</p>`,
+        'mortality_birth_vs_latest_year': `<p>This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth, year of birth and latest data-available year for that country. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.</p>`,
+        'mortality_compare': `<p>This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth and "compare to" country and sex at birth both for the latest data-available years. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.</p>`,
         'everything': undefined,
       }
 
       const values_texts = {
-        'clean': `<p>Allows you to print a clean calendar and fill it by yourself manually.</p>`,
-        'lifetime': `<p>Shows you how many weeks have passed since your birthday. Allows you to print already pre-filled calendar instead of clean one.</p>`,
+        'clean': `<p>Lets you to print empty Life Calendar canvas, fill it manually with your favorite color(s) and then put it on a wall / fridge.</p>`,
+        'lifetime': `<p>Shows you how many weeks have already passed since your birthday and allows you to print already pre-filled calendar instead of clean one.</p>`,
         'mortality_birth_year': `<p>Shows you mortality situation in your motherland for your sex at a year you were born. Explanatory data-skin.</p>`,
         'mortality_birth_vs_latest_year': `<p>Shows you how mortality situation have changed in your motherland between your year of birth and latest data-available year. Explanatory data-skin.</p>`,
-        'mortality_compare': `<p>Allows you to compare different countries and sexes &mdash; so you can see the difference in life expectancies in any combination.</p>`,
+        'mortality_compare': `<p>Allows you to compare different countries and sexes &mdash; so you can see the difference in life expectancies in any combination: men with women in one country, women with women or men with men in different countries.</p>`,
         'everything': undefined,
       }
 
@@ -1758,7 +1794,7 @@
       function adjust_calendar_offsets_for_data_skin(data_skin) {
         if (data_skin == 'clean') {
           calendar_top_offset = 5;
-          number_of_years = 90;
+          number_of_years = 101;
           calendar_width_offset = 20;
         }
         else if (data_skin == 'everything') {
@@ -1768,7 +1804,7 @@
         }
         else if (data_skin == 'lifetime') {
           calendar_top_offset = 10;
-          number_of_years = 91;
+          number_of_years = 101;
           calendar_width_offset = 20;
         }
         else if (data_skin == 'mortality_birth_year') {
@@ -1895,6 +1931,8 @@
         else {
           document.getElementById("value_text").innerHTML = '<p>TBD</p>';
         }
+        
+        compose_legend(user_values);
         switch_off_loading();
       }
 
@@ -1933,7 +1971,7 @@
                 <option value="clean">Clean</option>
                 <option value="lifetime">Fill Lifetime</option>
                 <option value="mortality_birth_year">Mortality for a birth year</option>
-                <option value="mortality_birth_vs_latest_year">Mortality for a birth vs. latest year</option>
+                <option value="mortality_birth_vs_latest_year">Mortality for a birth vs. latest years</option>
                 <option value="mortality_compare">Compare mortality for countries & sexes</option>
                 <option value="everything">Everything together</option>
               </select>
@@ -2051,15 +2089,17 @@
             </div>
 
             <div id="explanation_section" style="margin-top: 25px; display: none;">
-              <h4>What is displayed</h4>
+              <h4>Legend</h4>
+              <div id="legend_text"></div>
+              <h4>What is this</h4>
               <div id="explanation_text"></div>
               <h4>Value of this data-skin</h4>
               <div id="value_text"></div>
-              <!--h4>Download</h4>
+              <h4>Download</h4>
               <div id="download_as_pdf" style="margin-bottom: 25px;">
-                <p>You can download this calendar as optimized for printing PDF file, print it in A3/A2 size and put it on a wall in a frame.</p><p>Printed version also has a QR-code that leads to this online calendar &mdash; so you could visit it (with it's all latest available data-skins) right from the wall at any time.</p>
-                <button class="btn btn-primary disabled">Download as PDF</button>
-              </div-->
+                <p>Download this calendar as an optimized for printing PDF file to print it in A4/A3/A2/A1 size.</p><p>Printed version also has a <b>QR-code</b> that leads to this website &mdash; so you can visit an online version of the calendar with it's all available data right from the wall at any time.</p>
+                <button class="btn btn-primary" onclick="prepare_for_print();">Download as PDF</button>
+              </div>
             </div>
           </div>
         </div>
