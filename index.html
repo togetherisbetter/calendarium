@@ -1833,9 +1833,9 @@
         if (['mortality_birth_vs_latest_year', ].includes(data_skin))
           legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${countries_names}, ${sex}, ${first_years};</li><li><b>Right lines</b> &mdash; are "Chance to die at age" distributions for ${countries_names}, ${sex}, ${first_years};</li>`;
         if (['mortality_compare', ].includes(data_skin))
-          legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${countries_names}, ${sex}, ${last_years};</li><li><b>Right lines</b> &mdash; are "Chance to die at age" distributions for ${countries_names}, ${sex}, ${last_years};</li>`;
+          legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${countries_names}, ${sexes}, ${last_years};</li><li><b>Right lines</b> &mdash; are "Chance to die at age" distributions for ${countries_names}, ${sexes}, ${last_years};</li>`;
         if (['everything', ].includes(data_skin))
-          legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${countries_names}, ${sex}, ${all_years};</li><li><b>Right lines</b> &mdash; are "Chance to die at age" distributions for ${countries_names}, ${sex}, ${all_years};</li>`;
+          legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${countries_names}, ${sexes}, ${all_years};</li><li><b>Right lines</b> &mdash; are "Chance to die at age" distributions for ${countries_names}, ${sexes}, ${all_years};</li>`;
         if (['mortality_birth_vs_latest_year', 'everything', ].includes(data_skin))
           legend += `<li><b>Black bold (solid) lines and digits</b> &mdash; are the data for for ${country_name}, ${year_of_birth}, ${sex};</li>`;
         if (['mortality_birth_vs_latest_year', 'mortality_compare', 'everything', ].includes(data_skin))
@@ -1844,13 +1844,13 @@
           if (['mortality_compare', 'everything', ].includes(data_skin))
             legend += `<li><b>Gray thin (dashed) lines and digits</b> is for ${country_name_compare}, ${last_year_in_dataset_2}, ${sex_to_compare};</li>`;
         if (['mortality_birth_year', ].includes(data_skin))
-          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" chart: how many ${sex} (of all died ${sex} in ${country_name} in ${year_of_birth}) have died by that age;</li>`;
+          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" chart: how many ${sexes} (of all died ${sexes} in ${country_name} in ${year_of_birth}) have died by that age;</li>`;
         if (['mortality_birth_vs_latest_year', ].includes(data_skin))
-          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sex} (of all died ${sex} in ${countries_names} in ${first_years}) have died by this age;</li>`;
+          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sexes} (of all died ${sexes} in ${countries_names} in ${first_years}) have died by this age;</li>`;
         if (['mortality_compare', ].includes(data_skin))
-          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sex} (of all died ${sex} in ${countries_names} in ${last_years}) have died by this age;</li>`;
+          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sexes} (of all died ${sexes} in ${countries_names} in ${last_years}) have died by this age;</li>`;
         if (['everything', ].includes(data_skin))
-          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sex} (of all died ${sex} in ${countries_names} in ${all_years}) have died by this age;</li>`;
+          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sexes} (of all died ${sexes} in ${countries_names} in ${all_years}) have died by this age;</li>`;
         if (['mortality_birth_year', 'mortality_birth_vs_latest_year', 'everything', ].includes(data_skin))
           legend += `<li><b>${user_values.country_code.toUpperCase()}${year_of_birth}${user_values.sex.toUpperCase()}</b> in the top left corner &mdash; is a "smart legend" that means: ${country_name}, data for ${year_of_birth} year, ${sex};</li>`;
         if (['mortality_compare', ].includes(data_skin))
