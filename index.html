@@ -1741,21 +1741,21 @@
         const data_skin = user_values['data_skin'];
         if (true)
           legend += '<li><b>Ring</b> &mdash; each ring is a week of life;</li><li><b>Line of rings</b> &mdash; each line of rings (52 rings) is 1 year (52 weeks) of life;</li>';
-        if (['lifetime', 'everything'].includes(data_skin))
+        if (['lifetime', 'everything', ].includes(data_skin))
           legend += '<li><b>Colored circles</b> &mdash; each colored circle is a passed week of life;</li>';
         if (['lifetime', 'everything', ].includes(data_skin))
           legend += '<li><b>Rings and circles with a dot inside</b> &mdash; represent a New Year week;</li>';
         if (['mortality_birth_year'].includes(data_skin))
           legend += '<li><b>Line on the left</b> &mdash; number of "Deaths at age" distribution for a specified country, sex at birth and year;</li><li><b>Line on the right</b> &mdash; "Chance to die at age" distribution for a specified country, sex at birth and year;</li><li><b>50%, 80%, 90% on the left</b> &mdash; are integrals for "Deaths at age" charts (how many died by this age);</li><li><b>Top left corner</b> &mdash; smart legend: <b>RU1987M</b> means Russia, data for 1987 birth year, males.</li>';
-        if (['mortality_birth_vs_latest_year', 'mortality_compare'].includes(data_skin))
+        if (['mortality_birth_vs_latest_year', 'mortality_compare', 'everything', ].includes(data_skin))
           legend += '<li><b>Lines on the left</b> &mdash; number of "Deaths at age" distributions for specified country, sex at birth and year;</li><li><b>Lines on the right</b> &mdash; "Chance to die at age" distributions for specified country, sex at birth and year;</li>';
-        if (['mortality_birth_vs_latest_year', ].includes(data_skin))
+        if (['mortality_birth_vs_latest_year', 'everything', ].includes(data_skin))
           legend += '<li><b>Black bold (solid) lines and digits</b> &mdash; data for the year of birth;</li>';
-        if (['mortality_birth_vs_latest_year', 'mortality_compare'].includes(data_skin))
+        if (['mortality_birth_vs_latest_year', 'mortality_compare', 'everything', ].includes(data_skin))
           legend += '<li><b>Gray bold (solid) lines and digits</b> &mdash; data for the latest data-available year;</li>';
-        if (['mortality_compare'].includes(data_skin))
+        if (['mortality_compare', 'everything', ].includes(data_skin))
           legend += '<li><b>Gray thin (dashed) lines and digits</b> is for "compare to" sex at birth and country;</li>';
-        if (['mortality_birth_vs_latest_year', 'mortality_compare'].includes(data_skin))
+        if (['mortality_birth_vs_latest_year', 'mortality_compare', 'everything', ].includes(data_skin))
           legend += '<li><b>50%, 80%, 90% on the left</b> &mdash; are integrals for "Deaths at age" charts;</li><li><b>Top left corner</b> &mdash; smart legend: <b>RU1987M</b> means Russia, data for 1987 year, males;</li>';
 
         legend += '</ul>';
