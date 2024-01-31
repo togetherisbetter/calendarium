@@ -304,7 +304,7 @@
       }
 
       function generate_url(user_values) {
-        return `${calendar_qrcode_url_domain}?p=${user_values.birthday},${user_values.country_code},${user_values.country_code_latest},${user_values.sex},${user_values.sex_to_compare},${user_values.data_skin}`
+        return `${calendar_qrcode_url_domain}?p=${user_values.birthday},${user_values.country_code},${user_values.country_code_latest},${user_values.sex},${user_values.sex_to_compare},${user_values.data_skin}`;
       }
       function generate_qrcode_url(user_values) {
         //return generate_url(user_values) + `&cid=${calendar_id}&a=abc&b=cde&c=def`;
@@ -1744,11 +1744,6 @@
         }));
       }
 
-      function change_data_skin() {
-        const user_values = get_user_selected_parameters();
-        init_calendar(user_values);
-      }
-
       function start_svg_image_calendar() {
         let ch = get_calendar_height() + 1;
         if (is_mobile)
@@ -1841,7 +1836,7 @@
             <h4>Configure</h4>
             <div id="wrapper_data_skin" class="form-floating controls_wrapper">
               <label for="data_skin">Data-skin:</label>
-              <select id="data_skin" onchange="change_data_skin();" class="form-control form-select form-select-sm">
+              <select id="data_skin" onchange="redraw_calendar();" class="form-control form-select form-select-sm">
                 <option value="cln">Clean</option>
                 <option value="lft">Fill Lifetime</option>
                 <option value="mby">Mortality for a birth year</option>
