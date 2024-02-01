@@ -18,8 +18,8 @@
     <meta name="author" content="Aleksei Sotskov">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <!--script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <!--link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"-->
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,7 +71,7 @@
         text-align: center;
         font-size: 1.5em;
       }
-      p, ul {
+      p, ul, ol {
         font-size: 0.875rem;
       }
       /*
@@ -1322,8 +1322,13 @@
 
       function switch_off_loading() {
         document.getElementById('loading').style.display = 'none';
-        document.getElementById('controls').style.display = '';
-        //document.getElementById('faq').style.display = '';
+        document.getElementById('container').style.display = '';
+        document.getElementById('qrcode').style.display = 'none';
+      }
+      function switch_on_loading() {
+        document.getElementById('loading').style.display = '';
+        document.getElementById('container').style.display = 'none';
+        document.getElementById('qrcode').style.display = 'none';
       }
 
       function prepare_for_print() {
@@ -1343,9 +1348,11 @@
 
         document.getElementsByClassName('container')[0].classList.remove("container");
         document.getElementById('controls').style.display = 'none';
-        //document.getElementById('faq').style.display = 'none';
+        $('#downloadAsPDF').removeClass('fade');
+        $('#downloadAsPDF').modal('hide');
 
         print();
+        switch_on_loading();
         location.reload(); // because print adjustments breaks the page
       }
 
@@ -1821,14 +1828,14 @@
       <p>📅 Loading Calendarium...</p>
     </div>
     <div id="qrcode" style="position: absolute; padding: 5px; background-color: white; top: 84.7%; left: 64.6%; border-radius: 0px; display: none;"></div>
-    <div class="container">
+    <div class="container" id="container" style="display: none">
       <div class="row justify-content-center">
         <div class="col-xxl-7 col-xl-7 col-lg-7 col-md-12 col-sm-12" style="">
           <div id="calendar"></div>
         </div>
       
         <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-8 col-sm-10 col-11">
-          <div id="controls" style="color: black; font-size: 0.7em; display: none; margin-top: 10px;">
+          <div id="controls" style="color: black; font-size: 0.7em; margin-top: 10px;">
             <h4>Configure</h4>
             <div id="wrapper_data_skin" class="form-floating controls_wrapper">
               <label for="data_skin">Data-skin:</label>
@@ -1885,9 +1892,49 @@
 
               <h4>Download</h4>
               <div id="download_as_pdf" style="margin-bottom: 25px;">
-                <p>Download this calendar as an optimized for printing PDF A4 size file and then print it in A4/A3/A2/A1 size.</p><p>Printed version also has a <b>QR-code</b> that leads to this website &mdash; so you can visit an online version of the calendar with it's all available data right from the wall at any time.</p>
-                <button class="btn btn-primary" onclick="prepare_for_print();">Download as PDF</button>
+                <p>Download this calendar as an optimized for printing PDF file and print it any size.</p><p>Printed version of the calendar also has a <b>QR&#8209;code</b> &mdash; so you can visit an online version of the calendar with it's all latest updates and data-skins right from the wall at any time of your life.</p>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadAsPDF">Download as PDF</button>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="downloadAsPDF" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="downloadAsPDFLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="downloadAsPDFLabel">Download as PDF</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Use Google Chrome desktop web browser to get the best results.</p>
+              <p>While saving your PDF choose A4 paper size even if you plan to print calendar in A3/A2/A1/A0 sizes later. PDF is vector graphics and calendar quality will not suffer.</p>
+              <p>Read a step-by-step instruction below (it will not be available to you after clicking on a "<a href="#" onclick="prepare_for_print();">Save as PDF</a>" button):</p>
+              <ol>
+                <li>In a "Print" dialogue window set:
+                    <ul>
+                      <li>Destination: Save to PDF</li>
+                    </ul>
+                  </li>
+                <li>Expand "More settings" and set:
+                  <ul>
+                    <li>Paper size: A4</li>
+                    <li>Margins: Default</li>
+                    <li>Headers and footers: uncheck</li>
+                    <li>Background graphics: uncheck</li>
+                  </ul>
+                </li>
+                <li>Make sure that in preview section calendar looks good;</li>
+                <li>Click "Save" button in a "Print" dialogue window;</li> 
+                <li>(optional) Give a custom name to a PDF file;</li> 
+                <li>Click "Save" button in a "Save file" window.</li>
+              </ol>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" onclick="prepare_for_print();">Save as PDF</button>
             </div>
           </div>
         </div>
