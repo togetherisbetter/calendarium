@@ -1133,8 +1133,6 @@
       }
 
       async function draw_mortality_for_latest_year_user_values(user_values) {
-        //data_all = {'mx': [], 'dx': []}; // reset
-
         const date = user_values['birthday'];
         const country_code = user_values['country_code'];
         const sex = user_values['sex'];
@@ -1142,10 +1140,6 @@
         const birthday_date = new Date(date);
         let birthday_year = birthday_date.getFullYear();
 
-        //await get_mortality_data(country_code, sex);
-        // birthday_year = last_year_in_dataset
-        //const last_year_in_dataset_1 = last_year_in_dataset;
-        //last_year_in_dataset_1_fix_me = last_year_in_dataset_1;
         const data_to_draw_mx_latest = data_mx[country_code][sex][last_year_in_dataset_1];
         const data_to_draw_dx_latest = data_dx[country_code][sex][last_year_in_dataset_1];
         const label_chart_second = `${country_code}${last_year_in_dataset_1}${sex}`.toUpperCase();
@@ -1157,7 +1151,6 @@
         const special_ages = [1, 2, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, age + 1, number_of_years];  // to draw integral values for these years
 
         let total_weeks = 1;
-        //let percentiles_labels = {};
         let labels = '';
         let labels_special_years = '';
         for (let year = 1; year <= number_of_years; year++) {
@@ -1206,9 +1199,7 @@
         content += draw_line("mx", data_to_draw_mx_latest, latest, age);
         content += draw_line("dx", data_to_draw_dx_latest, latest, age);
 
-        //content += draw_legend(label_chart_first, label_chart_second);
         content += draw_legend2(label_chart_second, 2);
-        //content += draw_datasources();
         content += labels;
         content += labels_special_years;
         
@@ -1217,8 +1208,6 @@
       }
 
       async function draw_mortality_to_compare_user_values(user_values) {
-        //data_all = {'mx': [], 'dx': []}; // reset
-
         const date = user_values['birthday'];
         const country_code = user_values['country_code'];
         const country_code_latest = user_values['country_code_latest'];
@@ -1228,9 +1217,6 @@
         const birthday_date = new Date(date);
         let birthday_year = birthday_date.getFullYear();
 
-        //if (country_code_latest != country_code || sex != sex_to_compare)
-        //  await get_mortality_data(country_code_latest, sex_to_compare); // to fix last year will be calculated automatically because not set
-        //const last_year_in_dataset_2 = last_year_in_dataset;
         const data_to_draw_mx_another_country = data_mx[country_code_latest][sex_to_compare][last_year_in_dataset_2];
         const data_to_draw_dx_another_country = data_dx[country_code_latest][sex_to_compare][last_year_in_dataset_2];
         const label_chart_third = `${country_code_latest}${last_year_in_dataset_2}${sex_to_compare}`.toUpperCase();
@@ -1242,7 +1228,6 @@
         const special_ages = [1, 2, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, age + 1, number_of_years];  // to draw integral values for these years
 
         let total_weeks = 1;
-        //let percentiles_labels = {};
         let labels = '';
         let labels_special_years = '';
         
@@ -1360,7 +1345,7 @@
         //document.getElementById('faq').style.display = 'none';
 
         print();
-        location.reload();
+        location.reload(); // because print adjustments breaks the page
       }
 
       function guess_the_country() {
@@ -1661,8 +1646,6 @@
         document.getElementById("legend_text").innerHTML = legend;
       }
 
-
-
       const data_skins = {
         'cln': [draw_weeks_numbers, draw_ages_numbers, draw_circles, ],
         'lft': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_label_new_year, draw_new_year_dots],
@@ -1807,7 +1790,27 @@
         switch_off_loading();
       }
 
+      function build_selectors_options_for_countries() {
+        build_selector_options_for_country_code('country_code');
+        build_selector_options_for_country_code('country_code_latest');
+      }
+
+      function build_selector_options_for_country_code(element_id) {
+        let options = '';
+        for (let country_code in supported_countries) {
+          const country = supported_countries[country_code];
+          options += `<option value="${country_code}">${country.country_name}`;
+          if (element_id == 'country_code')
+            options += `(${country.data_years_from}-${country.data_years_to})`;
+
+          options += `</option>`;
+        }
+        document.getElementById(element_id).innerHTML = options;
+      }
+
       window.onload = function() {
+        build_selectors_options_for_countries();
+
         let user_values = get_parameters_from_url(); // get what's possible from url (including incomplete url)
         set_user_selected_parameters(user_values); // set what's possible in html
 
@@ -1853,47 +1856,7 @@
 
             <div id="wrapper_country_code" class="form-floating controls_wrapper">
               <label>Motherland (with data-available years):</label>
-              <select id="country_code" onchange="change_country_of_birth();" class="form-control form-select form-select-sm">
-                <option value="at">Austria (1947-2019)</option>
-                <option value="au">Australia (1921-2020)</option>
-                <option value="by">Belarus (1959-2018)</option>
-                <option value="be">Belgium (1841-2022)</option>
-                <option value="bg">Bulgaria (1947-2021)</option>
-                <option value="ca">Canada (1921-2021)</option>
-                <option value="cl">Chile (1992-2020)</option>
-                <option value="hr">Croatia (2001-2020)</option>
-                <option value="cz">Czechia (1950-2021)</option>
-                <option value="fi">Finland (1878-2022)</option>
-                <option value="fr">France (1816-2021)</option>
-                <option value="de">Germany (1990-2020)</option>
-                <option value="gr">Greece (1981-2019)</option>
-                <option value="hk">Hong Kong (1986-2020)</option>
-                <option value="hu">Hungary (1950-2020)</option>
-                <option value="is">Iceland (1838-2021)</option>
-                <option value="ie">Ireland (1950-2020)</option>
-                <option value="il">Israel (1983-2016)</option>
-                <option value="it">Italy (1872-2020)</option>
-                <option value="jp">Japan (1947-2021)</option>
-                <option value="lv">Latvia (1959-2019)</option>
-                <option value="lt">Lithuania (1959-2020)</option>
-                <option value="lu">Luxembourg (1960-2022)</option>
-                <option value="nl">Netherlands (1850-2021)</option>
-                <option value="nz">New Zealand (1948-2021)</option>
-                <option value="no">Norway (1846-2022)</option>
-                <option value="pl">Poland (1958-2019)</option>
-                <option value="pt">Portugal (1940-2022)</option>
-                <option value="kr">Republic of Korea (2003-2020)</option>
-                <option value="ru">Russia (1959-2014)</option>
-                <option value="sk">Slovakia (1950-2019)</option>
-                <option value="si">Slovenia (1983-2019)</option>
-                <option value="es">Spain (1908-2021)</option>
-                <option value="se">Sweden (1751-2022)</option>
-                <option value="ch">Switzerland (1876-2022)</option>
-                <option value="tw">Taiwan (1970-2021)</option>
-                <option value="ua">Ukraine (1959-2013)</option>
-                <option value="uk">United Kingdom (1922-2021)</option>
-                <option value="us">United States (1933-2021)</option>        
-              </select>
+              <select id="country_code" onchange="change_country_of_birth();" class="form-control form-select form-select-sm"></select>
             </div>
 
             <div id="wrapper_sex" class="form-floating controls_wrapper">
@@ -1906,47 +1869,7 @@
 
             <div id="wrapper_country_code_latest" class="form-floating controls_wrapper">
               <label>Country mostly lived in during last years<br> or plan to relocate for a living:</label>
-              <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm xl">
-                <option value="at">Austria</option>
-                <option value="au">Australia</option>
-                <option value="by">Belarus</option>
-                <option value="be">Belgium</option>
-                <option value="bg">Bulgaria</option>
-                <option value="ca">Canada</option>
-                <option value="cl">Chile</option>
-                <option value="hr">Croatia</option>
-                <option value="cz">Czechia</option>
-                <option value="fi">Finland</option>
-                <option value="fr">France</option>
-                <option value="de">Germany</option>
-                <option value="gr">Greece</option>
-                <option value="hk">Hong Kong</option>
-                <option value="hu">Hungary</option>
-                <option value="is">Iceland</option>
-                <option value="ie">Ireland</option>
-                <option value="il">Israel</option>
-                <option value="it">Italy</option>
-                <option value="jp">Japan</option>
-                <option value="lv">Latvia</option>
-                <option value="lt">Lithuania</option>
-                <option value="lu">Luxembourg</option>
-                <option value="nl">Netherlands</option>
-                <option value="nz">New Zealand</option>
-                <option value="no">Norway</option>
-                <option value="pl">Poland</option>
-                <option value="pt">Portugal</option>
-                <option value="kr">Republic of Korea</option>
-                <option value="ru">Russia</option>
-                <option value="sk">Slovakia</option>
-                <option value="si">Slovenia</option>
-                <option value="es">Spain</option>
-                <option value="se">Sweden</option>
-                <option value="ch">Switzerland</option>
-                <option value="tw">Taiwan</option>
-                <option value="ua">Ukraine</option>
-                <option value="uk">United Kingdom</option>
-                <option value="us">United States</option>       
-              </select>
+              <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm xl"></select>
             </div>
 
             <div id="wrapper_sex_to_compare" class="form-floating controls_wrapper">
