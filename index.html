@@ -1638,9 +1638,12 @@
         if (['mbly', ].includes(data_skin))
           legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sex} (of all died ${sex} in ${country_name} in ${year_of_birth} and ${last_year_in_dataset_1}) have died by that age;</li>`;
         if (['mc', ].includes(data_skin))
-          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sexes} (of all died ${sexes} in ${countries_names} in ${last_years}) have died by this age;</li>`;
+          if (compare)
+            legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many (of all died ${sex} in ${country_name} in ${last_year_in_dataset_1} and ${sex_to_compare} in ${country_name_compare} in ${last_year_in_dataset_2}) have died by that age;</li>`;
+          else
+            legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sex} (of all died ${sex} in ${country_name} in ${last_year_in_dataset_1}) have died by that age;</li>`;
         if (['all', ].includes(data_skin))
-          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sexes} (of all died ${sexes} in ${countries_names} in ${all_years}) have died by this age;</li>`;
+          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sexes} (of all died ${sexes} in ${countries_names} in ${all_years}) have died by that age;</li>`;
         if (['mby', 'mbly', 'all', ].includes(data_skin))
           legend += `<li><b>${user_values.country_code.toUpperCase()}${year_of_birth}${user_values.sex.toUpperCase()}</b> in the top left corner &mdash; is a "smart legend" that means: ${country_name}, data for ${year_of_birth} year, ${sex};</li>`;
         if (['mc', ].includes(data_skin))
