@@ -1595,7 +1595,7 @@
 
         let first_years = year_of_birth;
         if (year_of_birth != last_year_in_dataset_1)
-          first_years += ', ' + last_year_in_dataset_1;
+          first_years += ' and ' + last_year_in_dataset_1;
 
         let last_years = last_year_in_dataset_1;
         let all_years = year_of_birth + ', ' + last_year_in_dataset_1
@@ -1616,24 +1616,27 @@
         if (['lft', 'all', ].includes(data_skin))
           legend += `<li><b>Dot in a ring / circle</b> &mdash; is a New Year week;</li>`;
         if (['mby'].includes(data_skin))
-          legend += `<li><b>Left line</b> &mdash; is a "Deaths at age" distribution for ${country_name}, ${sex} in ${year_of_birth};</li><li><b>Right line</b> &mdash; is a "Chance to die at age" distribution for ${country_name}, ${sex} in ${year_of_birth};</li>`;
+          legend += `<li><b>Left line</b> &mdash; is a "Deaths at age" distribution for ${country_name}, ${sex} in ${year_of_birth};</li><li><b>Right line (and digits)</b> &mdash; is a "Chance to die at age" distribution for ${country_name}, ${sex} in ${year_of_birth};</li>`;
         if (['mbly', ].includes(data_skin))
-          legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${countries_names}, ${sex}, ${first_years};</li><li><b>Right lines</b> &mdash; are "Chance to die at age" distributions for ${countries_names}, ${sex}, ${first_years};</li>`;
+          legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${country_name}, ${sex}, ${year_of_birth} and ${country_name}, ${sex}, ${last_year_in_dataset_1};</li><li><b>Right lines</b> &mdash; are "Chance to die at age" distributions for the same dataset: ${country_name}, ${sex}, ${year_of_birth} and ${country_name}, ${sex}, ${last_year_in_dataset_1};</li>`;
         if (['mc', ].includes(data_skin))
-          legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${countries_names}, ${sexes}, ${last_years};</li><li><b>Right lines</b> &mdash; are "Chance to die at age" distributions for ${countries_names}, ${sexes}, ${last_years};</li>`;
+          if (compare)
+            legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${country_name}, ${sex}, ${last_year_in_dataset_1} and ${country_name_compare}, ${sex_to_compare}, ${last_year_in_dataset_2};</li><li><b>Right lines (and digits)</b> &mdash; are "Chance to die at age" distributions for the same dataset: ${country_name}, ${sex}, ${last_year_in_dataset_1} and ${country_name_compare}, ${sex_to_compare}, ${last_year_in_dataset_2};</li>`;
+          else
+            legend += `<li><b>Left line</b> &mdash; is "Deaths at age" distribution for ${country_name}, ${sex}, ${last_year_in_dataset_1};</li><li><b>Right line (and digits)</b> &mdash; is "Chance to die at age" distribution for the same dataset: ${country_name}, ${sex}, ${last_year_in_dataset_1};</li>`;
         if (['all', ].includes(data_skin))
-          legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${countries_names}, ${sexes}, ${all_years};</li><li><b>Right lines</b> &mdash; are "Chance to die at age" distributions for ${countries_names}, ${sexes}, ${all_years};</li>`;
+          legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${countries_names}, ${sexes}, ${all_years};</li><li><b>Right lines (and digits)</b> &mdash; are "Chance to die at age" distributions for ${countries_names}, ${sexes}, ${all_years};</li>`;
         if (['mbly', 'all', ].includes(data_skin))
-          legend += `<li><b>Black bold (solid) lines and digits</b> &mdash; are the data for for ${country_name}, ${year_of_birth}, ${sex};</li>`;
+          legend += `<li><b>Black bold (solid) lines and digits</b> &mdash; is the data for ${country_name}, ${year_of_birth}, ${sex};</li>`;
         if (['mbly', 'mc', 'all', ].includes(data_skin))
-          legend += `<li><b>Gray bold (solid) lines and digits</b> &mdash; are the data for ${country_name}, ${last_year_in_dataset_1}, ${sex};</li>`;
+          legend += `<li><b>Gray bold (solid) lines and digits</b> &mdash; is the data for ${country_name}, ${last_year_in_dataset_1}, ${sex};</li>`;
         if (compare)
           if (['mc', 'all', ].includes(data_skin))
             legend += `<li><b>Gray thin (dashed) lines and digits</b> is for ${country_name_compare}, ${last_year_in_dataset_2}, ${sex_to_compare};</li>`;
         if (['mby', ].includes(data_skin))
-          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" chart: how many ${sexes} (of all died ${sexes} in ${country_name} in ${year_of_birth}) have died by that age;</li>`;
+          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" chart: how many ${sex} (of all died ${sex} in ${country_name} in ${year_of_birth}) have died by that age;</li>`;
         if (['mbly', ].includes(data_skin))
-          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sexes} (of all died ${sexes} in ${countries_names} in ${first_years}) have died by this age;</li>`;
+          legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sex} (of all died ${sex} in ${country_name} in ${year_of_birth} and ${last_year_in_dataset_1}) have died by that age;</li>`;
         if (['mc', ].includes(data_skin))
           legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many ${sexes} (of all died ${sexes} in ${countries_names} in ${last_years}) have died by this age;</li>`;
         if (['all', ].includes(data_skin))
@@ -1707,22 +1710,19 @@
 
       function adjust_calendar_controls_for_data_skin(data_skin) {
         hide_all_calendar_controls();
+
         let enable_controls = [];
-        if (data_skin == 'cln') {
+        if (data_skin == 'cln')
           ;
-        }
-        else if (data_skin == 'all') {
+        else if (data_skin == 'all')
           enable_controls = available_controls;
-        }
-        else if (data_skin == 'lft') {
+        else if (data_skin == 'lft')
           enable_controls.push('birthday')
-        }
-        else if (['mby', 'mbly'].includes(data_skin)) {
+        else if (['mby', 'mbly'].includes(data_skin))
           enable_controls = ['sex', 'birthday', 'country_code'];
-        }
-        else if (data_skin == 'mc') {
+        else if (data_skin == 'mc')
           enable_controls = ['sex', 'country_code', 'country_code_latest', 'sex_to_compare'];
-        }
+
         enable_controls.forEach((element_id => {
           document.getElementById('wrapper_' + element_id).style.display = '';
         }));
@@ -1810,7 +1810,7 @@
       }
 
       function update_download_text_for_mobile() {
-        document.getElementById('download_as_pdf').innerHTML = '<p>Download calendar as an optimized for printing PDF file is available only on Desktop.</p>'
+        document.getElementById('download_as_pdf').innerHTML = '<p>Download calendar as an optimized for printing PDF file is available only on Desktop.</p>';
       }
 
       window.onload = function() {
