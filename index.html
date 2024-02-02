@@ -62,23 +62,19 @@
         text-align: left;
         padding-right: 10px;
       }
+      /*
       #faq {
-        /*width: 600px;
-        margin-left: calc(50% - 300px);*/
+        //width: 600px;
+        //margin-left: calc(50% - 300px);
         margin: 10% 0 10% 0;
       }
       #faq h1 {
         text-align: center;
         font-size: 1.5em;
-      }
+      }*/
       p, ul, ol {
         font-size: 0.875rem;
       }
-      /*
-      ul {
-        padding: 0 2em;
-      }
-      */
       ul {
         padding-left: 1.5em;
       }
@@ -91,11 +87,6 @@
         position: absolute;
         transform: translate(-50%, -50%);
       }
-      /*label {
-        margin: 10px 0 2px 2px;
-        color: gray;
-        font-size: 1em;
-      }*/
       .form-floating>label {
         color: gray;
         padding: 0.75rem;
@@ -137,10 +128,16 @@
         background-color: linen-;
         background-color: moccasin;
       }
-      .xl {
+      .xl_country_code {
         height: calc(4.6rem + calc(var(--bs-border-width) * 2)) !important;
         padding: 0.725rem !important;
         padding-top: 2.8rem !important;
+      }
+      select, button, a {
+        cursor: pointer;
+      }
+      input {
+        cursor: text;
       }
     </style>
 
@@ -1602,24 +1599,24 @@
         if (['mby'].includes(data_skin))
           legend += `<li><b>Left line</b> &mdash; is a "Deaths at age" distribution for ${country_name}, ${sex} in ${year_of_birth};</li><li><b>Right line (and digits)</b> &mdash; is a "Chance to die at age" distribution for ${country_name}, ${sex} in ${year_of_birth};</li>`;
         if (['mbly', ].includes(data_skin))
-          legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${country_name}, ${sex}, ${year_of_birth} and ${country_name}, ${sex}, ${last_year_in_dataset_1};</li><li><b>Right lines</b> &mdash; are "Chance to die at age" distributions for the same dataset: ${country_name}, ${sex}, ${year_of_birth} and ${country_name}, ${sex}, ${last_year_in_dataset_1};</li>`;
+          legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${country_name}, ${sex} in ${year_of_birth} and ${country_name}, ${sex} in ${last_year_in_dataset_1};</li><li><b>Right lines</b> &mdash; are "Chance to die at age" distributions for the same dataset: ${country_name}, ${sex} in ${year_of_birth} and ${country_name}, ${sex} in ${last_year_in_dataset_1};</li>`;
         if (['mc', ].includes(data_skin))
           if (compare)
-            legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${country_name}, ${sex}, ${last_year_in_dataset_1} and ${country_name_compare}, ${sex_to_compare}, ${last_year_in_dataset_2};</li><li><b>Right lines (and digits)</b> &mdash; are "Chance to die at age" distributions for the same dataset: ${country_name}, ${sex}, ${last_year_in_dataset_1} and ${country_name_compare}, ${sex_to_compare}, ${last_year_in_dataset_2};</li>`;
+            legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${country_name}, ${sex} in ${last_year_in_dataset_1} and ${country_name_compare}, ${sex_to_compare} in ${last_year_in_dataset_2};</li><li><b>Right lines (and digits)</b> &mdash; are "Chance to die at age" distributions for the same dataset: ${country_name}, ${sex} in ${last_year_in_dataset_1} and ${country_name_compare}, ${sex_to_compare} in ${last_year_in_dataset_2};</li>`;
           else
-            legend += `<li><b>Left line</b> &mdash; is "Deaths at age" distribution for ${country_name}, ${sex}, ${last_year_in_dataset_1};</li><li><b>Right line (and digits)</b> &mdash; is "Chance to die at age" distribution for the same dataset: ${country_name}, ${sex}, ${last_year_in_dataset_1};</li>`;
+            legend += `<li><b>Left line</b> &mdash; is "Deaths at age" distribution for ${country_name}, ${sex} in ${last_year_in_dataset_1};</li><li><b>Right line (and digits)</b> &mdash; is "Chance to die at age" distribution for the same dataset: ${country_name}, ${sex} in ${last_year_in_dataset_1};</li>`;
         if (['all', ].includes(data_skin))
           if (compare)
-            legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${country_name}, ${sex}, ${year_of_birth} and ${last_year_in_dataset_1} and ${country_name_compare}, ${sex_to_compare}, ${last_year_in_dataset_2};</li><li><b>Right lines (and digits)</b> &mdash; are "Chance to die at age" distributions for the same dataset: ${country_name}, ${sex}, ${year_of_birth} and ${last_year_in_dataset_1} and ${country_name_compare}, ${sex_to_compare}, ${last_year_in_dataset_2};</li>`;
+            legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${country_name}, ${sex} in ${year_of_birth} and ${last_year_in_dataset_1} and ${country_name_compare}, ${sex_to_compare} in ${last_year_in_dataset_2};</li><li><b>Right lines (and digits)</b> &mdash; are "Chance to die at age" distributions for the same dataset: ${country_name}, ${sex} in ${year_of_birth} and ${last_year_in_dataset_1} and ${country_name_compare}, ${sex_to_compare} in ${last_year_in_dataset_2};</li>`;
           else
-            legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${country_name}, ${sex}, ${year_of_birth} and ${last_year_in_dataset_1};</li><li><b>Right lines (and digits)</b> &mdash; are "Chance to die at age" distributions for the same dataset: ${country_name}, ${sex}, ${year_of_birth} and ${last_year_in_dataset_1};</li>`;
+            legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${country_name}, ${sex} in ${year_of_birth} and ${last_year_in_dataset_1};</li><li><b>Right lines (and digits)</b> &mdash; are "Chance to die at age" distributions for the same dataset: ${country_name}, ${sex} in ${year_of_birth} and ${last_year_in_dataset_1};</li>`;
         if (['mbly', 'all', ].includes(data_skin))
           legend += `<li><b>Black bold (solid) lines and digits</b> &mdash; is the data for ${country_name}, ${year_of_birth}, ${sex};</li>`;
         if (['mbly', 'mc', 'all', ].includes(data_skin))
-          legend += `<li><b>Gray bold (solid) lines and digits</b> &mdash; is the data for ${country_name}, ${last_year_in_dataset_1}, ${sex};</li>`;
+          legend += `<li><b style="color: gray;">Gray bold (solid) lines and digits</b> &mdash; is the data for ${country_name}, ${last_year_in_dataset_1}, ${sex};</li>`;
         if (compare)
           if (['mc', 'all', ].includes(data_skin))
-            legend += `<li><b>Gray thin (dashed) lines and digits</b> is for ${country_name_compare}, ${last_year_in_dataset_2}, ${sex_to_compare};</li>`;
+            legend += `<li><span style="color: gray;">Gray thin (dashed) lines and digits</span> &mdash; is for ${country_name_compare}, ${last_year_in_dataset_2}, ${sex_to_compare};</li>`;
         if (['mby', ].includes(data_skin))
           legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" chart: how many ${sex} (of all died ${sex} in ${country_name} in ${year_of_birth}) have died by that age;</li>`;
         if (['mbly', ].includes(data_skin))
@@ -1753,7 +1750,7 @@
             last_year_in_dataset_2 = last_year_in_dataset;
           }
         }
-        if (['mby', 'mbly',].includes(data_skin)) {
+        if (['mby', 'mbly', 'all'].includes(data_skin)) {
           await get_mortality_data(country_code, sex);
           last_year_in_dataset_1 = last_year_in_dataset;
 
@@ -1785,6 +1782,7 @@
         document.getElementById("explanation_text").innerHTML = `<p>${explanation_texts[data_skin]}</p>`;
         document.getElementById("value_text").innerHTML = `<p>${values_texts[data_skin]}</p>`;
 
+        console.log(last_year_in_dataset, last_year_in_dataset_1, last_year_in_dataset_2)
         compose_legend(user_values);
         switch_off_loading();
       }
@@ -1874,7 +1872,7 @@
 
             <div id="wrapper_country_code_latest" class="form-floating controls_wrapper">
               <label>Country mostly lived in during last years<br> or plan to relocate for a living:</label>
-              <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm xl"></select>
+              <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm xl_country_code"></select>
             </div>
 
             <div id="wrapper_sex_to_compare" class="form-floating controls_wrapper">
