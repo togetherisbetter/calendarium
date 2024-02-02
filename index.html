@@ -1795,7 +1795,7 @@
           const country = supported_countries[country_code];
           options += `<option value="${country_code}">${country.country_name}`;
           if (element_id == 'country_code')
-            options += `(${country.data_years_from}-${country.data_years_to})`;
+            options += ` (${country.data_years_from}-${country.data_years_to})`;
 
           options += `</option>`;
         }
@@ -1915,7 +1915,7 @@
               <ol>
                 <li>In a "Print" dialogue window set:
                     <ul>
-                      <li>Destination: Save to PDF</li>
+                      <li>Destination: Save as PDF</li>
                     </ul>
                   </li>
                 <li>Expand "More settings" and set:
