@@ -350,7 +350,6 @@
         if (window.location.protocol != 'file:') {  // doesn't work for local files
           window.history.replaceState(null, null, generate_url(user_values));
         }
-        //console.log(user_values)
 
         init_calendar(user_values);
         update_qrcode_url(user_values);
@@ -447,7 +446,6 @@
         if (position == 1)
           content += `<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${cx2}" y="${cy4}" font-weight="bold">${text}</text>`;
         
-        //cx2 = cx2 - cx - 1.5;
         const cx5 = cx2 + 19 * (number_of_mortality_charts_drawn);
         if (position == 2)
             content += `<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${cx5}" y="${cy4}" font-weight="bold">${text}</text>`;
@@ -591,7 +589,6 @@
         const last_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 1;
         const last_dot_y = get_calendar_height() - 90 * calendar_step_vertical - vertical_offset + 5;
         points += `${last_dot_x},${last_dot_y} `;
-        //console.log(coordinates, points)
         return points;
       }
 
@@ -603,7 +600,6 @@
         if (!scale_y)
           scale_y = 1;
         
-        //console.log(array)
         for (let year = 0; year < number_of_years; year++) {
           const value = array[year];
           let value_mapped_on_weeks;
@@ -635,12 +631,10 @@
           let val = data_dx.ru.m[2014][year - 1];
           let coeff = val * 0.72 / max2;
           let value_mapped_on_weeks = coeff * (value / max) * number_of_weeks_in_a_row;
-          //let value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row;
 
           coordinates_dots[year] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
         }
         
-        //console.log(coordinates_dots)
         return {'dots': coordinates_dots};
       }
 
@@ -663,9 +657,6 @@
       function draw_line(mdx_type, data, stroke, age, stroke_dasharray) {
         let content = '';
 
-        //const antistroke = "black"
-        //let stroke_width = 0.5;
-        //const antistroke_width = stroke_width * 1.5;
         let position = "left";
         let scale_y = 0.7;
         if (mdx_type == "mx") {
@@ -686,9 +677,6 @@
         let content = '';
         const stroke_width = 0.5;
         const coordinates = make_stacked_coordinates(100, data);
-        let fill = 'none';
-        //if (stroke == 'blue')
-        //  fill = stroke;
         content += draw_stacked_polyline(coordinates.dots, stroke, stroke_width, stroke_dasharray);
         return content;
       }
@@ -747,8 +735,6 @@
         const margins_svg_canvas = svg_margin * 2;
         const innerHeight = window.innerHeight - margins_svg_canvas;
         const innerWidth = window.innerWidth - margins_svg_canvas;
-        //const ratio_current_screen = innerHeight / (innerWidth - margins_svg_canvas);
-        //document.getElementById('log').innerHTML = `${ratio_current_screen > ratio_current_svg_canvas}, ${innerHeight}, ${innerWidth}`;
         if (innerHeight > innerWidth)  // if portrait, optimize by width in aspect ratio
           return (((innerWidth * ratio_current_svg_canvas) * 100) / innerHeight) + '%';
         else  // otherwise optimize by screen height, but 1.5 to zoom
@@ -998,9 +984,8 @@
         const date = user_values['birthday'];
         const birthday_date = new Date(date);
 
-        let fill_ranges = [ // init
+        let fill_ranges = [
           {"fill": "white"},
-          //{"fill": "skyblue", "to": new Date(), "stroke_width": "0.2"},
         ];
 
         const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, birthday_date);
@@ -1043,8 +1028,6 @@
       }
 
       async function draw_mortality_for_user_values(user_values) {
-        //data_all = {'mx': [], 'dx': []}; // reset
-
         const date = user_values['birthday'];
         const country_code = user_values['country_code'];
         const sex = user_values['sex'];
@@ -1125,7 +1108,6 @@
         }
 
         content += draw_legend2(label_chart_first, 1);
-        //content += draw_datasources();
         content += labels;
         content += labels_special_years;
 
@@ -1468,11 +1450,8 @@
               else
                 console.log(cause);
             }
-            //console.log(population_total, deaths_total, d);
             let coordinates = transform_who_ages_causes_to_coordinates(who_ages_causes);
             who_stacked_coordinates = transform_coordinates_to_stacked_coordinates(coordinates, who_causes_groups);
-            //console.log(injuries)
-            //console.log(who_stacked_coordinates);
           }
         );
       }
@@ -1548,7 +1527,6 @@
           let cy = y_offset - circle_radius;
           for (let week = 1; week <= number_of_weeks_in_a_row; week++) {
             let cx = (week + 1) * calendar_step_horizontal + calendar_years_numbers_width - circle_radius;
-            //content += '<circle cx="' + cx + '" cy="' + cy + '" r="' + circle_radius + '" ';
             const rect_width = 3.5;
             const cx3 = cx - rect_width / 2;
             const cy3 = cy - rect_width / 2;
@@ -1640,7 +1618,7 @@
           legend += `<li><b>${user_values.country_code.toUpperCase()}${last_year_in_dataset_1}${user_values.sex.toUpperCase()}</b> in the top left corner &mdash; is a "smart legend" that means: ${country_name}, data for ${last_year_in_dataset_1} year, ${sex};</li>`;
 
         legend += '</ul>';
-        document.getElementById("legend_text").innerHTML = legend;
+        return legend;
       }
 
       const data_skins = {
@@ -1736,7 +1714,7 @@
         return '</svg>';
       }
 
-      async function warm_cache(user_values) {
+      async function preload_data(user_values) {
         const date = user_values['birthday'];
         const country_code = user_values['country_code'];
         const country_code_latest = user_values['country_code_latest'];
@@ -1766,7 +1744,7 @@
         data_all = {'mx': [], 'dx': []}; // reset
         number_of_mortality_charts_drawn = 0;
 
-        await warm_cache(user_values);
+        await preload_data(user_values);
 
         const data_skin = user_values['data_skin'];
         adjust_calendar_offsets_for_data_skin(data_skin);
@@ -1784,8 +1762,8 @@
         document.getElementById("calendar").innerHTML = svg_image_calendar;
         document.getElementById("explanation_text").innerHTML = `<p>${explanation_texts[data_skin]}</p>`;
         document.getElementById("value_text").innerHTML = `<p>${values_texts[data_skin]}</p>`;
+        document.getElementById("legend_text").innerHTML = compose_legend(user_values);
 
-        compose_legend(user_values);
         switch_off_loading();
       }
 
