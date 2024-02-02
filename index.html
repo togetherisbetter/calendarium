@@ -139,6 +139,9 @@
       input {
         cursor: text;
       }
+      .btn-light {
+        border: 1px solid lightgray;
+      }
     </style>
 
     <!-- https://github.com/davidshimjs/qrcodejs -->
@@ -1806,7 +1809,7 @@
       }
 
       function update_download_text_for_mobile() {
-        document.getElementById('download_as_pdf').innerHTML = '<p>Download calendar as an optimized for printing PDF file is available only on Desktop.</p>';
+        document.getElementById('download_as_pdf').innerHTML = '<p>Downloading this calendar as an optimized for printing PDF file is available only on Desktop. Open this URL on your Desktop computer to be able to download this calendar as PDF.</p>';
       }
 
       window.onload = function() {
@@ -1912,16 +1915,16 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <p>Use Google Chrome desktop web browser to get the best results.</p>
-              <p>While saving your PDF choose A4 paper size even if you plan to print calendar in A3/A2/A1/A0 sizes later. PDF is vector graphics and calendar quality will not suffer.</p>
+              <p>Use Google Chrome web browser to get the best results.</p>
+              <p>While saving your PDF choose A4 paper size even if you plan to print calendar in A3/A2/A1/A0 sizes later. PDF is a vector graphics and calendar quality will not be affected.</p>
               <p>Read a step-by-step instruction below (it will not be available to you after clicking on a "<a href="#" onclick="prepare_for_print();">Save as PDF</a>" button):</p>
               <ol>
-                <li>In a "Print" dialogue window set:
+                <li>In an opened "Print" dialogue window set:
                     <ul>
                       <li>Destination: Save as PDF</li>
                     </ul>
                   </li>
-                <li>Expand "More settings" and set:
+                <li>Expand "More settings" section and set:
                   <ul>
                     <li>Paper size: A4</li>
                     <li>Margins: Default</li>
@@ -1929,14 +1932,14 @@
                     <li>Background graphics: uncheck</li>
                   </ul>
                 </li>
-                <li>Make sure that in preview section calendar looks good;</li>
+                <li>Make sure that in a preview window calendar looks good;</li>
                 <li>Click "Save" button in a "Print" dialogue window;</li> 
                 <li>(optional) Give a custom name to a PDF file;</li> 
                 <li>Click "Save" button in a "Save file" window.</li>
               </ol>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
               <button type="button" class="btn btn-primary" onclick="prepare_for_print();">Save as PDF</button>
             </div>
           </div>
