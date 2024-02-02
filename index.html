@@ -142,6 +142,11 @@
       .btn-light {
         border: 1px solid lightgray;
       }
+      select, input {
+        outline: none !important;
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+      }
     </style>
 
     <!-- https://github.com/davidshimjs/qrcodejs -->
@@ -350,7 +355,7 @@
         if (window.location.protocol != 'file:') {  // doesn't work for local files
           window.history.replaceState(null, null, generate_url(user_values));
         }
-
+        
         init_calendar(user_values);
         update_qrcode_url(user_values);
       }
