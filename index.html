@@ -1742,19 +1742,24 @@
         const country_code_latest = user_values['country_code_latest'];
         const sex = user_values['sex'];
         const sex_to_compare = user_values['sex_to_compare'];
+        const data_skin = user_values['data_skin'];
 
         const birthday_date = new Date(date);
         let birthday_year = birthday_date.getFullYear();
         
-        if (country_code_latest != country_code || sex != sex_to_compare) {
-          await get_mortality_data(country_code_latest, sex_to_compare); // to fix last year will be calculated 
-          last_year_in_dataset_2 = last_year_in_dataset;
+        if (['mc', 'all'].includes(data_skin)) {
+          if (country_code_latest != country_code || sex != sex_to_compare) {
+            await get_mortality_data(country_code_latest, sex_to_compare); // to fix last year will be calculated 
+            last_year_in_dataset_2 = last_year_in_dataset;
+          }
         }
-        await get_mortality_data(country_code, sex);
-        last_year_in_dataset_1 = last_year_in_dataset;
+        if (['mby', 'mbly',].includes(data_skin)) {
+          await get_mortality_data(country_code, sex);
+          last_year_in_dataset_1 = last_year_in_dataset;
 
-        await get_mortality_data(country_code, sex, birthday_year);
-        last_year_in_dataset = last_year_in_dataset;
+          await get_mortality_data(country_code, sex, birthday_year);
+          last_year_in_dataset = last_year_in_dataset;
+        }
       }
 
       async function init_calendar(user_values) {
