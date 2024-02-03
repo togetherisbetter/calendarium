@@ -659,9 +659,10 @@
           const year = years[i];
           const value = array[i];
           let value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row;
+          if (!value_mapped_on_weeks)
+            value_mapped_on_weeks = (array[i-1] / max) * number_of_weeks_in_a_row;
           coordinates_dots[year] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
-        }
-        
+        }        
         return {'dots': coordinates_dots};
       }
 
@@ -674,6 +675,8 @@
           let val = data_dx.ru.m[2014][year - 1];
           let coeff = val * 0.7 / max2;
           let value_mapped_on_weeks = coeff * (value / max) * number_of_weeks_in_a_row;
+          if (!value_mapped_on_weeks)
+            value_mapped_on_weeks = coeff * (array[i-1] / max) * number_of_weeks_in_a_row;
           
           coordinates_dots[year] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
         }
@@ -716,11 +719,14 @@
 
         return content;
       }
-      function draw_stacked_line(data, stroke, age, stroke_dasharray) {
+      function draw_stacked_line(data, stroke, under_curve) {
         let content = '';
-        const stroke_width = 0.5;
-        const coordinates = make_stacked_coordinates(100, data);
-        content += draw_stacked_polyline(coordinates.dots, stroke, stroke_width, stroke_dasharray);
+        let coordinates = {};
+        if (under_curve)
+          coordinates = make_stacked_coordinates_inside_deaths(100, data);
+        else
+          coordinates = make_stacked_coordinates(100, data);
+        content += draw_stacked_polyline(coordinates.dots, stroke);
         return content;
       }
 
@@ -1100,6 +1106,18 @@
         return content;
       }
 
+      async function draw_causes_of_deaths_under_mortality_curve() {
+        await who_get();
+        
+        let content = '';        
+        for (let j = who_causes_groups.length - 1; j >= 0 ; j--) {
+          let cause = get_data_for_something(who_stacked_coordinates, who_causes_groups[j]);
+          content += draw_stacked_line(cause, who_charts_colors[j], true);
+        }
+
+        return content;
+      }
+
       function get_parameters_from_url() {
         const current_url = new URL(window.location.href);
         const params = current_url.searchParams.get("p");
@@ -1144,7 +1162,12 @@
         
         svg_canvas.style.height = '1000px';
         svg_canvas.style.marginTop = '16px';
-        svg_canvas.style.marginLeft = '50px';
+
+        const url_params = get_parameters_from_url();
+        if (['cau', 'cam'].includes(url_params.data_skin))
+          svg_canvas.style.marginLeft = '20px';
+        else
+          svg_canvas.style.marginLeft = '50px';
       }
 
       function prepare_qrcode_for_print() {
@@ -1166,7 +1189,11 @@
         else if (url_params.data_skin == 'lft')
           qrcode_margin_left += 5;
         else if (url_params.data_skin == 'cau')
-          qrcode_margin_left -= 320;
+          qrcode_margin_left -= 350;
+        else if (url_params.data_skin == 'cam') {
+          qrcode_margin_left += 35;
+          qrcode_margin_top -= 8;
+        }
         //else if (['mby', 'mbly', 'mc', 'all'].includes(url_params.data_skin))
         //  ;
 
@@ -1479,7 +1506,7 @@
           legend += `<li><b>${user_values.country_code.toUpperCase()}${year_of_birth}${user_values.sex.toUpperCase()}</b> in the top left corner &mdash; is a "smart legend" that means: ${country_name}, data for ${year_of_birth} year, ${sex};</li>`;
         if (['mc', ].includes(data_skin))
           legend += `<li><b>${user_values.country_code.toUpperCase()}${last_year_in_dataset_1}${user_values.sex.toUpperCase()}</b> in the top left corner &mdash; is a "smart legend" that means: ${country_name}, data for ${last_year_in_dataset_1} year, ${sex};</li>`;
-        if (['cau', ].includes(data_skin))
+        if (['cau', 'cam'].includes(data_skin))
           legend += `<li>Is under construction</li>`;
 
         legend += '</ul>';
@@ -1495,6 +1522,7 @@
         //'all': [draw_calendar, ],
         'all': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
         'cau': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_causes_of_deaths, draw_datasources, ],
+        'cam': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_causes_of_deaths_under_mortality_curve, draw_datasources, ],
         'cau2': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_new_year_dots, draw_causes_of_deaths, draw_mortality_for_latest_year_user_values, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_labels_percentiles, draw_datasources, ],
         //'mortality': [circles, draw_mortality_lines, ],
         //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
@@ -1524,18 +1552,14 @@
           calendar_top_offset = 15;
           calendar_width_offset = 48;
         }
-        else if (data_skin == 'mc') {
+        else if (data_skin == 'mc' || data_skin == 'all') {
           calendar_top_offset = 15;
           calendar_width_offset = 60;
         }
-        else if (data_skin == 'all') {
-          calendar_top_offset = 15;
-          calendar_width_offset = 60;
-        }
-        else if (data_skin == 'cau') {
+        else if (data_skin == 'cau' || data_skin == 'cam') {
           calendar_top_offset = 15;
           calendar_width_offset = 20;
-          number_of_years = 91;
+          number_of_years = 89;
         }
       }
       function adjust_calendar_controls_offset() {
@@ -1558,7 +1582,7 @@
           enable_controls = available_controls;
         else if (data_skin == 'lft')
           enable_controls.push('birthday')
-        else if (['mby', 'mbly', 'cau-'].includes(data_skin))
+        else if (['mby', 'mbly', 'cau-', 'cam-'].includes(data_skin))
           enable_controls = ['sex', 'birthday', 'country_code'];
         else if (data_skin == 'mc')
           enable_controls = ['sex', 'country_code', 'country_code_latest', 'sex_to_compare'];
@@ -1600,7 +1624,7 @@
             last_year_in_dataset_2 = last_year_in_dataset;
           }
         }
-        if (['mby', 'mbly', 'mc', 'all', 'cau'].includes(data_skin)) {
+        if (['mby', 'mbly', 'mc', 'all', 'cau', 'cam'].includes(data_skin)) {
           await get_mortality_data(country_code, sex);
           last_year_in_dataset_1 = last_year_in_dataset;
 
@@ -1716,6 +1740,7 @@
                 <option value="mc">Compare mortality for countries & sexes</option>
                 <option value="all">All above together</option>
                 <option value="cau">Causes of Deaths</option>
+                <option value="cam">Causes of Deaths on Mortality curve</option>
               </select>
             </div>
 
