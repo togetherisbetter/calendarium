@@ -201,6 +201,7 @@
       const url_params_items = ['birthday', 'country_code', 'country_code_latest', 'sex', 'sex_to_compare', 'data_skin'];
       const available_sexes = ['m', 'f'];
       const sex_default = available_sexes[0];
+      const percentiles_to_draw = [50, 80, 90];
 
       var who_stacked_coordinates;
 
@@ -212,6 +213,7 @@
       var last_year_in_dataset_1 = 0;
       var last_year_in_dataset_2 = 0;
       var number_of_mortality_charts_drawn = 0;
+      var labels_percentiles = [{}, {}, {}];
 
       let calendar_top_offset = calendar_weeks_numbers_height + calendar_new_year_label_height + 5;
       let calendar_width_offset = calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6 + 10 + 16;
@@ -1075,7 +1077,6 @@
           label_chart_first = undefined;
         }
         
-        const percentiles_to_draw = [50, 80, 90];
         const year_percentiles_dx_birthday = get_percentiles(data_to_draw_dx_birthday, percentiles_to_draw);
 
         const age = get_age(birthday_date);
@@ -1107,7 +1108,9 @@
 
             if (have_data_for_charts) {
               if (year == year_percentiles_dx_birthday[percentile]) {
-                labels += draw_label({'rect': {'x': cx5, 'y': cy5, 'width': 10}, 'text': {'x': cx2, 'y': cy2, 'text': percentile + '%', 'fill': 'black', 'weight': 'bold'}});
+                const l = {'rect': {'x': cx5, 'y': cy5, 'width': 10}, 'text': {'x': cx2, 'y': cy2, 'text': percentile + '%', 'fill': 'black', 'weight': 'bold'}};
+                labels_percentiles[0][percentile] = l;
+                //labels += draw_label(l);
               }
             }
           }
@@ -1129,7 +1132,7 @@
         }
 
         antistroke_width = 0.5;
-        
+        let content = '';
         if (have_data_for_charts) {
           antistroke = "black"
           content += draw_line("mx", data_to_draw_mx_birthday, "black", age);
@@ -1156,7 +1159,6 @@
         const data_to_draw_dx_latest = data_dx[country_code][sex][last_year_in_dataset_1];
         const label_chart_second = `${country_code}${last_year_in_dataset_1}${sex}`.toUpperCase();
         
-        const percentiles_to_draw = [50, 80, 90];
         const year_percentiles_dx_latest = get_percentiles(data_to_draw_dx_latest, percentiles_to_draw);
 
         const age = get_age(birthday_date);
@@ -1186,7 +1188,9 @@
               cy5 = cy5 + 10 - 1;
 
             if (year == year_percentiles_dx_latest[percentile]) {
-              labels += draw_label({'rect': {'x': cx5, 'y': cy5, 'width': 10 + 10 * (number_of_mortality_charts_drawn)}, 'text': {'x': cx2 + 10 * (number_of_mortality_charts_drawn), 'y': cy2, 'text': percentile + '%', 'fill': 'gray', 'weight': 'bold'}});
+              const l = {'rect': {'x': cx5, 'y': cy5, 'width': 10 + 10 * (number_of_mortality_charts_drawn)}, 'text': {'x': cx2 + 10 * (number_of_mortality_charts_drawn), 'y': cy2, 'text': percentile + '%', 'fill': 'gray', 'weight': 'bold'}};
+              labels_percentiles[1][percentile] = l;
+              //labels += draw_label(l);
             }
           }
 
@@ -1208,6 +1212,7 @@
         antistroke = "gray"
         const latest = "gray"
         antistroke_width = 0.5;
+        let content = '';
         content += draw_line("mx", data_to_draw_mx_latest, latest, age);
         content += draw_line("dx", data_to_draw_dx_latest, latest, age);
 
@@ -1232,8 +1237,7 @@
         const data_to_draw_mx_another_country = data_mx[country_code_latest][sex_to_compare][last_year_in_dataset_2];
         const data_to_draw_dx_another_country = data_dx[country_code_latest][sex_to_compare][last_year_in_dataset_2];
         const label_chart_third = `${country_code_latest}${last_year_in_dataset_2}${sex_to_compare}`.toUpperCase();
-        
-        const percentiles_to_draw = [50, 80, 90];
+
         const year_percentiles_dx_another_country = get_percentiles(data_to_draw_dx_another_country, percentiles_to_draw);
 
         const age = get_age(birthday_date);
@@ -1265,7 +1269,9 @@
             
             if (country_code != country_code_latest || sex != sex_to_compare) {
               if (year == year_percentiles_dx_another_country[percentile]) {
-                labels += draw_label({'rect': {'x': cx5, 'y': cy5, 'width': 20 + 10 * (number_of_mortality_charts_drawn - 1)}, 'text': {'x': cx4, 'y': cy2, 'text': percentile + '%', 'fill': 'gray', 'weight': 'normal'}});
+                const l = {'rect': {'x': cx5, 'y': cy5, 'width': 20 + 10 * (number_of_mortality_charts_drawn - 1)}, 'text': {'x': cx4, 'y': cy2, 'text': percentile + '%', 'fill': 'gray', 'weight': 'normal'}};
+                labels_percentiles[2][percentile] = l;
+                //labels += draw_label(l);
               }
             }
           }
@@ -1290,6 +1296,7 @@
         const latest = "gray"
         stroke_width = 0.4;
         antistroke_width = 0.4;
+        let content = '';
         if (country_code_latest != country_code || sex != sex_to_compare) {
           content += draw_line("mx", data_to_draw_mx_another_country, "gray", age, "4 2");
           content += draw_line("dx", data_to_draw_dx_another_country, "gray", age, "4 2");
@@ -1676,11 +1683,11 @@
       const data_skins = {
         'cln': [draw_weeks_numbers, draw_ages_numbers, draw_circles, ],
         'lft': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_label_new_year, draw_new_year_dots],
-        'mby': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots],
-        'mbly': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots],
-        'mc': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots],
+        'mby': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
+        'mbly': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
+        'mc': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
         //'all': [draw_calendar, ],
-        'all': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots],
+        'all': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
         //'mortality': [circles, draw_mortality_lines, ],
         //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
         //'causes': [draw_causes_lines, circles, ],
@@ -1789,9 +1796,14 @@
         }
       }
 
-      async function init_calendar(user_values) {
-        data_all = {'mx': [], 'dx': []}; // reset
+      function reset_globals() {
+        data_all = {'mx': [], 'dx': []};
         number_of_mortality_charts_drawn = 0;
+        labels_percentiles = [{}, {}, {}];
+      }
+
+      async function init_calendar(user_values) {
+        reset_globals();
 
         await preload_data(user_values);
 
@@ -1836,6 +1848,18 @@
 
       function update_download_text_for_mobile() {
         document.getElementById('download_as_pdf').innerHTML = '<p>Downloading this calendar as an optimized for printing PDF file is available only on Desktop. Open this URL on your Desktop computer to be able to download this calendar as PDF.</p>';
+      }
+
+      function draw_labels_percentiles() {
+        let content = '';
+        for (let i = labels_percentiles.length - 1; i >= 0; i--) {  // in reverse order due to labels overlap
+          if (Object.keys(labels_percentiles[i]).length != 0) {
+            percentiles_to_draw.forEach((percentile) => {
+              content += draw_label(labels_percentiles[i][percentile]);
+            });
+          }
+        }
+        return content;
       }
 
       window.onload = function() {
