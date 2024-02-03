@@ -657,6 +657,8 @@
         let coordinates_dots = {};
         for (let i = 0; i < years.length; i++) {
           const year = years[i];
+          if (year == 2) // skip for better curve drawing
+            continue;
           const value = array[i];
           let value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row;
           if (!value_mapped_on_weeks)
