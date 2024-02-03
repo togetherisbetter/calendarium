@@ -208,6 +208,7 @@ const explanation_texts = {
   'mc':   'This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth and "compare to" country and sex at birth both for the latest data-available years. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.',
   'all':  'This is a 101 years long Life Calendar which is already pre-filled for a specified birthday. It can have up to 6 mortality charts built on it for a specified country, sex at birth, year of birth, latest data-available year and "compare to" country and sex at birth for the latest data-available year. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.',
   'cau':  'This is a 89 years long "Causes of Deaths at age" chart built for specified country (Russia), sex (male) and year (2014). Is under everyday construction right now. Published for demo purposes.',
+  'cam':  'This is a 89 years long "Causes of Deaths at age" chart built under Mortality curve for specified country (Russia), sex (male) and year (2014). Is under everyday construction right now. Published for demo purposes.',
 }
 
 const values_texts = {
@@ -217,5 +218,6 @@ const values_texts = {
   'mbly': 'Shows you how mortality situation have changed in your motherland between your year of birth and latest data-available year. Explanatory data-skin.',
   'mc':   'Allows you to compare different countries and sexes &mdash; so you can see the difference in life expectancies in any combination: men with women in one country, women with women or men with men in different countries.',
   'all':  'Shows you how many weeks have already passed since your birthday and allows you to compare different countries and sexes &mdash; so you can see the difference in life expectancies in any combination: men with women in one country, women with women or men with men in different countries.',
-  'cau':  'Shows you causes of deaths for the people of different sexes at different ages in different countries.'
+  'cau':  'Shows you causes of deaths for the people of different sexes at different ages in different countries.',
+  'cam':  'Shows you causes of deaths to understand the actual volumes of deaths for the people of different sexes at different ages in different countries.'
 }
