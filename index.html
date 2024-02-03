@@ -470,25 +470,20 @@
         if (bad_mobile)
           cy += 10;
 
-        let content = '';
         let cx2 = cx + 1.5;
         let cy2 = cy + 3 + 1;
         if (bad_mobile)
           cy2 -= 9;
         
-        const cy4 = cy2;
         if (position == 1)
-          content += `<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${cx2}" y="${cy4}" font-weight="bold">${text}</text>`;
+          return `<text font-size="3" fill="black" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${cx2}" y="${cy2}" font-weight="bold">${text}</text>`;
         
         const cx5 = cx2 + 19 * (number_of_mortality_charts_drawn);
         if (position == 2)
-            content += `<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${cx5}" y="${cy4}" font-weight="bold">${text}</text>`;
+            return `<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${cx5}" y="${cy2}" font-weight="bold">${text}</text>`;
         
-        const cx6 = cx5 + 19 * (number_of_mortality_charts_drawn - 1);
         if (position == 3)
-          content += `<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${cx6}" y="${cy4}" font-weight="bold-">${text}</text>`;
-
-        return content
+          return `<text font-size="3" fill="gray" font-family="Verdana" text-anchor="start" alignment-baseline="baseline" x="${cx5}" y="${cy2}" font-weight="bold-">${text}</text>`;
       }
 
       function draw_label_deaths() {
@@ -1681,10 +1676,11 @@
       const data_skins = {
         'cln': [draw_weeks_numbers, draw_ages_numbers, draw_circles, ],
         'lft': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_label_new_year, draw_new_year_dots],
-        'mby': [draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
-        'mbly': [draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
-        'mc': [draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
-        'all': [draw_calendar, ],
+        'mby': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots],
+        'mbly': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots],
+        'mc': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots],
+        //'all': [draw_calendar, ],
+        'all': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots],
         //'mortality': [circles, draw_mortality_lines, ],
         //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
         //'causes': [draw_causes_lines, circles, ],
