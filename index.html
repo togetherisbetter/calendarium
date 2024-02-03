@@ -1643,6 +1643,8 @@
         if (['lft', 'all', ].includes(data_skin))
           legend += `<li><b>Each filled circle</b> &mdash; is a passed week of life;</li>`;
         if (['lft', 'all', ].includes(data_skin))
+          legend += `<li><b>Blinking circle</b> &mdash; is a current week;</li>`;
+        if (['lft', 'mby', 'mbly', 'mc', 'all', ].includes(data_skin))
           legend += `<li><b>Dot in a ring / circle</b> &mdash; is a New Year week;</li>`;
         if (['mby'].includes(data_skin))
           legend += `<li><b>Left line</b> &mdash; is a "Deaths at age" distribution for ${country_name}, ${sex} in ${year_of_birth};</li><li><b>Right line (and digits)</b> &mdash; is a "Chance to die at age" distribution for ${country_name}, ${sex} in ${year_of_birth};</li>`;
