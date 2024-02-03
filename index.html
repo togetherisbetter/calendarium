@@ -48,7 +48,7 @@
       /* https://stackoverflow.com/questions/29205294/how-to-achieve-blinking-effect-in-svg */
       @keyframes blink {
         100%, 0% { fill: snow; }
-        80% { fill: skyblue; }
+        80% { fill: skyblue; stroke-width: 0.2; }
       }
       .blink {
         animation: blink 1.5s infinite;
@@ -1388,6 +1388,7 @@
         prepare_qrcode_for_print();
 
         document.getElementsByClassName('container')[0].classList.remove("container");
+        document.getElementsByClassName('blink')[0].classList.remove("blink");
         document.getElementById('controls').style.display = 'none';
         $('#downloadAsPDF').removeClass('fade');
         $('#downloadAsPDF').modal('hide');
@@ -1527,7 +1528,7 @@
         next_week.setDate(today.getDate() + 7);
         let fill_ranges = [ // init
           {"fill": "skyblue", "to": today, "stroke_width": "0.2"},
-          {"fill": "skyblue", "from": next_week, "to": next_week, "animate": "blink", "stroke_width": "0.2"},
+          {"fill": "snow", "from": next_week, "to": next_week, "animate": "blink"},
         ];
 
         const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, birthday_date);
