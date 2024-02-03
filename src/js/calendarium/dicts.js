@@ -201,19 +201,21 @@ const who_map_causes_to_groups = {
 };
 
 const explanation_texts = {
-  'cln':  `This is a clean canvas for a 101 years long Life&nbsp;Calendar made for printing and manual filling. It starts from a ring at the bottom left corner, from the first week of your life.`,
-  'lft':  `This is a 101 years long Life Calendar which is already pre-filled for a specified birthday. It starts from the circle at the bottom left corner, from the first week of life for a specified date of birth.`,
-  'mby':  `This is a 101 years long Life Calendar with 2 mortality charts built on it for a specified country, sex at birth and year of birth. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.`,
-  'mbly': `This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth, year of birth and latest data-available year for that country. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.`,
-  'mc':   `This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth and "compare to" country and sex at birth both for the latest data-available years. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.`,
+  'cln':  'This is a clean canvas for a 101 years long Life&nbsp;Calendar made for printing and manual filling. It starts from a ring at the bottom left corner, from the first week of your life.',
+  'lft':  'This is a 101 years long Life Calendar which is already pre-filled for a specified birthday. It starts from the circle at the bottom left corner, from the first week of life for a specified date of birth.',
+  'mby':  'This is a 101 years long Life Calendar with 2 mortality charts built on it for a specified country, sex at birth and year of birth. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.',
+  'mbly': 'This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth, year of birth and latest data-available year for that country. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.',
+  'mc':   'This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth and "compare to" country and sex at birth both for the latest data-available years. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.',
   'all':  'This is a 101 years long Life Calendar which is already pre-filled for a specified birthday. It can have up to 6 mortality charts built on it for a specified country, sex at birth, year of birth, latest data-available year and "compare to" country and sex at birth for the latest data-available year. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.',
+  'cau':  'This is a 89 years long "Causes of Deaths at age" chart built for specified country (Russia), sex (male) and year (2014). Is under everyday construction right now. Published for demo purposes.',
 }
 
 const values_texts = {
-  'cln':  `Lets you to print empty Life Calendar canvas, fill it manually with your favorite color(s) and then put it on a wall / fridge.`,
-  'lft':  `Shows you how many weeks have already passed since your birthday and allows you to print already pre-filled calendar instead of clean one.`,
-  'mby':  `Shows you mortality situation in your motherland for your sex at a year you were born. Explanatory data-skin.`,
-  'mbly': `Shows you how mortality situation have changed in your motherland between your year of birth and latest data-available year. Explanatory data-skin.`,
-  'mc':   `Allows you to compare different countries and sexes &mdash; so you can see the difference in life expectancies in any combination: men with women in one country, women with women or men with men in different countries.`,
-  'all':  `Shows you how many weeks have already passed since your birthday and allows you to compare different countries and sexes &mdash; so you can see the difference in life expectancies in any combination: men with women in one country, women with women or men with men in different countries.`,
+  'cln':  'Lets you to print empty Life Calendar canvas, fill it manually with your favorite color(s) and then put it on a wall / fridge.',
+  'lft':  'Shows you how many weeks have already passed since your birthday and allows you to print already pre-filled calendar instead of clean one.',
+  'mby':  'Shows you mortality situation in your motherland for your sex at a year you were born. Explanatory data-skin.',
+  'mbly': 'Shows you how mortality situation have changed in your motherland between your year of birth and latest data-available year. Explanatory data-skin.',
+  'mc':   'Allows you to compare different countries and sexes &mdash; so you can see the difference in life expectancies in any combination: men with women in one country, women with women or men with men in different countries.',
+  'all':  'Shows you how many weeks have already passed since your birthday and allows you to compare different countries and sexes &mdash; so you can see the difference in life expectancies in any combination: men with women in one country, women with women or men with men in different countries.',
+  'cau':  'Shows you causes of deaths for the people of different sexes at different ages in different countries.'
 }
