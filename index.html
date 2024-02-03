@@ -1523,11 +1523,11 @@
         const birthday_date = new Date(date);
 
         const today = new Date();
-        const next_week = today;
+        const next_week = new Date();
         next_week.setDate(today.getDate() + 7);
         let fill_ranges = [ // init
           {"fill": "skyblue", "to": today, "stroke_width": "0.2"},
-          {"fill": "skyblue", "from": next_week, "to": next_week, "animate": "blink"},
+          {"fill": "skyblue", "from": next_week, "to": next_week, "animate": "blink", "stroke_width": "0.2"},
         ];
 
         const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, birthday_date);
@@ -1550,9 +1550,9 @@
             let stroke_width = "0.07";
             for (let i in fill_ranges_transformed) {
               const range = fill_ranges_transformed[i];
+              circle_color = range["fill"];
               if (range["from_week"] <= total_weeks && range["to_week"] >= total_weeks) {
                 content += `<rect x="${cx3}" y="${cy3}" width="${rect_width}" height="${rect_width}" rx="20" `;
-                circle_color = range["fill"];
                 if (range["stroke"])
                   stroke = range["stroke"];
                 if (range["stroke_width"])
@@ -1561,9 +1561,9 @@
               if (range["to_week"] == total_weeks && range["animate"] == "blink") { // blink current week
                 content += 'class="blink" ';
               }
-              
+
               content += 'fill="' + circle_color + '" ';
-              content += 'stroke="' + stroke + '" stroke-width="' + stroke_width + '" ';
+              content += 'stroke="' + stroke + '" stroke-width="' + stroke_width + '" ';              
               content += '/>';
             }
             total_weeks++;
