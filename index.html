@@ -1287,7 +1287,9 @@
             if (country_code != country_code_latest || sex != sex_to_compare) {
               cx2 += 11 * number_of_mortality_charts_drawn;
               if (data_mx[country_code][sex][last_year_in_dataset_1][year - 1] > 10)
-                cx2 += 2 * number_of_mortality_charts_drawn;
+                cx2 += 2;
+              if (data_mx[country_code][sex][birthday_year][year - 1] > 10)
+                cx2 += 2 * (number_of_mortality_charts_drawn - 1);
               labels_special_years += draw_special_age_label({'color': 'gray', 'x': cx2, 'y': cy2, 'weight': 'normal', 'text': data_mx[country_code_latest][sex_to_compare][last_year_in_dataset_2][year - 1].toFixed(1) + '%'});
             }
           }
