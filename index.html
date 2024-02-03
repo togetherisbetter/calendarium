@@ -197,13 +197,14 @@
       const color_base = "snow";
       const years = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90,];
       const available_controls = ['sex', 'birthday', 'country_code', 'country_code_latest', 'sex_to_compare'];
-      const data_skin_default = 'mbly';
+      const data_skin_default = 'all', // 'mbly';
       const url_params_items = ['birthday', 'country_code', 'country_code_latest', 'sex', 'sex_to_compare', 'data_skin'];
       const available_sexes = ['m', 'f'];
       const sex_default = available_sexes[0];
 
       var who_stacked_coordinates;
 
+      var data_fetched = {'dx': {}, 'mx': {}};
       var data_dx = {};
       var data_mx = {};
       var data_all = {'dx': [], 'mx': []};
@@ -227,20 +228,46 @@
       }
 
       function enrich_data_mdx_dict(data_mdx, mdx_data, country_code, sex, target_year) {
-        let data_country = data_mdx[country_code];
+        const data_country = data_mdx[country_code];
         if (!data_country)
           data_mdx[country_code] = {};
         
-        let data_country_sex = data_mdx[country_code][sex];
+        const data_country_sex = data_mdx[country_code][sex];
         if (!data_country_sex)
           data_mdx[country_code][sex] = {};
 
-        let data_country_sex_year = data_mdx[country_code][sex][target_year];
+        const data_country_sex_year = data_mdx[country_code][sex][target_year];
         if (!data_country_sex_year)
           data_mdx[country_code][sex][target_year] = mdx_data;
       }
 
+      /*
+      function enrich_data_fetched_dict(country_code, sex, target_year) {
+        const data_country = data_fetched['dx'][country_code];
+        if (!data_country) {
+          data_fetched['dx'][country_code] = {};
+          data_fetched['mx'][country_code] = {};
+        }
+        
+        const data_country_sex = data_fetched['dx'][country_code][sex];
+        if (!data_country_sex) {
+          data_fetched['dx'][country_code][sex] = {};
+          data_fetched['mx'][country_code][sex] = {};
+        }
+
+        const data_country_sex_year = data_fetched['dx'][country_code][sex][target_year];
+        if (!data_country_sex_year) {
+          data_fetched['dx'][country_code][sex][target_year] = data_dx[country_code][sex][target_year];
+          data_fetched['mx'][country_code][sex][target_year] = data_mx[country_code][sex][target_year];
+        }
+      }
+      */
+
       function get_mortality_data(country_code, sex, target_year) {
+        //if (data_fetched['dx'][country_code])
+        //  if (data_fetched['dx'][country_code][sex])
+        //    ;
+
         return fetch('https://calendarium.me/data/mortality/' + country_code + '/' + sex + 'ltper_1x1.txt')
           .then((response) => response.text())
           .then((data) => {
@@ -271,6 +298,8 @@
             enrich_data_mdx_dict(data_mx, mx_data, country_code, sex, target_year);
             data_all['dx'] = data_all['dx'].concat(dx_data.map(Number));
             enrich_data_mdx_dict(data_dx, dx_data, country_code, sex, target_year);
+
+            //enrich_data_fetched_dict(country_code, sex, target_year);
           }
         );
       }
