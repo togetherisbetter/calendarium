@@ -197,7 +197,7 @@
       const color_base = "snow";
       const years = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90,];
       const available_controls = ['sex', 'birthday', 'country_code', 'country_code_latest', 'sex_to_compare'];
-      const data_skin_default = 'all', // 'mbly';
+      const data_skin_default = 'all'; // 'mbly';
       const url_params_items = ['birthday', 'country_code', 'country_code_latest', 'sex', 'sex_to_compare', 'data_skin'];
       const available_sexes = ['m', 'f'];
       const sex_default = available_sexes[0];
@@ -1351,16 +1351,33 @@
         const svg_canvas = document.getElementById('svg_canvas');
         const qrcode_image = document.getElementById('qrcode');
 
+        const base_svg_margin_top = 16;
+        const base_svg_margin_left = 50;
+        const base_qrcode_margin_top = 890;
+        const base_qrcode_margin_left = 479;
+
+        let svg_margin_top = base_svg_margin_top;
+        let svg_margin_left = base_svg_margin_left;
+        let qrcode_margin_top = base_qrcode_margin_top;
+        let qrcode_margin_left = base_qrcode_margin_left;
+
         qrcode_image.style.display = '';
-        svg_canvas.style.height = '996px';
-        svg_canvas.style.marginTop = '2.5%';
-        svg_canvas.style.marginLeft = '35px';
+        svg_canvas.style.height = '1000px';
 
         const url_params = get_parameters_from_url();
-        if (url_params.country_code == url_params.country_code_latest) {
-          svg_canvas.style.marginLeft = '45px';
-          qrcode_image.style.left = '65.8%';
+        if (url_params.data_skin == 'cln') {
+          qrcode_margin_top -= 1;
+          qrcode_margin_left += 10;
         }
+        else if (url_params.data_skin == 'lft')
+          qrcode_margin_left += 5;
+        //else if (['mby', 'mbly', 'mc', 'all'].includes(url_params.data_skin))
+        //  ;
+
+        svg_canvas.style.marginTop = svg_margin_top + 'px';
+        svg_canvas.style.marginLeft = svg_margin_left + 'px';
+        qrcode_image.style.top = qrcode_margin_top + 'px';
+        qrcode_image.style.left = qrcode_margin_left + 'px';
 
         document.getElementsByClassName('container')[0].classList.remove("container");
         document.getElementById('controls').style.display = 'none';
@@ -1658,9 +1675,9 @@
       const data_skins = {
         'cln': [draw_weeks_numbers, draw_ages_numbers, draw_circles, ],
         'lft': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_label_new_year, draw_new_year_dots],
-        'mby': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
-        'mbly': [draw_ages_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
-        'mc': [draw_ages_numbers, draw_circles, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
+        'mby': [draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
+        'mbly': [draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
+        'mc': [draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths],
         'all': [draw_calendar, ],
         //'mortality': [circles, draw_mortality_lines, ],
         //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
@@ -1672,34 +1689,30 @@
       };
 
       function adjust_calendar_offsets_for_data_skin(data_skin) {
+        number_of_years = 101;
+
         if (data_skin == 'cln') {
           calendar_top_offset = 5;
-          number_of_years = 101;
           calendar_width_offset = 20;
-        }
-        else if (data_skin == 'all') {
-          calendar_top_offset = 15;
-          number_of_years = 101;
-          calendar_width_offset = 60;
         }
         else if (data_skin == 'lft') {
           calendar_top_offset = 10;
-          number_of_years = 101;
           calendar_width_offset = 20;
         }
         else if (data_skin == 'mby') {
           calendar_top_offset = 15;
-          number_of_years = 101;
           calendar_width_offset = 35;
         }
         else if (data_skin == 'mbly') {
           calendar_top_offset = 15;
-          number_of_years = 101;
           calendar_width_offset = 48;
         }
         else if (data_skin == 'mc') {
           calendar_top_offset = 15;
-          number_of_years = 101;
+          calendar_width_offset = 60;
+        }
+        else if (data_skin == 'all') {
+          calendar_top_offset = 15;
           calendar_width_offset = 60;
         }
       }
@@ -1765,7 +1778,7 @@
             last_year_in_dataset_2 = last_year_in_dataset;
           }
         }
-        if (['mby', 'mbly', 'all'].includes(data_skin)) {
+        if (['mby', 'mbly', 'mc', 'all'].includes(data_skin)) {
           await get_mortality_data(country_code, sex);
           last_year_in_dataset_1 = last_year_in_dataset;
 
@@ -1835,7 +1848,7 @@
           guess_the_country();
         
         user_values = get_user_selected_parameters(); // read from html as usual
-        qrcode = init_qrcode(user_values, 66);
+        qrcode = init_qrcode(user_values, 67); // other sizes: 75 (4 dots left), 84 (3 dots left)
         init_calendar(user_values);
       };
     </script>
