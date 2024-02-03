@@ -1347,22 +1347,24 @@
         document.getElementById('qrcode').style.display = 'none';
       }
 
-      function prepare_for_print() {
+      function prepare_svg_canvas_for_print() {
         const svg_canvas = document.getElementById('svg_canvas');
+        
+        svg_canvas.style.height = '1000px';
+        svg_canvas.style.marginTop = '16px';
+        svg_canvas.style.marginLeft = '50px';
+      }
+
+      function prepare_qrcode_for_print() {
         const qrcode_image = document.getElementById('qrcode');
 
-        const base_svg_margin_top = 16;
-        const base_svg_margin_left = 50;
         const base_qrcode_margin_top = 890;
         const base_qrcode_margin_left = 479;
 
-        let svg_margin_top = base_svg_margin_top;
-        let svg_margin_left = base_svg_margin_left;
         let qrcode_margin_top = base_qrcode_margin_top;
         let qrcode_margin_left = base_qrcode_margin_left;
 
         qrcode_image.style.display = '';
-        svg_canvas.style.height = '1000px';
 
         const url_params = get_parameters_from_url();
         if (url_params.data_skin == 'cln') {
@@ -1374,10 +1376,13 @@
         //else if (['mby', 'mbly', 'mc', 'all'].includes(url_params.data_skin))
         //  ;
 
-        svg_canvas.style.marginTop = svg_margin_top + 'px';
-        svg_canvas.style.marginLeft = svg_margin_left + 'px';
         qrcode_image.style.top = qrcode_margin_top + 'px';
         qrcode_image.style.left = qrcode_margin_left + 'px';
+      }
+
+      function prepare_for_print() {
+        prepare_svg_canvas_for_print();
+        prepare_qrcode_for_print();
 
         document.getElementsByClassName('container')[0].classList.remove("container");
         document.getElementById('controls').style.display = 'none';
@@ -1385,6 +1390,7 @@
         $('#downloadAsPDF').modal('hide');
 
         print();
+
         switch_on_loading();
         location.reload(); // because print adjustments breaks the page
       }
