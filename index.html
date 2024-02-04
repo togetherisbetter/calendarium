@@ -670,12 +670,13 @@
 
       function make_stacked_coordinates_inside_deaths(max, array) {
         let coordinates_dots = {};
-        let max2 = get_peak_value(data_dx.ru.m["2014"]).value;
+        let max2 = get_peak_value(data_dx["us"]["m"]["2021"]).value;
         for (let i = 0; i < years.length; i++) {
           const year = years[i];
           const value = array[i];
-          let val = data_dx.ru.m[2014][year - 1];
-          let coeff = val * 0.7 / max2;
+          let val = data_dx["us"]["m"][2021][year - 1];
+          //let coeff = val * 0.7 / max2;
+          let coeff = val / max2;
           let value_mapped_on_weeks = coeff * (value / max) * number_of_weeks_in_a_row;
           if (!value_mapped_on_weeks)
             value_mapped_on_weeks = coeff * (array[i-1] / max) * number_of_weeks_in_a_row;
@@ -1165,8 +1166,8 @@
         svg_canvas.style.height = '1000px';
         svg_canvas.style.marginTop = '16px';
 
-        const url_params = get_parameters_from_url();
-        if (['cau', 'cam'].includes(url_params.data_skin))
+        const user_values = get_user_selected_parameters()
+        if (['cau', 'cam'].includes(user_values.data_skin))
           svg_canvas.style.marginLeft = '20px';
         else
           svg_canvas.style.marginLeft = '50px';
@@ -1183,20 +1184,20 @@
 
         qrcode_image.style.display = '';
 
-        const url_params = get_parameters_from_url();
-        if (url_params.data_skin == 'cln') {
+        const user_values = get_user_selected_parameters()
+        if (user_values.data_skin == 'cln') {
           qrcode_margin_top -= 1;
           qrcode_margin_left += 10;
         }
-        else if (url_params.data_skin == 'lft')
+        else if (user_values.data_skin == 'lft')
           qrcode_margin_left += 5;
-        else if (url_params.data_skin == 'cau')
+        else if (user_values.data_skin == 'cau')
           qrcode_margin_left -= 350;
-        else if (url_params.data_skin == 'cam') {
+        else if (user_values.data_skin == 'cam') {
           qrcode_margin_left += 35;
           qrcode_margin_top -= 8;
         }
-        //else if (['mby', 'mbly', 'mc', 'all'].includes(url_params.data_skin))
+        //else if (['mby', 'mbly', 'mc', 'all'].includes(user_values.data_skin))
         //  ;
 
         qrcode_image.style.top = qrcode_margin_top + 'px';
