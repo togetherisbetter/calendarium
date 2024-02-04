@@ -669,12 +669,16 @@
       }
 
       function make_stacked_coordinates_inside_deaths(max, array) {
+        const user_values = get_user_selected_parameters();
+        const country_code = user_values.country_code;
+        const sex = user_values.sex;
+
         let coordinates_dots = {};
-        let max2 = get_peak_value(data_dx["us"]["m"]["2021"]).value;
+        let max2 = get_peak_value(data_dx[country_code][sex][last_year_in_dataset_1]).value;
         for (let i = 0; i < years.length; i++) {
           const year = years[i];
           const value = array[i];
-          let val = data_dx["us"]["m"][2021][year - 1];
+          let val = data_dx[country_code][sex][last_year_in_dataset_1][year - 1];
           //let coeff = val * 0.7 / max2;
           let coeff = val / max2;
           let value_mapped_on_weeks = coeff * (value / max) * number_of_weeks_in_a_row;
@@ -1281,7 +1285,14 @@
       }
 
       function who_get() {
-        const who_url = `https://frontdoor-l4uikgap6gz3m.azurefd.net/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DEATHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DEATHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DEATHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq 'RUS' and DIM_SEX_CODE eq 'MLE' and DIM_YEAR_CODE eq '2019'`;
+        const user_values = get_user_selected_parameters();
+        const sex = user_values.sex;
+        let year = last_year_in_dataset_1;
+        if (year > 2019)
+          year = 2019;
+        const country = supported_countries[user_values.country_code].who_country_code;
+
+        const who_url = `https://frontdoor-l4uikgap6gz3m.azurefd.net/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DEATHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DEATHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DEATHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq '${country}' and DIM_SEX_CODE eq '${who_sexes_map[sex]}' and DIM_YEAR_CODE eq '${year}'`;
 
         return fetch(who_url)
           .then((response) => response.text())
@@ -1587,6 +1598,8 @@
           enable_controls.push('birthday')
         else if (['mby', 'mbly', 'cau-', 'cam-'].includes(data_skin))
           enable_controls = ['sex', 'birthday', 'country_code'];
+        else if (['cau', 'cam'].includes(data_skin))
+          enable_controls = ['sex', 'country_code'];
         else if (data_skin == 'mc')
           enable_controls = ['sex', 'country_code', 'country_code_latest', 'sex_to_compare'];
 
