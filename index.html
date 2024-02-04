@@ -1621,10 +1621,10 @@
         let birthday_year = birthday_date.getFullYear();
         
         if (['mc', 'all'].includes(data_skin)) {
-          if (country_code_latest != country_code || sex != sex_to_compare) {
+          //if (country_code_latest != country_code || sex != sex_to_compare) {
             await get_mortality_data(country_code_latest, sex_to_compare); // to fix last year will be calculated 
             last_year_in_dataset_2 = last_year_in_dataset;
-          }
+          //}
         }
         if (['mby', 'mbly', 'mc', 'all', 'cau', 'cam'].includes(data_skin)) {
           await get_mortality_data(country_code, sex);
@@ -1633,6 +1633,7 @@
           await get_mortality_data(country_code, sex, birthday_year);
           last_year_in_dataset = last_year_in_dataset;
         }
+        //console.log(data_skin, last_year_in_dataset_2)
       }
 
       function reset_globals() {
