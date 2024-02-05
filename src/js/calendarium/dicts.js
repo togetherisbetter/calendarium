@@ -64,7 +64,7 @@ const who_map_age_to_groups = {
 
 const who_sex_groups = ['MLE', 'FMLE'];
 const who_causes_groups = ['Injuries',  'Chronic respiratory diseases', 'Cardiovascular diseases',  'Diabetes', 'Cancers', 'Other noncommunicable diseases',  'Maternal causes',  'Communicable diseases',  'Dimentias'];
-const who_charts_colors = ['#0193d6',   '#892e2f',                      '#86bee7',                  '#ffe094',  '#023f88', '#f5887d',                         '#fcc513',          '#5e82a0',                'black'];
+const who_causes_colors = ['#0193d6',   '#892e2f',                      '#86bee7',                  '#ffe094',  '#023f88', '#f5887d',                         '#fcc513',          '#5e82a0',                'black'];
 const who_sexes_map = {'m': 'MLE', 'f': 'FMLE'};
 
 const who_map_causes_to_groups = {
@@ -191,12 +191,12 @@ const who_map_causes_to_groups = {
   'Leishmaniasis': '',
   'Lymphatic filariasis': '',
   'Onchocerciasis': '',
-  'Ascariasis': '',
-  'Trichuriasis': '',
-  'Hookworm disease': '',
-  'Food-bourne trematodes': '',
-  'Leprosy': '',
-  'Otitis media': '',
+  'Ascariasis': 'Communicable diseases',
+  'Trichuriasis': 'Communicable diseases',
+  'Hookworm disease': 'Communicable diseases',
+  'Food-bourne trematodes': 'Communicable diseases',
+  'Leprosy': 'Communicable diseases',
+  'Otitis media': 'Other noncommunicable diseases',
   'Maternal conditions': 'Maternal causes',
   'Neonatal conditions': 'Communicable diseases',
 };
@@ -208,8 +208,8 @@ const explanation_texts = {
   'mbly': 'This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth, year of birth and latest data-available year for that country. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.',
   'mc':   'This is a 101 years long Life Calendar with 4 mortality charts built on it for a specified country, sex at birth and "compare to" country and sex at birth both for the latest data-available years. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.',
   'all':  'This is a 101 years long Life Calendar which is already pre-filled for a specified birthday. It can have up to 6 mortality charts built on it for a specified country, sex at birth, year of birth, latest data-available year and "compare to" country and sex at birth for the latest data-available year. Data source for these charts is <a href="https://www.mortality.org" target="_blank" title="Human Mortality Database">Human Mortality Database (HMD)</a>.',
-  'cau':  'This is a 89 years long "Causes of Deaths at age" chart built for specified country (Russia), sex (male) and year (2014). Is under everyday construction right now. Published for demo purposes.',
-  'cam':  'This is a 89 years long "Causes of Deaths at age" chart built under Mortality curve for specified country (Russia), sex (male) and year (2014). Is under everyday construction right now. Published for demo purposes.',
+  'cau':  'This is a 89 years long "Causes of Deaths at age" chart built for for specified country, sex at birth and latest data-available year. It is under everyday construction right now and published for demo purposes.',
+  'cam':  'This is a 89 years long "Causes of Deaths at age" chart shaped by Mortality curve for specified country, sex at birth and latest data-available year. It is under everyday construction right now and published for demo purposes.',
 }
 
 const values_texts = {
@@ -220,5 +220,5 @@ const values_texts = {
   'mc':   'Allows you to compare different countries and sexes &mdash; so you can see the difference in life expectancies in any combination: men with women in one country, women with women or men with men in different countries.',
   'all':  'Shows you how many weeks have already passed since your birthday and allows you to compare different countries and sexes &mdash; so you can see the difference in life expectancies in any combination: men with women in one country, women with women or men with men in different countries.',
   'cau':  'Shows you causes of deaths for the people of different sexes at different ages in different countries.',
-  'cam':  'Shows you causes of deaths to understand the actual volumes of deaths for the people of different sexes at different ages in different countries.'
+  'cam':  'Shows you causes of deaths to understand the actual volumes of causes of deaths for the people of different sexes at different ages in different countries.'
 }
