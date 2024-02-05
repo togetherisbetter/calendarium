@@ -617,7 +617,7 @@
           const horizontal = (value - 1) * calendar_step_horizontal + calendar_years_numbers_width + 10;
           points += horizontal + ',' + vertical + ' ';
         }
-        const last_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 1;
+        const last_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 0;
         const last_dot_y = get_calendar_height() - 90 * calendar_step_vertical - vertical_offset + 5;
         points += `${last_dot_x},${last_dot_y} `;
         return points;
@@ -653,7 +653,8 @@
         };
       }
 
-      function make_stacked_coordinates(max, array) {
+      function make_stacked_coordinates(array) {
+        const max = 100;
         let coordinates_dots = {};
         for (let i = 0; i < years.length; i++) {
           const year = years[i];
@@ -668,7 +669,8 @@
         return {'dots': coordinates_dots};
       }
 
-      function make_stacked_coordinates_inside_deaths(max, array) {
+      function make_stacked_coordinates_inside_deaths(array) {
+        const max = 100;
         const user_values = get_user_selected_parameters();
         const country_code = user_values.country_code;
         const sex = user_values.sex;
@@ -730,9 +732,9 @@
         let content = '';
         let coordinates = {};
         if (under_curve)
-          coordinates = make_stacked_coordinates_inside_deaths(100, data);
+          coordinates = make_stacked_coordinates_inside_deaths(data);
         else
-          coordinates = make_stacked_coordinates(100, data);
+          coordinates = make_stacked_coordinates(data);
         content += draw_stacked_polyline(coordinates.dots, stroke);
         return content;
       }
@@ -1107,7 +1109,7 @@
         let content = '';        
         for (let j = who_causes_groups.length - 1; j >= 0 ; j--) {
           let cause = get_data_for_something(who_stacked_coordinates, who_causes_groups[j]);
-          content += draw_stacked_line(cause, who_charts_colors[j]);
+          content += draw_stacked_line(cause, who_causes_colors[j]);
         }
 
         return content;
@@ -1119,7 +1121,7 @@
         let content = '';        
         for (let j = who_causes_groups.length - 1; j >= 0 ; j--) {
           let cause = get_data_for_something(who_stacked_coordinates, who_causes_groups[j]);
-          content += draw_stacked_line(cause, who_charts_colors[j], true);
+          content += draw_stacked_line(cause, who_causes_colors[j], true);
         }
 
         return content;
@@ -1453,6 +1455,17 @@
         return content;  
       }
 
+      function compose_legend_for_causes_of_deaths_colors() {
+        let content = '<li><b>Colors explanation</b>: <br>';
+        for (let i = 0; i < who_causes_groups.length; i++) {
+          const cause = who_causes_groups[i];
+          const cause_color = who_causes_colors[i];
+          content += `<span style="background: ${cause_color};">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> ${cause}<br>`;
+        }
+        content += '</li>';
+        return content;
+      }
+
       function compose_legend(user_values) {
         const data_skin = user_values['data_skin'];
         let legend = '<ul>';
@@ -1473,7 +1486,7 @@
         if (country_name != country_name_compare || sex != sex_to_compare)
           compare = true;
 
-        if (['cln', 'lft', 'mby', 'mbly', 'mc', 'all', ].includes(data_skin))
+        if (['cln', 'lft', 'mby', 'mbly', 'mc', 'all', 'cau-', 'cam-', ].includes(data_skin))
           legend += `<li><b>Each ring</b> &mdash; is a week;</li><li><b>Each line of rings</b> &mdash; is a year (52 weeks);</li>`;
         if (['lft', 'all', ].includes(data_skin))
           legend += `<li><b>Each filled circle</b> &mdash; is a passed week of life;</li>`;
@@ -1520,8 +1533,10 @@
           legend += `<li><b>${user_values.country_code.toUpperCase()}${year_of_birth}${user_values.sex.toUpperCase()}</b> in the top left corner &mdash; is a "smart legend" that means: ${country_name}, data for ${year_of_birth} year, ${sex};</li>`;
         if (['mc', ].includes(data_skin))
           legend += `<li><b>${user_values.country_code.toUpperCase()}${last_year_in_dataset_1}${user_values.sex.toUpperCase()}</b> in the top left corner &mdash; is a "smart legend" that means: ${country_name}, data for ${last_year_in_dataset_1} year, ${sex};</li>`;
-        if (['cau', 'cam'].includes(data_skin))
-          legend += `<li>Is under construction</li>`;
+        if (['cau', 'cam'].includes(data_skin)) {
+          legend += `<li><b>Left lines</b> &mdash; are "Causes of Deaths at age" distributions stacked and shaped by a Mortality curve for ${country_name}, ${sex} and ${last_year_in_dataset_1} latest data-available year;</li>`;
+          legend += compose_legend_for_causes_of_deaths_colors();
+        }
 
         legend += '</ul>';
         return legend;
@@ -1535,8 +1550,8 @@
         'mc': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
         //'all': [draw_calendar, ],
         'all': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
-        'cau': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_causes_of_deaths, draw_datasources, ],
-        'cam': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_causes_of_deaths_under_mortality_curve, draw_datasources, ],
+        'cau': [draw_weeks_numbers, draw_ages_numbers, draw_circles, draw_causes_of_deaths, draw_datasources, ],
+        'cam': [draw_weeks_numbers, draw_ages_numbers, draw_circles, draw_causes_of_deaths_under_mortality_curve, draw_datasources, ],
         'cau2': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_new_year_dots, draw_causes_of_deaths, draw_mortality_for_latest_year_user_values, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_labels_percentiles, draw_datasources, ],
         //'mortality': [circles, draw_mortality_lines, ],
         //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
