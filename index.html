@@ -603,22 +603,30 @@
         return points;
       }
 
-      function stacked_coordinates_to_svg_pair_points(coordinates) {
+      function stacked_coordinates_to_svg_pair_points(coordinates, scale_y, shift_y) {
+        if (!scale_y)
+          scale_y = 1;
+        if (!shift_y)
+          shift_y = 0;
+
         let vertical_offset = calendar_weeks_numbers_height + 0;
         if (bad_mobile)  // idk why on mobiles is calculated differently
           vertical_offset -= 10;
 
-        const first_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 1;
-        const first_dot_y = get_calendar_height() - 1 * calendar_step_vertical - vertical_offset + 5;
+        const horizontal_offset = get_calendar_width() * shift_y;
+        const calendar_height = get_calendar_height();
+
+        const first_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 0 + horizontal_offset;
+        const first_dot_y = calendar_height - 1 * calendar_step_vertical - vertical_offset + 5;
         let points = `${first_dot_x},${first_dot_y} `;
         for (let key in coordinates) {
           const value = coordinates[key];
-          const vertical = get_calendar_height() - (key - 1) * calendar_step_vertical - vertical_offset;
-          const horizontal = (value - 1) * calendar_step_horizontal + calendar_years_numbers_width + 10;
+          const vertical = calendar_height - (key - 1) * calendar_step_vertical - vertical_offset;
+          const horizontal = scale_y * (value * calendar_step_horizontal) + calendar_years_numbers_width + 5 + horizontal_offset;
           points += horizontal + ',' + vertical + ' ';
         }
-        const last_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 0;
-        const last_dot_y = get_calendar_height() - 90 * calendar_step_vertical - vertical_offset + 5;
+        const last_dot_x = 1 * calendar_step_horizontal + calendar_years_numbers_width + 0 + horizontal_offset;
+        const last_dot_y = calendar_height - 89 * calendar_step_vertical - vertical_offset + 0;
         points += `${last_dot_x},${last_dot_y} `;
         return points;
       }
@@ -700,9 +708,9 @@
         return content;
       }
 
-      function draw_stacked_polyline(coordinates, stroke) {
+      function draw_stacked_polyline(coordinates, stroke, scale_y, shift_y) {
         let content = `<polyline opacity="1" fill="${stroke}" stroke-linejoin="round" points="`;
-        content += stacked_coordinates_to_svg_pair_points(coordinates);
+        content += stacked_coordinates_to_svg_pair_points(coordinates, scale_y, shift_y);
         content += '"/>';
 
         return content;
@@ -727,7 +735,7 @@
 
         return content;
       }
-      function draw_stacked_line(data, stroke, draw_under_mortality, draw_in_comparison_mode) {
+      function draw_stacked_line(data, stroke, draw_under_mortality, scale_y, shift_y) {
         let content = '';
         let coordinates = {};
 
@@ -735,7 +743,7 @@
           coordinates = make_stacked_coordinates_inside_deaths(data);
         else
           coordinates = make_stacked_coordinates(data);
-        content += draw_stacked_polyline(coordinates.dots, stroke);
+        content += draw_stacked_polyline(coordinates.dots, stroke, scale_y, shift_y);
         return content;
       }
 
@@ -1103,28 +1111,28 @@
         return content;
       }
 
-      async function smth(country_code, sex, year, draw_under_mortality, draw_in_comparison_mode) {
+      async function draw_stacked_chart(country_code, sex, year, draw_under_mortality, scale_y, shift_y) {
         await who_get(country_code, sex, year);
         
         let content = '';        
         for (let j = who_causes_groups.length - 1; j >= 0 ; j--) {
           let cause = get_data_for_cause(who_stacked_coordinates, who_causes_groups[j]);
-          content += draw_stacked_line(cause, who_causes_colors[j], draw_under_mortality, draw_in_comparison_mode);
+          content += draw_stacked_line(cause, who_causes_colors[j], draw_under_mortality, scale_y, shift_y);
         }
 
         return content;
       }
 
-      async function draw_causes_of_deaths(uv, draw_under_mortality, draw_in_comparison_mode) {
-        return smth(uv.country_code, uv.sex, last_year_in_dataset_1, draw_under_mortality, draw_in_comparison_mode);
+      async function draw_causes_of_deaths(uv) {
+        return draw_stacked_chart(uv.country_code, uv.sex, last_year_in_dataset_1);
       }
 
       async function draw_causes_of_deaths_under_mortality_curve(uv) {
-        return smth(uv.country_code, uv.sex, last_year_in_dataset_1, true);
+        return draw_stacked_chart(uv.country_code, uv.sex, last_year_in_dataset_1, true);
       }
 
       async function draw_causes_of_deaths_compare(uv) {
-        return smth(uv.country_code, uv.sex, last_year_in_dataset_1, true, true);
+        return draw_stacked_chart(uv.country_code, uv.sex, last_year_in_dataset_1, true, 0.5, 0.5);
       }
 
       function get_parameters_from_url() {
