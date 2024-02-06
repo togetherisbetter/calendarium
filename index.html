@@ -663,7 +663,8 @@
           const value = array[i];
           let value_mapped_on_weeks = (value / max) * number_of_weeks_in_a_row;
           if (!value_mapped_on_weeks)
-            value_mapped_on_weeks = (array[i-1] / max) * number_of_weeks_in_a_row;
+            value_mapped_on_weeks = (array[i - 1] / max) * number_of_weeks_in_a_row;
+
           coordinates_dots[year] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
         }        
         return {'dots': coordinates_dots};
@@ -671,25 +672,23 @@
 
       function make_stacked_coordinates_inside_deaths(array) {
         const max = 100;
-        const user_values = get_user_selected_parameters();
-        const country_code = user_values.country_code;
-        const sex = user_values.sex;
+        const uv = get_user_selected_parameters();
 
         let coordinates_dots = {};
-        let max2 = get_peak_value(data_dx[country_code][sex][last_year_in_dataset_1]).value;
+        let max2 = get_peak_value(data_dx[uv.country_code][uv.sex][last_year_in_dataset_1]).value;
         for (let i = 0; i < years.length; i++) {
           const year = years[i];
           const value = array[i];
-          let val = data_dx[country_code][sex][last_year_in_dataset_1][year - 1];
+          let val = data_dx[uv.country_code][uv.sex][last_year_in_dataset_1][year - 1];
           //let coeff = val * 0.7 / max2;
           let coeff = val / max2;
           let value_mapped_on_weeks = coeff * (value / max) * number_of_weeks_in_a_row;
           if (!value_mapped_on_weeks)
-            value_mapped_on_weeks = coeff * (array[i-1] / max) * number_of_weeks_in_a_row;
+            value_mapped_on_weeks = coeff * (array[i - 1] / max) * number_of_weeks_in_a_row;
           
           coordinates_dots[year] = value_mapped_on_weeks;  // +1 because year in data starts with 0, on chart with 1
         }
-        
+
         return {'dots': coordinates_dots};
       }
 
@@ -728,11 +727,11 @@
 
         return content;
       }
-      function draw_stacked_line(data, stroke, under_curve) {
+      function draw_stacked_line(data, stroke, draw_under_mortality, draw_in_comparison_mode) {
         let content = '';
         let coordinates = {};
 
-        if (under_curve)
+        if (draw_under_mortality)
           coordinates = make_stacked_coordinates_inside_deaths(data);
         else
           coordinates = make_stacked_coordinates(data);
@@ -1104,30 +1103,28 @@
         return content;
       }
 
-      async function draw_causes_of_deaths(user_values, draw_under_mortality) {
-        const sex = user_values.sex;
-        let year = last_year_in_dataset_1;
-        if (year > 2019)
-          year = 2019;
-        const country = supported_countries[user_values.country_code].who_country_code;
-
-        await who_get(country, sex, year);
+      async function smth(country_code, sex, year, draw_under_mortality, draw_in_comparison_mode) {
+        await who_get(country_code, sex, year);
         
         let content = '';        
         for (let j = who_causes_groups.length - 1; j >= 0 ; j--) {
-          let cause = get_data_for_something(who_stacked_coordinates, who_causes_groups[j]);
-          content += draw_stacked_line(cause, who_causes_colors[j], draw_under_mortality);
+          let cause = get_data_for_cause(who_stacked_coordinates, who_causes_groups[j]);
+          content += draw_stacked_line(cause, who_causes_colors[j], draw_under_mortality, draw_in_comparison_mode);
         }
 
         return content;
       }
 
-      async function draw_causes_of_deaths_under_mortality_curve(user_values) {
-        return draw_causes_of_deaths(user_values, true);
+      async function draw_causes_of_deaths(uv, draw_under_mortality, draw_in_comparison_mode) {
+        return smth(uv.country_code, uv.sex, last_year_in_dataset_1, draw_under_mortality, draw_in_comparison_mode);
       }
 
-      async function draw_causes_of_deaths_compare() {
-        ;
+      async function draw_causes_of_deaths_under_mortality_curve(uv) {
+        return smth(uv.country_code, uv.sex, last_year_in_dataset_1, true);
+      }
+
+      async function draw_causes_of_deaths_compare(uv) {
+        return smth(uv.country_code, uv.sex, last_year_in_dataset_1, true, true);
       }
 
       function get_parameters_from_url() {
@@ -1279,17 +1276,21 @@
         return stacked_coordinates;
       }
 
-      function get_data_for_something(stacked_coordinates, something) {
+      function get_data_for_cause(stacked_coordinates, cause) {
         let data = [];
         for (let i = 0; i < number_of_years; i++) {
           if (!stacked_coordinates[i])
             break;
-          data.push(stacked_coordinates[i][something]);
+          data.push(stacked_coordinates[i][cause]);
         }
         return data;
       }
 
-      function who_get(country, sex, year) {
+      function who_get(country_code, sex, year) {
+        if (year > 2019)
+          year = 2019;
+        const country = supported_countries[country_code].who_country_code;
+
         const who_url = `https://frontdoor-l4uikgap6gz3m.azurefd.net/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DEATHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DEATHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DEATHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq '${country}' and DIM_SEX_CODE eq '${who_sexes_map[sex]}' and DIM_YEAR_CODE eq '${year}'`;
 
         return fetch(who_url)
