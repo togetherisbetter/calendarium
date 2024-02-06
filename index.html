@@ -807,7 +807,7 @@
         const birthday_date = new Date(date);
 
         let fill_ranges = [
-          {"fill": "white"},
+          {"fill": "transparent"},
         ];
 
         const fill_ranges_transformed = transform_fill_ranges_to_coordinates(fill_ranges, birthday_date);
@@ -1553,8 +1553,8 @@
         'mc': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
         //'all': [draw_calendar, ],
         'all': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
-        'cau': [draw_weeks_numbers, draw_ages_numbers, draw_circles, draw_causes_of_deaths, draw_datasources, ],
-        'cam': [draw_weeks_numbers, draw_ages_numbers, draw_circles, draw_causes_of_deaths_under_mortality_curve, draw_datasources, ],
+        'cau': [draw_weeks_numbers, draw_ages_numbers, draw_causes_of_deaths, draw_circles, draw_datasources, ],
+        'cam': [draw_weeks_numbers, draw_ages_numbers, draw_causes_of_deaths_under_mortality_curve, draw_circles, draw_datasources, ],
         'cau2': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_new_year_dots, draw_causes_of_deaths, draw_mortality_for_latest_year_user_values, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_labels_percentiles, draw_datasources, ],
         //'mortality': [circles, draw_mortality_lines, ],
         //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
