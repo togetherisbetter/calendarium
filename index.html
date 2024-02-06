@@ -731,6 +731,7 @@
       function draw_stacked_line(data, stroke, under_curve) {
         let content = '';
         let coordinates = {};
+
         if (under_curve)
           coordinates = make_stacked_coordinates_inside_deaths(data);
         else
@@ -1103,28 +1104,30 @@
         return content;
       }
 
-      async function draw_causes_of_deaths() {
-        await who_get();
+      async function draw_causes_of_deaths(user_values, draw_under_mortality) {
+        const sex = user_values.sex;
+        let year = last_year_in_dataset_1;
+        if (year > 2019)
+          year = 2019;
+        const country = supported_countries[user_values.country_code].who_country_code;
+
+        await who_get(country, sex, year);
         
         let content = '';        
         for (let j = who_causes_groups.length - 1; j >= 0 ; j--) {
           let cause = get_data_for_something(who_stacked_coordinates, who_causes_groups[j]);
-          content += draw_stacked_line(cause, who_causes_colors[j]);
+          content += draw_stacked_line(cause, who_causes_colors[j], draw_under_mortality);
         }
 
         return content;
       }
 
-      async function draw_causes_of_deaths_under_mortality_curve() {
-        await who_get();
-        
-        let content = '';        
-        for (let j = who_causes_groups.length - 1; j >= 0 ; j--) {
-          let cause = get_data_for_something(who_stacked_coordinates, who_causes_groups[j]);
-          content += draw_stacked_line(cause, who_causes_colors[j], true);
-        }
+      async function draw_causes_of_deaths_under_mortality_curve(user_values) {
+        return draw_causes_of_deaths(user_values, true);
+      }
 
-        return content;
+      async function draw_causes_of_deaths_compare() {
+        ;
       }
 
       function get_parameters_from_url() {
@@ -1286,14 +1289,7 @@
         return data;
       }
 
-      function who_get() {
-        const user_values = get_user_selected_parameters();
-        const sex = user_values.sex;
-        let year = last_year_in_dataset_1;
-        if (year > 2019)
-          year = 2019;
-        const country = supported_countries[user_values.country_code].who_country_code;
-
+      function who_get(country, sex, year) {
         const who_url = `https://frontdoor-l4uikgap6gz3m.azurefd.net/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DEATHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DEATHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DEATHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq '${country}' and DIM_SEX_CODE eq '${who_sexes_map[sex]}' and DIM_YEAR_CODE eq '${year}'`;
 
         return fetch(who_url)
@@ -1556,8 +1552,8 @@
         //'all': [draw_calendar, ],
         'all': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
         'cau': [draw_ages_numbers, draw_causes_of_deaths, draw_datasources, ],
-        'cam': [draw_weeks_numbers, draw_ages_numbers, draw_causes_of_deaths_under_mortality_curve, draw_circles, draw_datasources, ],
-        'cau2': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_new_year_dots, draw_causes_of_deaths, draw_mortality_for_latest_year_user_values, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_labels_percentiles, draw_datasources, ],
+        'cam': [draw_ages_numbers, draw_causes_of_deaths_under_mortality_curve, draw_circles, draw_datasources, ],
+        'cc': [draw_ages_numbers, draw_causes_of_deaths_compare, draw_circles, draw_datasources, ],
         //'mortality': [circles, draw_mortality_lines, ],
         //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
         //'causes': [draw_causes_lines, circles, ],
