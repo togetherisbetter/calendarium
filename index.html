@@ -1536,10 +1536,12 @@
           legend += `<li><b>${user_values.country_code.toUpperCase()}${year_of_birth}${user_values.sex.toUpperCase()}</b> in the top left corner &mdash; is a "smart legend" that means: ${country_name}, data for ${year_of_birth} year, ${sex};</li>`;
         if (['mc', ].includes(data_skin))
           legend += `<li><b>${user_values.country_code.toUpperCase()}${last_year_in_dataset_1}${user_values.sex.toUpperCase()}</b> in the top left corner &mdash; is a "smart legend" that means: ${country_name}, data for ${last_year_in_dataset_1} year, ${sex};</li>`;
-        if (['cau', 'cam'].includes(data_skin)) {
-          legend += `<li><b>Left lines</b> &mdash; are "Causes of Deaths at age" distributions stacked and shaped by a Mortality curve for ${country_name}, ${sex} and ${last_year_in_dataset_1} latest data-available year;</li>`;
+        if (['cau', ].includes(data_skin))
+          legend += `<li><b>Lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
+        if (['cam', ].includes(data_skin))
+          legend += `<li><b>Lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality curve" for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
+        if (['cau', 'cam'].includes(data_skin))
           legend += compose_legend_for_causes_of_deaths_colors();
-        }
 
         legend += '</ul>';
         return legend;
@@ -1553,7 +1555,7 @@
         'mc': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
         //'all': [draw_calendar, ],
         'all': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
-        'cau': [draw_weeks_numbers, draw_ages_numbers, draw_causes_of_deaths, draw_circles, draw_datasources, ],
+        'cau': [draw_ages_numbers, draw_causes_of_deaths, draw_datasources, ],
         'cam': [draw_weeks_numbers, draw_ages_numbers, draw_causes_of_deaths_under_mortality_curve, draw_circles, draw_datasources, ],
         'cau2': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_new_year_dots, draw_causes_of_deaths, draw_mortality_for_latest_year_user_values, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_labels_percentiles, draw_datasources, ],
         //'mortality': [circles, draw_mortality_lines, ],
