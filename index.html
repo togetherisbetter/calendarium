@@ -779,7 +779,7 @@
       }
 
       function draw_datasources() {
-        if (bad_mobile) // idk why it works so ugly with links, so removed links for iOS 14
+        if (bad_mobile) // idk why it works so ugly with links, so removed links for iOS <= 15
           return `<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="5" font-weight="normal">Data sources: HMD, WHO</text>`;
         else
           return `<text font-size="3" fill="black" font-family="Verdana" text-anchor="end" alignment-baseline="baseline" x="276" y="5" font-weight="normal">Data sources: <a xlink:href="https://mortality.org" xlink:title="HMD website" xlink:show="new">HMD</a>, <a xlink:href="https://www.who.int/data/gho/data/themes/mortality-and-global-health-estimates/ghe-leading-causes-of-death" xlink:title="WHO GHO website" xlink:show="new">WHO</a></text>`;
@@ -1785,7 +1785,7 @@
                 <option value="mby">Mortality for a birth year</option>
                 <option value="mbly" selected>Mortality for a birth vs. latest years</option>
                 <option value="mc">Compare mortality for countries & sexes</option>
-                <option value="all">All above together</option>
+                <option value="all">All of above together</option>
                 <option value="cau">Causes of deaths</option>
                 <option value="cam">Causes of deaths under Mortality curve</option>
               </select>
