@@ -617,11 +617,11 @@
 
         const calendar_height = get_calendar_height();
         const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal;
-        const horizontal_offset = calendar_width * shift_y + 22;
+        const horizontal_offset = calendar_width * shift_y + calendar_width_offset + circle_radius;
 
         let first_dot_x = horizontal_offset - 4;
         if (flip)
-          first_dot_x = calendar_width * scale_y + 22 - 5;
+          first_dot_x = calendar_width * scale_y + calendar_width_offset + circle_radius - 5;
         const first_dot_y = calendar_height - 1 * calendar_step_vertical - vertical_offset + 5;
         let points = `${first_dot_x},${first_dot_y} `;
         for (let key in coordinates) {
