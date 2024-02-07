@@ -611,31 +611,29 @@
         if (!flip)
           flip = false;
 
-        let vertical_offset = calendar_weeks_numbers_height + 0;
+        let vertical_offset = calendar_weeks_numbers_height;
         if (bad_mobile)  // idk why on mobiles is calculated differently
           vertical_offset -= 10;
 
         const calendar_height = get_calendar_height();
-        const calendar_width = get_calendar_width();
-        const horizontal_offset = calendar_width * shift_y;
+        const calendar_width = number_of_weeks_in_a_row * calendar_step_horizontal;
+        const horizontal_offset = calendar_width * shift_y + 22;
 
-        let first_dot_x = calendar_years_numbers_width + horizontal_offset - 4;
+        let first_dot_x = horizontal_offset - 4;
         if (flip)
-          first_dot_x = calendar_width * scale_y + calendar_years_numbers_width - 5;
+          first_dot_x = calendar_width * scale_y + 22 - 5;
         const first_dot_y = calendar_height - 1 * calendar_step_vertical - vertical_offset + 5;
         let points = `${first_dot_x},${first_dot_y} `;
         for (let key in coordinates) {
           const value = coordinates[key];
           const vertical = calendar_height - (key - 1) * calendar_step_vertical - vertical_offset;
-          let horizontal = scale_y * value * calendar_step_horizontal + calendar_years_numbers_width + horizontal_offset - 4;
+          let horizontal = scale_y * value * calendar_step_horizontal + horizontal_offset - 4;
           if (flip)
-            horizontal = calendar_width * scale_y - (scale_y * value * calendar_step_horizontal) + calendar_years_numbers_width - 5 + horizontal_offset;
+            horizontal = calendar_width / 2 - (scale_y * value * calendar_step_horizontal) - 5 + horizontal_offset;
           points += horizontal + ',' + vertical + ' ';
         }
-        let last_dot_x = calendar_years_numbers_width + horizontal_offset - 4;
-        if (flip)
-          last_dot_x = calendar_width * scale_y + calendar_years_numbers_width - 5;
-        const last_dot_y = calendar_height - 89 * calendar_step_vertical - vertical_offset + 0;
+        let last_dot_x = first_dot_x;
+        const last_dot_y = calendar_height - 89 * calendar_step_vertical - vertical_offset;
         points += `${last_dot_x},${last_dot_y} `;
         return points;
       }
@@ -1517,6 +1515,7 @@
         if (country_name != country_name_compare || sex != sex_to_compare)
           compare = true;
 
+        // Circles
         if (['cln', 'lft', 'mby', 'mbly', 'mc', 'all', ].includes(data_skin))
           legend += `<li><b>Each ring</b> &mdash; is a week;</li><li><b>Each line of rings</b> &mdash; is a year (52 weeks);</li>`;
         if (['lft', 'all', ].includes(data_skin))
@@ -1525,6 +1524,8 @@
           legend += `<li><b>Blinking circle</b> &mdash; is a current week;</li>`;
         if (['lft', 'mby', 'mbly', 'mc', 'all', ].includes(data_skin))
           legend += `<li><b>Dot in a ring / circle</b> &mdash; is a New Year week;</li>`;
+
+        // Lines
         if (['mby'].includes(data_skin))
           legend += `<li><b>Left line</b> &mdash; is a "Deaths at age" distribution for ${country_name}, ${sex} in ${year_of_birth};</li><li><b>Right line (and digits)</b> &mdash; is a "Chance to die at age" distribution for ${country_name}, ${sex} in ${year_of_birth};</li>`;
         if (['mbly', ].includes(data_skin))
@@ -1539,6 +1540,16 @@
             legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${country_name}, ${sex} in ${year_of_birth} and ${last_year_in_dataset_1} and ${country_name_compare}, ${sex_to_compare} in ${last_year_in_dataset_2};</li><li><b>Right lines (and digits)</b> &mdash; are "Chance to die at age" distributions for the same dataset: ${country_name}, ${sex} in ${year_of_birth} and ${last_year_in_dataset_1} and ${country_name_compare}, ${sex_to_compare} in ${last_year_in_dataset_2};</li>`;
           else
             legend += `<li><b>Left lines</b> &mdash; are "Deaths at age" distributions for ${country_name}, ${sex} in ${year_of_birth} and ${last_year_in_dataset_1};</li><li><b>Right lines (and digits)</b> &mdash; are "Chance to die at age" distributions for the same dataset: ${country_name}, ${sex} in ${year_of_birth} and ${last_year_in_dataset_1};</li>`;
+        if (['cau', ].includes(data_skin))
+          legend += `<li><b>Lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
+        if (['cam', ].includes(data_skin))
+          legend += `<li><b>Lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality curve" for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
+        if (['cc', ].includes(data_skin)) {
+          legend += `<li><b>Left half lines (flipped chart)</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality curve" for ${country_name_compare}, ${sex_to_compare}, ${last_year_in_dataset_2} (latest data-available year);</li>`;
+          legend += `<li><b>Right half lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality curve" for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
+        }
+
+        // Digits and lines
         if (['mbly', 'all', ].includes(data_skin))
           legend += `<li><b>Black bold (solid) lines and digits</b> &mdash; is the data for ${country_name}, ${year_of_birth}, ${sex};</li>`;
         if (['mbly', 'mc', 'all', ].includes(data_skin))
@@ -1546,6 +1557,8 @@
         if (compare)
           if (['mc', 'all', ].includes(data_skin))
             legend += `<li><span style="color: gray;">Gray thin (dashed) lines and digits</span> &mdash; is for ${country_name_compare}, ${last_year_in_dataset_2}, ${sex_to_compare};</li>`;
+
+        // Percentiles
         if (['mby', ].includes(data_skin))
           legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" chart: how many ${sex} (of all died ${sex} in ${country_name} in ${year_of_birth}) have died by that age;</li>`;
         if (['mbly', ].includes(data_skin))
@@ -1560,18 +1573,14 @@
             legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many (of all died ${sex} in ${country_name} in ${year_of_birth} and in ${last_year_in_dataset_1} and ${sex_to_compare} in ${country_name_compare} in ${last_year_in_dataset_2}) have died by that age;</li>`;
           else
             legend += `<li><b>50%, 80%, 90%</b> on the left &mdash; are integrals for "Deaths at age" charts: how many (of all died ${sex} in ${country_name} in ${year_of_birth} and in ${last_year_in_dataset_1}) have died by that age;</li>`;
+
+        // Smart legend
         if (['mby', 'mbly', 'all', ].includes(data_skin))
           legend += `<li><b>${user_values.country_code.toUpperCase()}${year_of_birth}${user_values.sex.toUpperCase()}</b> in the top left corner &mdash; is a "smart legend" that means: ${country_name}, data for ${year_of_birth} year, ${sex};</li>`;
         if (['mc', ].includes(data_skin))
           legend += `<li><b>${user_values.country_code.toUpperCase()}${last_year_in_dataset_1}${user_values.sex.toUpperCase()}</b> in the top left corner &mdash; is a "smart legend" that means: ${country_name}, data for ${last_year_in_dataset_1} year, ${sex};</li>`;
-        if (['cau', ].includes(data_skin))
-          legend += `<li><b>Lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
-        if (['cam', ].includes(data_skin))
-          legend += `<li><b>Lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality curve" for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
-        if (['cc', ].includes(data_skin)) {
-          legend += `<li><b>Left half lines (flipped chart)</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality curve" for ${country_name_compare}, ${sex_to_compare}, ${last_year_in_dataset_2} (latest data-available year);</li>`;
-          legend += `<li><b>Right half lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality curve" for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
-        }
+
+        // Causes colors
         if (['cau', 'cam', 'cc'].includes(data_skin))
           legend += compose_legend_for_causes_of_deaths_colors();
 
@@ -1585,18 +1594,10 @@
         'mby': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
         'mbly': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
         'mc': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
-        //'all': [draw_calendar, ],
         'all': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
-        'cau': [draw_ages_numbers, draw_causes_of_deaths, draw_datasources, ],
+        'cau': [draw_ages_numbers, draw_causes_of_deaths, draw_datasources, draw_circles, ],
         'cam': [draw_ages_numbers, draw_causes_of_deaths_under_mortality_curve, draw_circles, draw_datasources, ],
         'cc': [draw_ages_numbers, draw_causes_of_deaths_compare, draw_circles, draw_datasources, ],
-        //'mortality': [circles, draw_mortality_lines, ],
-        //'lifetime+mortality': [circles, fill_lifetime_circles, draw_mortality_lines, ],
-        //'causes': [draw_causes_lines, circles, ],
-        //'causes+lifetime': [draw_causes_lines, circles, fill_lifetime_circles, ],
-        //'causes+lifetime+mortality': [draw_causes_lines, circles, fill_lifetime_circles, draw_mortality_lines, ],
-        //'causes+fit+mortality': [draw_causes_lines_fit_mortality, circles, fill_lifetime_circles, draw_mortality_lines, ],
-        //'causes+fit+lifetime': [draw_causes_lines_fit_mortality, circles, fill_lifetime_circles, ],
       };
 
       function adjust_calendar_offsets_for_data_skin(data_skin) {
@@ -1656,7 +1657,7 @@
           enable_controls = available_controls;
         else if (data_skin == 'lft')
           enable_controls.push('birthday')
-        else if (['mby', 'mbly', 'cau-', 'cam-'].includes(data_skin))
+        else if (['mby', 'mbly', ].includes(data_skin))
           enable_controls = ['sex', 'birthday', 'country_code'];
         else if (['cau', 'cam'].includes(data_skin))
           enable_controls = ['sex', 'country_code'];
