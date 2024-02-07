@@ -1517,7 +1517,7 @@
         if (country_name != country_name_compare || sex != sex_to_compare)
           compare = true;
 
-        if (['cln', 'lft', 'mby', 'mbly', 'mc', 'all', 'cau-', 'cam-', ].includes(data_skin))
+        if (['cln', 'lft', 'mby', 'mbly', 'mc', 'all', ].includes(data_skin))
           legend += `<li><b>Each ring</b> &mdash; is a week;</li><li><b>Each line of rings</b> &mdash; is a year (52 weeks);</li>`;
         if (['lft', 'all', ].includes(data_skin))
           legend += `<li><b>Each filled circle</b> &mdash; is a passed week of life;</li>`;
@@ -1568,6 +1568,10 @@
           legend += `<li><b>Lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
         if (['cam', ].includes(data_skin))
           legend += `<li><b>Lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality curve" for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
+        if (['cc', ].includes(data_skin)) {
+          legend += `<li><b>Left half lines (flipped chart)</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality curve" for ${country_name_compare}, ${sex_to_compare}, ${last_year_in_dataset_2} (latest data-available year);</li>`;
+          legend += `<li><b>Right half lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality curve" for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
+        }
         if (['cau', 'cam', 'cc'].includes(data_skin))
           legend += compose_legend_for_causes_of_deaths_colors();
 
