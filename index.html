@@ -1644,6 +1644,16 @@
           country_code_label = 'Country (with data-available years):';
 
         document.getElementById('country_code_label').innerHTML = country_code_label;
+
+        let country_code_latest_label = 'Country mostly lived in during last years<br> or plan to relocate for a living:';
+        if (['cc'].includes(data_skin)) {
+          country_code_latest_label = 'Country to compare with:';
+          document.getElementById('country_code_latest').classList.remove("xl_country_code");
+        }
+        else
+          document.getElementById('country_code_latest').classList.add("xl_country_code");
+
+        document.getElementById('country_code_latest_label').innerHTML = country_code_latest_label;
       }
 
       function adjust_calendar_controls_for_data_skin(data_skin) {
@@ -1843,7 +1853,7 @@
             </div>
 
             <div id="wrapper_country_code_latest" class="form-floating controls_wrapper">
-              <label>Country mostly lived in during last years<br> or plan to relocate for a living:</label>
+              <label id="country_code_latest_label">Country mostly lived in during last years<br> or plan to relocate for a living:</label>
               <select id="country_code_latest" onchange="redraw_calendar();" class="form-control form-select form-select-sm xl_country_code"></select>
             </div>
 
