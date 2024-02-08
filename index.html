@@ -819,7 +819,7 @@
         if (innerHeight > innerWidth)  // if portrait, optimize by width in aspect ratio
           return (((innerWidth * ratio_current_svg_canvas) * 100) / innerHeight) + '%';
         else  // otherwise optimize by screen height, but 1.5 to zoom
-          return innerHeight * 1.05 - 30 + 'px';
+          return innerHeight * 1.6 - 30 + 'px';
       }
 
       async function draw_circles(user_values) {
