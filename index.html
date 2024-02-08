@@ -690,11 +690,10 @@
         const uv = get_user_selected_parameters();
 
         let coordinates_dots = {};
-        let max2;
-        if (is_compare)
-          max2 = get_peak_value(data_dx[uv.country_code_latest][uv.sex_to_compare][last_year_in_dataset_2]).value;
-        else
-          max2 = get_peak_value(data_dx[uv.country_code][uv.sex][last_year_in_dataset_1]).value;
+        let max2 = get_peak_value(data_all["dx"]).value;
+        if (max2 < 100)
+          max2 = 100;
+        
         for (let i = 0; i < years.length; i++) {
           const year = years[i];
           const value = array[i];
@@ -820,7 +819,7 @@
         if (innerHeight > innerWidth)  // if portrait, optimize by width in aspect ratio
           return (((innerWidth * ratio_current_svg_canvas) * 100) / innerHeight) + '%';
         else  // otherwise optimize by screen height, but 1.5 to zoom
-          return innerHeight * 1.6 - 30 + 'px';
+          return innerHeight * 1.05 - 30 + 'px';
       }
 
       async function draw_circles(user_values) {
@@ -1860,14 +1859,14 @@
               <h4>Legend</h4>
               <div id="legend_text"></div>
               
-              <h4>What is this</h4>
-              <div id="explanation_text"></div>
+              <h4 style="display: none;">What is this</h4>
+              <div id="explanation_text" style="display: none;"></div>
               
-              <h4>Value of this data-skin</h4>
-              <div id="value_text"></div>
+              <h4 style="display: none;">Value of this data-skin</h4>
+              <div id="value_text" style="display: none;"></div>
 
-              <h4>Download</h4>
-              <div id="download_as_pdf" style="margin-bottom: 25px;">
+              <h4 style="display: none;">Download</h4>
+              <div id="download_as_pdf"  style="display: none;">
                 <p>Download this calendar as an optimized for printing PDF file and print it any size.</p><p>Printed version of the calendar also has a <b>QR&#8209;code</b> &mdash; so you can visit an online version of the calendar with it's all latest updates and data-skins right from the wall at any time of your life.</p>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadAsPDF">Download as PDF</button>
               </div>
