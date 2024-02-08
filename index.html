@@ -1542,10 +1542,10 @@
         if (['cau', ].includes(data_skin))
           legend += `<li><b>Lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
         if (['cam', ].includes(data_skin))
-          legend += `<li><b>Lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality curve" for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
+          legend += `<li><b>Lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality at age" curve for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
         if (['cc', ].includes(data_skin)) {
-          legend += `<li><b>Left half lines (flipped chart)</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality curve" for ${country_name_compare}, ${sex_to_compare}, ${last_year_in_dataset_2} (latest data-available year);</li>`;
-          legend += `<li><b>Right half lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality curve" for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
+          legend += `<li><b>Left half lines (flipped chart)</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality at age" curve for ${country_name_compare}, ${sex_to_compare}, ${last_year_in_dataset_2} (latest data-available year);</li>`;
+          legend += `<li><b>Right half lines</b> &mdash; are "Causes of Deaths at age" stacked and normalized distribution shaped by a "Mortality at age" curve for ${country_name}, ${sex}, ${last_year_in_dataset_1} (latest data-available year);</li>`;
         }
 
         // Digits and lines
