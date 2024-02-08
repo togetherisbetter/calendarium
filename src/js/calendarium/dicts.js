@@ -37,7 +37,7 @@ const supported_countries = {
   'tw': {'country_name': 'Taiwan', 'data_years_from': '1970', 'data_years_to': '2021', 'who_country_code': 'CHN'}, // no WHO code for TW, using China
   'ua': {'country_name': 'Ukraine', 'data_years_from': '1959', 'data_years_to': '2013', 'who_country_code': 'UKR'},
   'uk': {'country_name': 'United Kingdom', 'data_years_from': '1922', 'data_years_to': '2021', 'who_country_code': 'GBR'},
-  'us': {'country_name': 'United States ', 'data_years_from': '1933', 'data_years_to': '2021', 'who_country_code': 'USA'},
+  'us': {'country_name': 'United States', 'data_years_from': '1933', 'data_years_to': '2021', 'who_country_code': 'USA'},
 };
 
 const who_map_age_to_groups = {
