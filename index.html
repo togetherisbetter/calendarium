@@ -178,7 +178,7 @@
       const bad_mobile = is_bad_mobile();//is_iOS();//window.mobileCheck();
       const is_mobile = window.mobileCheck();
 
-      const circle_radius = 2;
+      const circle_radius = 3.5/2;
       const number_of_weeks_in_a_row = 52;
       let number_of_years = 101;
       const calendar_step_horizontal = 5;
@@ -827,6 +827,7 @@
 
         const date = user_values['birthday'];
         const birthday_date = new Date(date);
+        const age = get_age(birthday_date);
 
         let fill_ranges = [
           {"fill": "transparent"},
@@ -843,7 +844,9 @@
           let cy = y_offset - circle_radius;
           for (let week = 1; week <= number_of_weeks_in_a_row; week++) {
             let cx = (week + 1) * calendar_step_horizontal + calendar_years_numbers_width - circle_radius;
-            const rect_width = 3.5;
+            let rect_width = 0//2 * circle_radius; //3.5;
+            if (year == age)
+              rect_width = 0.5;
             const cx3 = cx - rect_width / 2;
             const cy3 = cy - rect_width / 2;
             content += `<rect x="${cx3}" y="${cy3}" width="${rect_width}" height="${rect_width}" rx="20"`;
@@ -1596,7 +1599,8 @@
         'all': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
         'cau': [draw_ages_numbers, draw_causes_of_deaths, draw_datasources, draw_circles, ],
         'cam': [draw_ages_numbers, draw_causes_of_deaths_under_mortality_curve, draw_circles, draw_datasources, ],
-        'cc': [draw_ages_numbers, draw_causes_of_deaths_compare, draw_circles, draw_datasources, ],
+        //'cc': [draw_ages_numbers, draw_causes_of_deaths_compare, draw_circles, draw_datasources, ],
+        'cc': [ draw_circles, draw_causes_of_deaths_compare, ],
       };
 
       function adjust_calendar_offsets_for_data_skin(data_skin) {
