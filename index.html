@@ -1265,6 +1265,21 @@
         document.getElementById('country_code_latest').value = browser_country;
       }
 
+      function make_who_map_causes_groups_to_causes() {
+        let who_map_causes_groups_to_causes = {};
+        for (let cause in who_map_causes_to_groups) {
+          const cause_group = who_map_causes_to_groups[cause];
+
+          if (cause_group in who_map_causes_groups_to_causes)
+            who_map_causes_groups_to_causes[cause_group][cause] = 0;
+          else {
+            who_map_causes_groups_to_causes[cause_group] = {};
+            who_map_causes_groups_to_causes[cause_group][cause] = 0;
+          }
+        }
+        return who_map_causes_groups_to_causes;
+      }
+
       function transform_who_ages_causes_to_coordinates(who_ranges) {
         let coordinates = {};
         for (let i = 0; i < number_of_years; i++) {
