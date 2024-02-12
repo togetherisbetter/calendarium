@@ -62,7 +62,6 @@ const who_map_age_to_groups = {
   85: '85PLUS', 86: '85PLUS', 87: '85PLUS', 88: '85PLUS', 89: '85PLUS', 
 };
 
-const who_sex_groups = ['MLE', 'FMLE'];
 const who_causes_groups = ['Injuries',  'Chronic respiratory diseases', 'Cardiovascular diseases',  'Diabetes', 'Cancers', 'Other noncommunicable diseases',  'Maternal causes',  'Communicable diseases',  'Dimentias'];
 const who_causes_colors = ['#0193d6',   '#892e2f',                      '#86bee7',                  '#ffe094',  '#023f88', '#f5887d',                         '#fcc513',          '#5e82a0',                'black'];
 const who_sexes_map = {'m': 'MLE', 'f': 'FMLE'};
@@ -200,6 +199,7 @@ const who_map_causes_to_groups = {
   'Maternal conditions': 'Maternal causes',
   'Neonatal conditions': 'Communicable diseases',
 };
+
 
 const explanation_texts = {
   'cln':  'This is a clean canvas for a 101 years long Life&nbsp;Calendar made for printing and manual filling. It starts from a ring at the bottom left corner, from the first week of your life.',
