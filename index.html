@@ -822,7 +822,26 @@
           return innerHeight * 1.6 - 30 + 'px';
       }
 
-      async function draw_circles(user_values) {
+      function draw_age_line(user_values) {
+        let content = '';
+
+        const date = user_values['birthday'];
+        const birthday_date = new Date(date);
+        const age = get_age(birthday_date);
+
+        let y_offset = get_calendar_height() - age * calendar_step_vertical;
+        if (bad_mobile)
+          y_offset += 10;
+        
+        let cy = y_offset - circle_radius;
+        content += `<rect x="0%" y="${cy}" width="100%" height="${calendar_step_vertical}" rx="0"`;
+        content += 'fill="white" ';
+        content += 'stroke="white" stroke-width="0"/>';
+
+        return content;
+      }
+
+      function draw_circles(user_values) {
         let content = '';
 
         const date = user_values['birthday'];
@@ -1226,9 +1245,13 @@
           qrcode_margin_left += 5;
         else if (user_values.data_skin == 'cau')
           qrcode_margin_left -= 350;
-        else if (['cam', 'cc'].includes(user_values.data_skin)) {
+        else if (['cam', 'cc-'].includes(user_values.data_skin)) {
           qrcode_margin_left += 35;
           qrcode_margin_top -= 8;
+        }
+        else if (['cc'].includes(user_values.data_skin)) {
+          qrcode_margin_left = 580 - 17;
+          qrcode_margin_top = 940 - 17;
         }
         //else if (['mby', 'mbly', 'mc', 'all'].includes(user_values.data_skin))
         //  ;
@@ -1600,7 +1623,7 @@
         'cau': [draw_ages_numbers, draw_causes_of_deaths, draw_datasources, draw_circles, ],
         'cam': [draw_ages_numbers, draw_causes_of_deaths_under_mortality_curve, draw_circles, draw_datasources, ],
         //'cc': [draw_ages_numbers, draw_causes_of_deaths_compare, draw_circles, draw_datasources, ],
-        'cc': [ draw_circles, draw_causes_of_deaths_compare, ],
+        'cc': [ draw_causes_of_deaths_compare, draw_age_line],
       };
 
       function adjust_calendar_offsets_for_data_skin(data_skin) {
@@ -1804,7 +1827,7 @@
           guess_the_country();
         
         user_values = get_user_selected_parameters(); // read from html as usual
-        qrcode = init_qrcode(user_values, 67); // other sizes: 75 (4 dots left), 84 (3 dots left)
+        qrcode = init_qrcode(user_values, 85); // other sizes: 75 (4 dots left), 84 (3 dots left)
         init_calendar(user_values);
       };
     </script>
