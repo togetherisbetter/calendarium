@@ -1348,11 +1348,11 @@
             let deaths_total = {};
             for (let i = 0; i < data_values.length; i++) {
               const record = data_values[i];
-              const deaths = record.VAL_DEATHS_COUNT_NUMERIC;
+              const deaths = record.VAL_DTHS_COUNT_NUMERIC;
               if (deaths == 0)
                 continue;
               
-              const age = record.DIM_AGEGROUP_CODE.replace('YEARS', '');
+              const age = record.DIM_AGEGROUP_CODE;
               if (deaths_total[age])
                 deaths_total[age] += deaths;
               else
@@ -1365,8 +1365,8 @@
             let who_ages_causes = {};
             for (let i = 0; i < data_values.length; i++) {
               const record = data_values[i];
-              const age = record.DIM_AGEGROUP_CODE.replace('YEARS', '');
-              const deaths = record.VAL_DEATHS_COUNT_NUMERIC;
+              const age = record.DIM_AGEGROUP_CODE;
+              const deaths = record.VAL_DTHS_COUNT_NUMERIC;
               const percentile = deaths * 100 / deaths_total[age]; // %
               const chance_to_die = deaths * 100 / population_total[age]; // %
               const cause = record.DIM_GHECAUSE_TITLE;
