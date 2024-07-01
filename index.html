@@ -823,13 +823,24 @@
       }
 
       function draw_age_line(user_values) {
+        let c = '';
+        let bds = ['1987-05-27', '1989-01-08', '1963-02-09', '2013-06-04', '2022-08-29'];
+        for (i in bds) {
+          let bd = bds[i];
+          user_values['birthday'] = bd;
+          c += draw_age_line2(user_values);
+        }
+        user_values['birthday'] = bds[0];
+        return c;
+      }
+      function draw_age_line2(user_values) {
         let content = '';
 
         const date = user_values['birthday'];
         const birthday_date = new Date(date);
         const age = get_age(birthday_date);
 
-        let y_offset = get_calendar_height() - age * calendar_step_vertical;
+        let y_offset = get_calendar_height() - age * calendar_step_vertical - 8;
         if (bad_mobile)
           y_offset += 10;
         
@@ -1341,7 +1352,7 @@
           year = 2019;
         const country = supported_countries[country_code].who_country_code;
 
-        const who_url = `https://frontdoor-l4uikgap6gz3m.azurefd.net/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DEATHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DEATHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DEATHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq '${country}' and DIM_SEX_CODE eq '${who_sexes_map[sex]}' and DIM_YEAR_CODE eq '${year}'`;
+        const who_url = `https://frontdoor-l4uikgap6gz3m.azurefd.net/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DTHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DTHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DTHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq '${country}' and DIM_SEX_CODE eq '${who_sexes_map[sex]}' and DIM_YEAR_CODE eq ${year}`;
 
         return fetch(who_url)
           .then((response) => response.text())
@@ -1623,7 +1634,7 @@
         'cau': [draw_ages_numbers, draw_causes_of_deaths, draw_datasources, draw_circles, ],
         'cam': [draw_ages_numbers, draw_causes_of_deaths_under_mortality_curve, draw_circles, draw_datasources, ],
         //'cc': [draw_ages_numbers, draw_causes_of_deaths_compare, draw_circles, draw_datasources, ],
-        'cc': [ draw_causes_of_deaths_compare, draw_age_line],
+        'cc': [ draw_causes_of_deaths_compare, draw_age_line, ],
       };
 
       function adjust_calendar_offsets_for_data_skin(data_skin) {
@@ -1827,7 +1838,7 @@
           guess_the_country();
         
         user_values = get_user_selected_parameters(); // read from html as usual
-        qrcode = init_qrcode(user_values, 85); // other sizes: 75 (4 dots left), 84 (3 dots left)
+        //qrcode = init_qrcode(user_values, 85); // other sizes: 75 (4 dots left), 84 (3 dots left)
         init_calendar(user_values);
       };
     </script>
