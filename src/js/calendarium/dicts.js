@@ -64,7 +64,7 @@ const who_map_age_to_groups = {
 
 const who_causes_groups = ['Injuries',  'Chronic respiratory diseases', 'Cardiovascular diseases',  'Diabetes', 'Cancers', 'Other noncommunicable diseases',  'Maternal causes',  'Communicable diseases',  'Dimentias'];
 const who_causes_colors = ['#0193d6',   '#892e2f',                      '#86bee7',                  '#ffe094',  '#023f88', '#f5887d',                         '#fcc513',          '#5e82a0',                'black'];
-const who_sexes_map = {'m': 'MLE', 'f': 'FMLE'};
+const who_sexes_map = {'m': 'MALE', 'f': 'FEMALE'};
 
 const who_map_causes_to_groups = {
   'Ischaemic heart disease': 'Cardiovascular diseases',

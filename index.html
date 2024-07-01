@@ -1337,7 +1337,7 @@
           year = 2019;
         const country = supported_countries[country_code].who_country_code;
 
-        const who_url = `https://frontdoor-l4uikgap6gz3m.azurefd.net/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DEATHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DEATHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DEATHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq '${country}' and DIM_SEX_CODE eq '${who_sexes_map[sex]}' and DIM_YEAR_CODE eq '${year}'`;
+        const who_url = `https://frontdoor-l4uikgap6gz3m.azurefd.net/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DTHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DTHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DTHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq '${country}' and DIM_SEX_CODE eq '${who_sexes_map[sex]}' and DIM_YEAR_CODE eq ${year}`;
 
         return fetch(who_url)
           .then((response) => response.text())
