@@ -202,8 +202,6 @@ const who_map_causes_to_groups = {
   'Birth asphyxia and birth trauma': '',
   'Neonatal sepsis and infections': '',
   'COVID-19': '',
-  'Trichomoniasis': '',
-  'Chlamydia': ''
 };
 
 const explanation_texts = {
