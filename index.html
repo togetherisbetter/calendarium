@@ -1362,6 +1362,7 @@
                 population_total[age] = record.ATTR_POPULATION_NUMERIC;
             }
 
+            let unknown_causes = [];
             let who_ages_causes = {};
             for (let i = 0; i < data_values.length; i++) {
               const record = data_values[i];
@@ -1387,11 +1388,16 @@
                 else
                   who_ages_causes[age] = {[group]: [deaths, deaths * 100 / deaths_total[age]]};
               }
-              else
-                ; //console.log(0); //console.log(cause);
+              else {
+                if (!unknown_causes.includes(cause))
+                  unknown_causes.push(cause);
+                
+                //console.log(cause, deaths * 100 / deaths_total[age]);
+              }
             }
             let coordinates = transform_who_ages_causes_to_coordinates(who_ages_causes);
             who_stacked_coordinates = transform_coordinates_to_stacked_coordinates(coordinates, who_causes_groups);
+            console.log(unknown_causes)
           }
         );
       }
