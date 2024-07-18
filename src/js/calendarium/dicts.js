@@ -62,7 +62,7 @@ const who_map_age_to_groups = {
   85: 'YGE_85', 86: 'YGE_85', 87: 'YGE_85', 88: 'YGE_85', 89: 'YGE_85', 
 };
 
-const who_causes_groups = ['Injuries',  'Chronic respiratory diseases', 'Cardiovascular diseases',  'Diabetes', 'Cancers', 'Other noncommunicable diseases',  'Maternal causes',  'Communicable diseases',  'Dimentias'];
+const who_causes_groups = ['Injuries',  'Chronic respiratory diseases', 'Cardiovascular diseases',  'Diabetes', 'Cancers', 'Other noncommunicable diseases',  'Maternal causes',  'Communicable diseases',  'Dementias'];
 const who_causes_colors = ['#0193d6',   '#892e2f',                      '#86bee7',                  '#ffe094',  '#023f88', '#f5887d',                         '#fcc513',          '#5e82a0',                'black'];
 const who_sexes_map = {'m': 'MALE', 'f': 'FEMALE'};
 
@@ -86,7 +86,7 @@ const who_map_causes_to_groups = {
   'Kidney cancer': 'Cancers',
   'Diabetes mellitus': 'Diabetes',
   'Oesophagus cancer': 'Cancers',
-  'Alzheimer disease and other dementias': 'Dimentias',
+  'Alzheimer disease and other dementias': 'Dementias',
   'Lymphomas, multiple myeloma': 'Other noncommunicable diseases',
   'Leukaemia': 'Cancers',
   'Alcohol use disorders': 'Other noncommunicable diseases',
@@ -198,8 +198,26 @@ const who_map_causes_to_groups = {
   'Otitis media': 'Other noncommunicable diseases',
   'Maternal conditions': 'Maternal causes',
   'Neonatal conditions': 'Communicable diseases',
+  'Preterm birth complications': '',
+  'Birth asphyxia and birth trauma': '',
+  'Neonatal sepsis and infections': '',
+  'Natural disasters': '',
+  'Gonorrhoea': '',
+  'Oral conditions': '',
+  'Dengue': '',
+  'Chagas disease': '',
+  'Trachoma': '',
+  'Benign prostatic hyperplasia': '',
+  'Gynecological diseases': '',
+  'COVID-19': '',
+  'Lymphatic filariasis': '',
+  'Trichomoniasis': '',
+  'Chlamydia': '',
+  'Leishmaniasis': '',
+  'Schistosomiasis': '',
+  'Onchocerciasis': '',
+  'Yellow fever': ''
 };
-
 
 const explanation_texts = {
   'cln':  'This is a clean canvas for a 101 years long Life&nbsp;Calendar made for printing and manual filling. It starts from a ring at the bottom left corner, from the first week of your life.',
