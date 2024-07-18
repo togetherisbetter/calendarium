@@ -201,22 +201,9 @@ const who_map_causes_to_groups = {
   'Preterm birth complications': '',
   'Birth asphyxia and birth trauma': '',
   'Neonatal sepsis and infections': '',
-  'Natural disasters': '',
-  'Gonorrhoea': '',
-  'Oral conditions': '',
-  'Dengue': '',
-  'Chagas disease': '',
-  'Trachoma': '',
-  'Benign prostatic hyperplasia': '',
-  'Gynecological diseases': '',
   'COVID-19': '',
-  'Lymphatic filariasis': '',
   'Trichomoniasis': '',
-  'Chlamydia': '',
-  'Leishmaniasis': '',
-  'Schistosomiasis': '',
-  'Onchocerciasis': '',
-  'Yellow fever': ''
+  'Chlamydia': ''
 };
 
 const explanation_texts = {

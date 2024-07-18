@@ -1389,7 +1389,7 @@
                   who_ages_causes[age] = {[group]: [deaths, deaths * 100 / deaths_total[age]]};
               }
               else {
-                if (!unknown_causes.includes(cause))
+                if (Object.keys(unknown_causes).includes(cause))
                   unknown_causes.push(cause);
                 
                 //console.log(cause, deaths * 100 / deaths_total[age]);
