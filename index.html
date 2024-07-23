@@ -10,13 +10,13 @@
       gtag('js', new Date());
       gtag('config', 'G-BPS2S5MCLH');
     </script>
-    <script type="text/javascript">
+    <!--script type="text/javascript">
       !function(){"use strict";!function(e,t){var n=e.amplitude||{_q:[],_iq:{}};if(n.invoked)e.console&&console.error&&console.error("Amplitude snippet has been loaded.");else{var r=function(e,t){e.prototype[t]=function(){return this._q.push({name:t,args:Array.prototype.slice.call(arguments,0)}),this}},s=function(e,t,n){return function(r){e._q.push({name:t,args:Array.prototype.slice.call(n,0),resolve:r})}},o=function(e,t,n){e._q.push({name:t,args:Array.prototype.slice.call(n,0)})},i=function(e,t,n){e[t]=function(){if(n)return{promise:new Promise(s(e,t,Array.prototype.slice.call(arguments)))};o(e,t,Array.prototype.slice.call(arguments))}},a=function(e){for(var t=0;t<g.length;t++)i(e,g[t],!1);for(var n=0;n<m.length;n++)i(e,m[n],!0)};n.invoked=!0;var u=t.createElement("script");u.type="text/javascript",u.integrity="sha384-Gzu/3zjG7uZ1G0TIW6BIGIzZHB61u7328yVnZUz4t1dNE/n/dSnABKbOJ+jw6Bnu",u.crossOrigin="anonymous",u.async=!0,u.src="https://cdn.amplitude.com/libs/analytics-browser-2.5.2-min.js.gz",u.onload=function(){e.amplitude.runQueuedFunctions||console.log("[Amplitude] Error: could not load SDK")};var c=t.getElementsByTagName("script")[0];c.parentNode.insertBefore(u,c);for(var l=function(){return this._q=[],this},p=["add","append","clearAll","prepend","set","setOnce","unset","preInsert","postInsert","remove","getUserProperties"],d=0;d<p.length;d++)r(l,p[d]);n.Identify=l;for(var f=function(){return this._q=[],this},v=["getEventProperties","setProductId","setQuantity","setPrice","setRevenue","setRevenueType","setEventProperties"],y=0;y<v.length;y++)r(f,v[y]);n.Revenue=f;var g=["getDeviceId","setDeviceId","getSessionId","setSessionId","getUserId","setUserId","setOptOut","setTransport","reset","extendSession"],m=["init","add","remove","track","logEvent","identify","groupIdentify","setGroup","revenue","flush"];a(n),n.createInstance=function(e){return n._iq[e]={_q:[]},a(n._iq[e]),n._iq[e]},e.amplitude=n}}(window,document)}();
 
       amplitude.init('0f2530c457eaeaa62d3d77639e60300d', {
         defaultTracking: true,
       });
-    </script>
+    </script-->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,8 +24,8 @@
     <meta name="keywords" content="Life Calendar, calendar">
     <meta name="author" content="Aleksei Sotskov">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <link href="src/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <!--script src="src/bootstrap/5.3.3/js/bootstrap.min.js"></script-->
     <!--link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css"-->
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -185,7 +185,7 @@
       const bad_mobile = is_bad_mobile();//is_iOS();//window.mobileCheck();
       const is_mobile = window.mobileCheck();
 
-      const circle_radius = 2;
+      const circle_radius = 3.5/2;
       const number_of_weeks_in_a_row = 52;
       let number_of_years = 101;
       const calendar_step_horizontal = 5;
@@ -829,11 +829,42 @@
           return innerHeight * 1.6 - 30 + 'px';
       }
 
-      async function draw_circles(user_values) {
+      function draw_age_line(user_values) {
+        let c = '';
+        let bds = ['1987-05-27', '1989-01-08', '1963-02-09', '2013-06-04', '2022-08-29'];
+        for (i in bds) {
+          let bd = bds[i];
+          user_values['birthday'] = bd;
+          c += draw_age_line2(user_values);
+        }
+        user_values['birthday'] = bds[0];
+        return c;
+      }
+      function draw_age_line2(user_values) {
         let content = '';
 
         const date = user_values['birthday'];
         const birthday_date = new Date(date);
+        const age = get_age(birthday_date);
+
+        let y_offset = get_calendar_height() - age * calendar_step_vertical - 8;
+        if (bad_mobile)
+          y_offset += 10;
+        
+        let cy = y_offset - circle_radius;
+        content += `<rect x="0%" y="${cy}" width="100%" height="${calendar_step_vertical}" rx="0"`;
+        content += 'fill="white" ';
+        content += 'stroke="white" stroke-width="0"/>';
+
+        return content;
+      }
+
+      function draw_circles(user_values) {
+        let content = '';
+
+        const date = user_values['birthday'];
+        const birthday_date = new Date(date);
+        const age = get_age(birthday_date);
 
         let fill_ranges = [
           {"fill": "transparent"},
@@ -850,7 +881,9 @@
           let cy = y_offset - circle_radius;
           for (let week = 1; week <= number_of_weeks_in_a_row; week++) {
             let cx = (week + 1) * calendar_step_horizontal + calendar_years_numbers_width - circle_radius;
-            const rect_width = 3.5;
+            let rect_width = 0//2 * circle_radius; //3.5;
+            if (year == age)
+              rect_width = 0.5;
             const cx3 = cx - rect_width / 2;
             const cy3 = cy - rect_width / 2;
             content += `<rect x="${cx3}" y="${cy3}" width="${rect_width}" height="${rect_width}" rx="20"`;
@@ -1219,7 +1252,7 @@
         let qrcode_margin_top = base_qrcode_margin_top;
         let qrcode_margin_left = base_qrcode_margin_left;
 
-        qrcode_image.style.display = '';
+        //qrcode_image.style.display = '';
 
         const user_values = get_user_selected_parameters()
         if (user_values.data_skin == 'cln') {
@@ -1230,9 +1263,13 @@
           qrcode_margin_left += 5;
         else if (user_values.data_skin == 'cau')
           qrcode_margin_left -= 350;
-        else if (['cam', 'cc'].includes(user_values.data_skin)) {
+        else if (['cam', 'cc-'].includes(user_values.data_skin)) {
           qrcode_margin_left += 35;
           qrcode_margin_top -= 8;
+        }
+        else if (['cc'].includes(user_values.data_skin)) {
+          qrcode_margin_left = 580 - 17;
+          qrcode_margin_top = 940 - 17;
         }
         //else if (['mby', 'mbly', 'mc', 'all'].includes(user_values.data_skin))
         //  ;
@@ -1397,7 +1434,7 @@
             }
             let coordinates = transform_who_ages_causes_to_coordinates(who_ages_causes);
             who_stacked_coordinates = transform_coordinates_to_stacked_coordinates(coordinates, who_causes_groups);
-            console.log(unknown_causes)
+            console.log(who_ages_causes)
           }
         );
       }
@@ -1624,7 +1661,8 @@
         'all': [draw_weeks_numbers, draw_ages_numbers, draw_years_numbers, draw_circles, fill_lifetime_circles, draw_mortality_for_user_values, draw_mortality_for_latest_year_user_values, draw_mortality_to_compare_user_values, draw_datasources, draw_label_chances, draw_label_deaths, draw_label_new_year, draw_new_year_dots, draw_labels_percentiles],
         'cau': [draw_ages_numbers, draw_causes_of_deaths, draw_datasources, draw_circles, ],
         'cam': [draw_ages_numbers, draw_causes_of_deaths_under_mortality_curve, draw_circles, draw_datasources, ],
-        'cc': [draw_ages_numbers, draw_causes_of_deaths_compare, draw_circles, draw_datasources, ],
+        //'cc': [draw_ages_numbers, draw_causes_of_deaths_compare, draw_circles, draw_datasources, ],
+        'cc': [ draw_causes_of_deaths_compare, draw_age_line, ],
       };
 
       function adjust_calendar_offsets_for_data_skin(data_skin) {
@@ -1828,7 +1866,7 @@
           guess_the_country();
         
         user_values = get_user_selected_parameters(); // read from html as usual
-        qrcode = init_qrcode(user_values, 67); // other sizes: 75 (4 dots left), 84 (3 dots left)
+        //qrcode = init_qrcode(user_values, 85); // other sizes: 75 (4 dots left), 84 (3 dots left)
         init_calendar(user_values);
       };
     </script>
