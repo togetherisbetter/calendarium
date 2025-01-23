@@ -194,7 +194,7 @@
       const calendar_years_numbers_width = 12;
       const calendar_le_at_birth_median_peak_width = 12;
       const calendar_new_year_label_height = 5;
-      const calendar_qrcode_url_domain = "https://calendarium.me";
+      const calendar_qrcode_url_domain = "https://togetherisbetter.github.io/calendarium";
       const calendar_id = Math.random().toString(36).slice(2);  // https://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
       const svg_margin = 5;
       var qrcode;
@@ -277,7 +277,7 @@
         //  if (data_fetched['dx'][country_code][sex])
         //    ;
 
-        return fetch('https://calendarium.me/data/mortality/' + country_code + '/' + sex + 'ltper_1x1.txt')
+        return fetch('https://togetherisbetter.github.io/calendarium/data/mortality/' + country_code + '/' + sex + 'ltper_1x1.txt')
           .then((response) => response.text())
           .then((data) => {
             const lines = data.split("\n");
@@ -832,6 +832,7 @@
       function draw_age_line(user_values) {
         let c = '';
         let bds = ['1987-05-27', '1989-01-08', '1963-02-09', '2013-06-04', '2022-08-29'];
+        bds = [user_values.birthday];
         for (i in bds) {
           let bd = bds[i];
           user_values['birthday'] = bd;
@@ -1373,7 +1374,7 @@
           year = 2019;
         const country = supported_countries[country_code].who_country_code;
 
-        const who_url = `https://frontdoor-l4uikgap6gz3m.azurefd.net/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DTHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DTHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DTHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq '${country}' and DIM_SEX_CODE eq '${who_sexes_map[sex]}' and DIM_YEAR_CODE eq ${year}`;
+        const who_url = `https://xmart-api-public.who.int/DEX_CMS/GHE_FULL?&$top=20000&$orderby=VAL_DTHS_RATE100K_NUMERIC desc&$select=DIM_COUNTRY_CODE,DIM_GHECAUSE_TITLE,DIM_YEAR_CODE,DIM_SEX_CODE,DIM_AGEGROUP_CODE,VAL_DTHS_COUNT_NUMERIC,ATTR_POPULATION_NUMERIC,VAL_DTHS_RATE100K_NUMERIC&$filter=FLAG_RANKABLE eq 1 and DIM_COUNTRY_CODE eq '${country}' and DIM_SEX_CODE eq '${who_sexes_map[sex]}' and DIM_YEAR_CODE eq ${year}`;
 
         return fetch(who_url)
           .then((response) => response.text())
@@ -2043,11 +2044,11 @@
             </p>
             <p>
                 <b>Q:</b> How can I help / contribute / ask a question?<br>
-                <b>A:</b> Please contact me via <a href="mailto:alexeyhimself@gmail.com?subject=[Contact you from calendarium.me] ...">alexeyhimself@gmail.com</a>
+                <b>A:</b> Please contact me via <a href="mailto:alexeyhimself@gmail.com?subject=[Contact you from togetherisbetter.github.io/calendarium] ...">alexeyhimself@gmail.com</a>
             </p>
             <p>
                 <b>Q:</b> I'd like to get it in a PDF format to print and to put it on a wall. How can I do that?<br>
-                <b>A:</b> You can get a PDF version of your calendar (like <a href="https://www.dropbox.com/scl/fi/uhscshx0uz04ey9dcchrh/Calendarium-1990-06-30-fi-se-m-m.pdf?rlkey=qrindotcis85o1f9v25bijo3s&dl=1" target="_blank">this one with QR-code</a> made for a Finland man moved to Sweden). Please configure the calendar you wish to print, copy URL link and send it to me at <a href="mailto:alexeyhimself@gmail.com?subject=[Order for PDF from calendarium.me] ...">alexeyhimself@gmail.com</a>. And I'll reply to you with a generated PDF.
+                <b>A:</b> You can get a PDF version of your calendar (like <a href="https://www.dropbox.com/scl/fi/uhscshx0uz04ey9dcchrh/Calendarium-1990-06-30-fi-se-m-m.pdf?rlkey=qrindotcis85o1f9v25bijo3s&dl=1" target="_blank">this one with QR-code</a> made for a Finland man moved to Sweden). Please configure the calendar you wish to print, copy URL link and send it to me at <a href="mailto:alexeyhimself@gmail.com?subject=[Order for PDF from togetherisbetter.github.io/calendarium] ...">alexeyhimself@gmail.com</a>. And I'll reply to you with a generated PDF.
             </p>
             <p>
                 <b>Q:</b> What QR-code on a printed version does?<br>
