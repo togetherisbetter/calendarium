@@ -1431,8 +1431,8 @@
                 
                 console.log(age, cause, deaths * 100 / deaths_total[age]);
               }
-              if (age == 'Y0T1')
-                console.log(age, cause, deaths * 100 / deaths_total[age]);
+              //if (age == 'Y0T1')
+              //  console.log(age, cause, deaths * 100 / deaths_total[age]);
             }
             let coordinates = transform_who_ages_causes_to_coordinates(who_ages_causes);
             who_stacked_coordinates = transform_coordinates_to_stacked_coordinates(coordinates, who_causes_groups);
@@ -1868,7 +1868,7 @@
           guess_the_country();
         
         user_values = get_user_selected_parameters(); // read from html as usual
-        //qrcode = init_qrcode(user_values, 85); // other sizes: 75 (4 dots left), 84 (3 dots left)
+        qrcode = init_qrcode(user_values, 85); // other sizes: 75 (4 dots left), 84 (3 dots left)
         init_calendar(user_values);
       };
     </script>
