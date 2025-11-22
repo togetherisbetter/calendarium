@@ -1261,8 +1261,8 @@
       function prepare_qrcode_for_print() {
         const qrcode_image = document.getElementById('qrcode');
 
-        const base_qrcode_margin_top = 890;
-        const base_qrcode_margin_left = 479;
+        const base_qrcode_margin_top = 892;
+        const base_qrcode_margin_left = 481;
 
         let qrcode_margin_top = base_qrcode_margin_top;
         let qrcode_margin_left = base_qrcode_margin_left;
@@ -1270,17 +1270,21 @@
         qrcode_image.style.display = '';
 
         const user_values = get_user_selected_parameters()
-        if (user_values.data_skin == 'cln') {
-          qrcode_margin_top -= 1;
-          qrcode_margin_left += 10;
+        if (user_values.data_skin == 'cln') { // 3x3 bottom right
+          qrcode_margin_top -= 3;
+          qrcode_margin_left += 8;
         }
-        else if (user_values.data_skin == 'lft')
-          qrcode_margin_left += 5;
-        else if (user_values.data_skin == 'cau')
-          qrcode_margin_left -= 350;
+        else if (user_values.data_skin == 'lft') {
+          qrcode_margin_left += 4;
+          qrcode_margin_top -= 1
+        }
+        else if (user_values.data_skin == 'cau') { // 5x5 bottom left
+          qrcode_margin_left -= 345;
+          qrcode_margin_top -= 28;
+        }
         else if (['cam', 'cc-'].includes(user_values.data_skin)) {
           qrcode_margin_left += 35;
-          qrcode_margin_top -= 8;
+          qrcode_margin_top -= 6;
         }
         else if (['cc'].includes(user_values.data_skin)) {
           qrcode_margin_left = 580 - 17;
