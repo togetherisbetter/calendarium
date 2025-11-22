@@ -221,6 +221,7 @@
       var last_year_in_dataset_2 = 0;
       var number_of_mortality_charts_drawn = 0;
       var labels_percentiles = [{}, {}, {}];
+      var fetched_files = {};
 
       let calendar_top_offset = calendar_weeks_numbers_height + calendar_new_year_label_height + 5;
       let calendar_width_offset = calendar_years_numbers_width + calendar_le_at_birth_median_peak_width + 6 + 10 + 16;
@@ -272,43 +273,57 @@
       }
       */
 
+      function postprocess_fetched_data(data, country_code, sex, target_year) {
+        const lines = data.split("\n");
+
+        const offset_data_headers = 3;
+        const index_column_year = 1;
+        const index_column_mx = 3;
+        const index_column_dx = 7;
+
+        last_year_in_dataset = lines[lines.length - 2].split(' ')[2];
+        if (!target_year)
+          target_year = last_year_in_dataset;
+
+        let mx_data = [];
+        let dx_data = [];
+        for (let i = offset_data_headers; i < lines.length; i++) {
+          const splitted_data_line = lines[i].replace(/\s+/g, ',').split(',');
+          const data_year = splitted_data_line[index_column_year];
+
+          if (data_year == target_year) {
+            dx_data.push(parseInt(splitted_data_line[index_column_dx]));
+            mx_data.push(splitted_data_line[index_column_mx] * 100);
+          }
+        }
+
+        data_all['mx'] = data_all['mx'].concat(mx_data.map(Number));
+        enrich_data_mdx_dict(data_mx, mx_data, country_code, sex, target_year);
+        data_all['dx'] = data_all['dx'].concat(dx_data.map(Number));
+        enrich_data_mdx_dict(data_dx, dx_data, country_code, sex, target_year);
+
+        //enrich_data_fetched_dict(country_code, sex, target_year);
+        var d = {};
+        d[sex] = data;
+        fetched_files[country_code] = d;
+        //console.log(fetched_files)
+      }
+
       function get_mortality_data(country_code, sex, target_year) {
         //if (data_fetched['dx'][country_code])
         //  if (data_fetched['dx'][country_code][sex])
         //    ;
-
+        //console.log(country_code, sex, target_year)
+        if (fetched_files[country_code]) {
+          if (fetched_files[country_code][sex]) {
+            return postprocess_fetched_data(fetched_files[country_code][sex], country_code, sex, target_year);
+          }
+        }
+        
         return fetch('https://togetherisbetter.github.io/calendarium/data/mortality/' + country_code + '/' + sex + 'ltper_1x1.txt')
           .then((response) => response.text())
           .then((data) => {
-            const lines = data.split("\n");
-
-            const offset_data_headers = 3;
-            const index_column_year = 1;
-            const index_column_mx = 3;
-            const index_column_dx = 7;
-
-            last_year_in_dataset = lines[lines.length - 2].split(' ')[2];
-            if (!target_year)
-              target_year = last_year_in_dataset;
-
-            let mx_data = [];
-            let dx_data = [];
-            for (let i = offset_data_headers; i < lines.length; i++) {
-              const splitted_data_line = lines[i].replace(/\s+/g, ',').split(',');
-              const data_year = splitted_data_line[index_column_year];
-
-              if (data_year == target_year) {
-                dx_data.push(parseInt(splitted_data_line[index_column_dx]));
-                mx_data.push(splitted_data_line[index_column_mx] * 100);
-              }
-            }
-
-            data_all['mx'] = data_all['mx'].concat(mx_data.map(Number));
-            enrich_data_mdx_dict(data_mx, mx_data, country_code, sex, target_year);
-            data_all['dx'] = data_all['dx'].concat(dx_data.map(Number));
-            enrich_data_mdx_dict(data_dx, dx_data, country_code, sex, target_year);
-
-            //enrich_data_fetched_dict(country_code, sex, target_year);
+            postprocess_fetched_data(data, country_code, sex, target_year);
           }
         );
       }
